@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Polls | SIRI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f7f5;
+      color: #24352b;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 25px auto;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 18px;
+      color: #17643c;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .header {
+      background: #145c38;
+      color: white;
+      padding: 28px;
+      border-radius: 14px;
+      margin-bottom: 22px;
+    }
+
+    .header h1 {
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      line-height: 1.6;
+    }
+
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 22px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.05);
+    }
+
+    .card h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 15px 0 7px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #dce5de;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 85px;
+      resize: vertical;
+    }
+
+    .option-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .option-row input {
+      flex: 1;
+    }
+
+    button {
+      border: none;
+      padding: 12px 17px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .primary {
+      background: #17643c;
+      color: white;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .secondary {
+      background: #e8f2eb;
+      color: #17643c;
+      margin-top: 10px;
+    }
+
+    .danger {
+      background: #fce8e8;
+      color: #b42318;
+    }
+
+    .poll-item {
+      border: 1px solid #e2e9e4;
+      padding: 17px;
+      border-radius: 10px;
+      margin-bottom: 13px;
+    }
+
+    .poll-item h3 {
+      margin-bottom: 8px;
+    }
+
+    .poll-item p {
+      color: #66736b;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .status {
+      display: inline-block;
+      margin: 10px 0;
+      padding: 5px 10px;
+      background: #edf2ee;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .actions button {
+      flex: 1;
+    }
+
+    .message {
+      margin-top: 13px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .success {
+      color: #168044;
+    }
+
+    .error {
+      color: #c0392b;
+    }
+
+    .empty {
+      text-align: center;
+      color: #66736b;
+      padding: 20px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #77837b;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <a href="../dashboard.html" class="back">
+    ← Back to Dashboard
+  </a>
+
+  <div class="header">
+    <h1>Poll Administration</h1>
+    <p>
+      Create and manage student polls through the
+      SOBO Research and Intelligence Hub.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Create a New Poll</h2>
+
+    <form id="pollForm">
+
+      <label for="question">Poll Question</label>
+      <input
+        id="question"
+        type="text"
+        maxlength="200"
+        placeholder="e.g. What should be the main focus of SOBO this semester?"
+        required
+      >
+
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        maxlength="500"
+        placeholder="Provide additional context for students..."
+      ></textarea>
+
+      <label>Answer Options</label>
+
+      <div id="optionsContainer"></div>
+
+      <button type="button" class="secondary" id="addOption">
+        + Add Another Option
+      </button>
+
+      <label for="status">Publication Status</label>
+
+      <select id="status" required>
+        <option value="draft">Save as Draft</option>
+        <option value="published">Publish Immediately</option>
+      </select>
+
+      <button type="submit" class="primary" id="createButton">
+        Create Poll
+      </button>
+
+      <p id="formMessage" class="message"></p>
+
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Existing Polls</h2>
+    <div id="pollList">
+      <p class="empty">Loading polls...</p>
+    </div>
+  </div>
+
+  <footer>
+    SIRI – SOBO Research and Intelligence Hub<br>
+    University of Nairobi
+  </footer>
+
+</div>
+
+<script type="module">
+
+  import { auth, db } from "../js/firebase.js";
+
+  import {
+    collection,
+    addDoc,
+    getDocs,
+    doc,
+    updateDoc,
+    deleteDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  import { onAuthStateChanged } from
+    "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+  import {
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  const pollForm = document.getElementById("pollForm");
+  const optionsContainer = document.getElementById("optionsContainer");
+  const pollList = document.getElementById("pollList");
+  const formMessage = document.getElementById("formMessage");
+  const createButton = document.getElementById("createButton");
+
+  let adminReady = false;
+
+  function addOption(value = "") {
+    const row = document.createElement("div");
+    row.className = "option-row";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "poll-option";
+    input.maxLength = 150;
+    input.placeholder = "Enter an answer option";
+    input.value = value;
+    input.required = true;
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "danger";
+    removeButton.textContent = "Remove";
+
+    removeButton.addEventListener("click", () => {
+      if (optionsContainer.children.length <= 2) {
+        alert("A poll must have at least two options.");
+        return;
+      }
+
+      row.remove();
+    });
+
+    row.appendChild(input);
+    row.appendChild(removeButton);
+    optionsContainer.appendChild(row);
+  }
+
+  addOption();
+  addOption();
+
+  document.getElementById("addOption").addEventListener("click", () => {
+    if (optionsContainer.children.length >= 10) {
+      alert("A poll can have a maximum of 10 options.");
+      return;
+    }
+
+    addOption();
+  });
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "../login.html";
+      return;
+    }
+
+    try {
+      const roleRef = doc(db, "roles", user.uid);
+      const roleSnapshot = await getDoc(roleRef);
+
+      if (!roleSnapshot.exists() ||
+          roleSnapshot.data().role !== "super_admin") {
+        document.body.innerHTML = `
+          <div style="text-align:center;padding:60px 20px;font-family:Arial">
+            <h2>Access Denied</h2>
+            <p>This page is restricted to authorised SIRI administrators.</p>
+            <p><a href="../dashboard.html">Return to Dashboard</a></p>
+          </div>
+        `;
+        return;
+      }
+
+      adminReady = true;
+      await loadPolls();
+
+    } catch (error) {
+      console.error(error);
+      document.body.innerHTML = `
+        <div style="text-align:center;padding:60px 20px;font-family:Arial">
+          <h2>Unable to verify administrator access</h2>
+          <p>Please sign in again or contact the system administrator.</p>
+          <p><a href="../dashboard.html">Return to Dashboard</a></p>
+        </div>
+      `;
+    }
+  });
+
+  pollForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!adminReady || !auth.currentUser) return;
+
+    const question = document.getElementById("question").value.trim();
+    const description = document.getElementById("description").value.trim();
+    const status = document.getElementById("status").value;
+
+    const options = Array.from(
+      document.querySelectorAll(".poll-option")
+    ).map(input => input.value.trim());
+
+    if (!question || options.length < 2 ||
+        options.some(option => !option)) {
+      formMessage.textContent = "Complete the question and all answer options.";
+      formMessage.className = "message error";
+      return;
+    }
+
+    if (new Set(options.map(option => option.toLowerCase())).size !== options.length) {
+      formMessage.textContent = "Please remove duplicate answer options.";
+      formMessage.className = "message error";
+      return;
+    }
+
+    createButton.disabled = true;
+    createButton.textContent = "Creating...";
+
+    try {
+      await addDoc(collection(db, "studentPolls"), {
+        question,
+        description,
+        options,
+        status,
+        createdBy: auth.currentUser.uid,
+        createdAt: serverTimestamp()
+      });
+
+      formMessage.textContent = "Poll created successfully.";
+      formMessage.className = "message success";
+
+      pollForm.reset();
+      optionsContainer.innerHTML = "";
+      addOption();
+      addOption();
+
+      await loadPolls();
+
+    } catch (error) {
+      console.error(error);
+      formMessage.textContent = "Unable to create poll. Please try again.";
+      formMessage.className = "message error";
+
+    } finally {
+      createButton.disabled = false;
+      createButton.textContent = "Create Poll";
+    }
+  });
+
+  async function loadPolls() {
+    if (!adminReady) return;
+
+    try {
+      const snapshot = await getDocs(collection(db, "studentPolls"));
+
+      pollList.innerHTML = "";
+
+      if (snapshot.empty) {
+        pollList.innerHTML = '<p class="empty">No polls created yet.</p>';
+        return;
+      }
+
+      snapshot.forEach((pollDoc) => {
+        const poll = pollDoc.data();
+
+        const item = document.createElement("div");
+        item.className = "poll-item";
+
+        const title = document.createElement("h3");
+        title.textContent = poll.question || "Untitled poll";
+
+        const description = document.createElement("p");
+        description.textContent = poll.description || "No description provided.";
+
+        const status = document.createElement("span");
+        status.className = "status";
+        status.textContent = poll.status || "unknown";
+
+        const optionText = document.createElement("p");
+        optionText.textContent =
+          "Options: " + (Array.isArray(poll.options) ? poll.options.join(" | ") : "None");
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const toggleButton = document.createElement("button");
+        toggleButton.className = "secondary";
+        toggleButton.textContent =
+          poll.status === "published" ? "Close Poll" : "Publish Poll";
+
+        toggleButton.addEventListener("click", async () => {
+          const nextStatus =
+            poll.status === "published" ? "closed" : "published";
+
+          if (!confirm(`Are you sure you want to ${nextStatus === "published" ? "publish" : "close"} this poll?`)) {
+            return;
+          }
+
+          try {
+            await updateDoc(doc(db, "studentPolls", pollDoc.id), {
+              status: nextStatus
+            });
+
+            await loadPolls();
+
+          } catch (error) {
+            console.error(error);
+            alert("Unable to update poll.");
+          }
+        });
+
+        const deleteButton = document.createElement("button");
+        deleteButton.className = "danger";
+        deleteButton.textContent = "Delete";
+
+        deleteButton.addEventListener("click", async () => {
+          if (!confirm("Delete this poll? This action cannot be undone.")) {
+            return;
+          }
+
+          try {
+            await deleteDoc(doc(db, "studentPolls", pollDoc.id));
+            await loadPolls();
+
+          } catch (error) {
+            console.error(error);
+            alert("Unable to delete poll.");
+          }
+        });
+
+        actions.appendChild(toggleButton);
+        actions.appendChild(deleteButton);
+
+        item.appendChild(title);
+        item.appendChild(description);
+        item.appendChild(status);
+        item.appendChild(optionText);
+        item.appendChild(actions);
+
+        pollList.appendChild(item);
+      });
+
+    } catch (error) {
+      console.error(error);
+      pollList.innerHTML =
+        '<p class="empty">Unable to load polls.</p>';
+    }
+  }
+
+</script>
+
+</body>
+</html>
