@@ -1,0 +1,344 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Polls | SIRI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f7f5;
+      color: #24352b;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 750px;
+      margin: 25px auto;
+    }
+
+    .header {
+      background: #145c38;
+      color: white;
+      padding: 28px;
+      border-radius: 14px;
+      margin-bottom: 22px;
+    }
+
+    .header h1 {
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      line-height: 1.6;
+      opacity: .9;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 18px;
+      color: #17643c;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .poll {
+      background: white;
+      padding: 23px;
+      border-radius: 12px;
+      margin-bottom: 18px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.05);
+    }
+
+    .poll h2 {
+      font-size: 19px;
+      margin-bottom: 10px;
+    }
+
+    .description {
+      color: #66736b;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px;
+      border: 1px solid #dce5de;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    .option:hover {
+      background: #f2f8f4;
+    }
+
+    .option input {
+      accent-color: #17643c;
+    }
+
+    button {
+      background: #17643c;
+      color: white;
+      border: none;
+      padding: 13px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    button:disabled {
+      background: #8b9b90;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 13px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .success {
+      color: #168044;
+    }
+
+    .error {
+      color: #c0392b;
+    }
+
+    .empty {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      color: #66736b;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 35px;
+      color: #77837b;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <a href="../dashboard.html" class="back">
+    ← Back to Dashboard
+  </a>
+
+  <div class="header">
+    <h1>Student Polls</h1>
+    <p>
+      Your voice matters. Participate in SOBO polls
+      and help shape decisions, activities and student experiences.
+    </p>
+  </div>
+
+  <div id="pollContainer">
+    <div class="empty">Loading polls...</div>
+  </div>
+
+  <footer>
+    SIRI – SOBO Research and Intelligence Hub<br>
+    University of Nairobi
+  </footer>
+
+</div>
+
+<script type="module">
+  import { auth, db } from "../js/firebase.js";
+
+  import {
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  import { onAuthStateChanged } from
+    "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+  const pollContainer = document.getElementById("pollContainer");
+
+  let currentUser = null;
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "../login.html";
+      return;
+    }
+
+    currentUser = user;
+    await loadPolls();
+  });
+
+  async function loadPolls() {
+    pollContainer.innerHTML =
+      '<div class="empty">Loading available polls...</div>';
+
+    try {
+      const pollsQuery = query(
+        collection(db, "studentPolls"),
+        where("status", "==", "published")
+      );
+
+      const snapshot = await getDocs(pollsQuery);
+
+      if (snapshot.empty) {
+        pollContainer.innerHTML =
+          '<div class="empty">There are currently no published polls. Please check again later.</div>';
+        return;
+      }
+
+      pollContainer.innerHTML = "";
+
+      for (const pollDoc of snapshot.docs) {
+        const poll = pollDoc.data();
+
+        if (!Array.isArray(poll.options) || poll.options.length < 2) {
+          continue;
+        }
+
+        const voteId = `${pollDoc.id}_${currentUser.uid}`;
+        const voteRef = doc(db, "pollVotes", voteId);
+        const existingVote = await getDoc(voteRef);
+
+        const pollElement = document.createElement("div");
+        pollElement.className = "poll";
+
+        const heading = document.createElement("h2");
+        heading.textContent = poll.question || "Untitled poll";
+        pollElement.appendChild(heading);
+
+        if (poll.description) {
+          const description = document.createElement("p");
+          description.className = "description";
+          description.textContent = poll.description;
+          pollElement.appendChild(description);
+        }
+
+        if (existingVote.exists()) {
+          const message = document.createElement("p");
+          message.className = "message success";
+          message.textContent = "You have already submitted your vote for this poll.";
+          pollElement.appendChild(message);
+
+        } else {
+          const form = document.createElement("form");
+
+          poll.options.forEach((option, index) => {
+            const label = document.createElement("label");
+            label.className = "option";
+
+            const radio = document.createElement("input");
+            radio.type = "radio";
+            radio.name = `poll-${pollDoc.id}`;
+            radio.value = option;
+            radio.required = true;
+
+            const text = document.createElement("span");
+            text.textContent = option;
+
+            label.appendChild(radio);
+            label.appendChild(text);
+            form.appendChild(label);
+          });
+
+          const button = document.createElement("button");
+          button.type = "submit";
+          button.textContent = "Submit Vote";
+          form.appendChild(button);
+
+          const message = document.createElement("p");
+          message.className = "message";
+          form.appendChild(message);
+
+          form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const selected = form.querySelector(
+              `input[name="poll-${pollDoc.id}"]:checked`
+            );
+
+            if (!selected) {
+              message.textContent = "Please select an option.";
+              message.className = "message error";
+              return;
+            }
+
+            button.disabled = true;
+            button.textContent = "Submitting...";
+
+            try {
+              await setDoc(voteRef, {
+                pollId: pollDoc.id,
+                uid: currentUser.uid,
+                selectedOption: selected.value,
+                createdAt: serverTimestamp()
+              });
+
+              message.textContent = "Your vote has been submitted successfully.";
+              message.className = "message success";
+
+              form.querySelectorAll("input").forEach(input => {
+                input.disabled = true;
+              });
+
+              button.textContent = "Vote Submitted";
+
+            } catch (error) {
+              console.error(error);
+
+              message.textContent =
+                "Unable to submit your vote. Please try again.";
+
+              message.className = "message error";
+              button.disabled = false;
+              button.textContent = "Submit Vote";
+            }
+          });
+
+          pollElement.appendChild(form);
+        }
+
+        pollContainer.appendChild(pollElement);
+      }
+
+      if (!pollContainer.children.length) {
+        pollContainer.innerHTML =
+          '<div class="empty">No valid polls are currently available.</div>';
+      }
+
+    } catch (error) {
+      console.error(error);
+
+      pollContainer.innerHTML =
+        '<div class="empty">Unable to load polls. Please try again later.</div>';
+    }
+  }
+</script>
+
+</body>
+</html>
