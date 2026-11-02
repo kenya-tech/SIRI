@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Research Requests | SIRI</title>
+
+  <style>
+    :root {
+      --green: #176B45;
+      --dark-green: #10452F;
+      --background: #f7f9f7;
+      --white: #ffffff;
+      --black: #171717;
+      --muted: #727d75;
+      --border: #e4eae5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--background);
+      color: var(--black);
+    }
+
+    header {
+      background: white;
+      padding: 18px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      color: var(--green);
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-decoration: none;
+    }
+
+    .back {
+      color: var(--green);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    main {
+      max-width: 850px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .intro {
+      background: var(--dark-green);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+    }
+
+    .intro h1 {
+      font-size: 27px;
+      margin-bottom: 12px;
+    }
+
+    .intro p {
+      line-height: 1.7;
+      font-size: 14px;
+      opacity: .95;
+    }
+
+    .form-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+    }
+
+    .form-card h2 {
+      color: var(--green);
+      margin-bottom: 8px;
+      font-size: 21px;
+    }
+
+    .description {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      outline: none;
+      background: white;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--green);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+      line-height: 1.6;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 15px;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .submit-button:hover {
+      background: var(--dark-green);
+    }
+
+    .submit-button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    #formMessage {
+      display: none;
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 7px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .success {
+      display: block !important;
+      background: #eaf4ee;
+      color: #176B45;
+    }
+
+    .error {
+      display: block !important;
+      background: #fcebea;
+      color: #b42318;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 15px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 5%;
+      }
+
+      main {
+        margin-top: 25px;
+      }
+
+      .intro, .form-card {
+        padding: 23px;
+      }
+
+      .intro h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="../dashboard.html" class="brand">SIRI</a>
+    <a href="../dashboard.html" class="back">← Back to Dashboard</a>
+  </header>
+
+  <main>
+
+    <section class="intro">
+      <h1>Research Requests</h1>
+
+      <p>
+        Have an issue, question or subject that requires
+        investigation? Submit a research request to SOBO
+        through the SIRI Research and Intelligence Hub.
+      </p>
+    </section>
+
+    <section class="form-card">
+
+      <h2>Submit a Research Request</h2>
+
+      <p class="description">
+        Provide sufficient information to help the ICT &
+        Research Directorate understand and assess your request.
+      </p>
+
+      <form id="researchForm">
+
+        <div class="form-group">
+          <label for="title">Research Request Title *</label>
+
+          <input
+            type="text"
+            id="title"
+            maxlength="150"
+            placeholder="e.g. Student experiences with lecture attendance"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="category">Research Category *</label>
+
+          <select id="category" required>
+            <option value="">Select a category</option>
+            <option value="Academic">Academic</option>
+            <option value="Student Welfare">Student Welfare</option>
+            <option value="Campus Life">Campus Life</option>
+            <option value="Business and Entrepreneurship">
+              Business and Entrepreneurship
+            </option>
+            <option value="Finance and Administration">
+              Finance and Administration
+            </option>
+            <option value="Institutional Research">
+              Institutional Research
+            </option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="objective">Research Objective *</label>
+
+          <textarea
+            id="objective"
+            placeholder="What do you want this research to establish?"
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="targetPopulation">Target Population *</label>
+
+          <input
+            type="text"
+            id="targetPopulation"
+            placeholder="e.g. First-year B.Com students"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="researchQuestions">Key Research Questions *</label>
+
+          <textarea
+            id="researchQuestions"
+            placeholder="List the questions you believe the research should answer."
+            required
+          ></textarea>
+
+          <p class="hint">
+            You can include several questions in this field.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="priority">Priority Level *</label>
+
+          <select id="priority" required>
+            <option value="">Select priority</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Urgent">Urgent</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="deadline">Preferred Completion Date *</label>
+
+          <input
+            type="date"
+            id="deadline"
+            required
+          >
+
+          <p class="hint">
+            This is your preferred date, not a guaranteed completion date.
+          </p>
+        </div>
+
+        <button
+          type="submit"
+          class="submit-button"
+          id="submitButton"
+        >
+          Submit Research Request
+        </button>
+
+        <div id="formMessage" role="status" aria-live="polite"></div>
+
+      </form>
+
+    </section>
+
+  </main>
+
+  <footer>
+    SIRI | SOBO Research and Intelligence Hub<br>
+    University of Nairobi · School of Business Organizations
+  </footer>
+
+  <script type="module">
+
+    import { auth, db } from "../js/firebase.js";
+
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+    import {
+      doc,
+      getDoc,
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+    const form = document.getElementById("researchForm");
+    const submitButton = document.getElementById("submitButton");
+    const formMessage = document.getElementById("formMessage");
+    const deadlineInput = document.getElementById("deadline");
+
+    let currentUser = null;
+    let studentProfile = null;
+    let accountReady = false;
+
+    // Set today's date as the earliest deadline
+    const today = new Date();
+    const localDate = [
+      today.getFullYear(),
+      String(today.getMonth() + 1).padStart(2, "0"),
+      String(today.getDate()).padStart(2, "0")
+    ].join("-");
+
+    deadlineInput.min = localDate;
+
+    function showMessage(message, type) {
+      formMessage.textContent = message;
+      formMessage.className = type;
+    }
+
+    // Verify student authentication and profile
+    onAuthStateChanged(auth, async (user) => {
+
+      if (!user) {
+        window.location.href = "../login.html";
+        return;
+      }
+
+      currentUser = user;
+
+      try {
+
+        const profileRef = doc(
+          db,
+          "registrationRequests",
+          user.uid
+        );
+
+        const profileSnapshot = await getDoc(profileRef);
+
+        if (!profileSnapshot.exists()) {
+          showMessage(
+            "Your student profile could not be found.",
+            "error"
+          );
+          return;
+        }
+
+        studentProfile = profileSnapshot.data();
+
+        if (studentProfile.status !== "active") {
+          showMessage(
+            "Your account is not active.",
+            "error"
+          );
+          return;
+        }
+
+        accountReady = true;
+        submitButton.disabled = false;
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          "Unable to verify your account. Please refresh the page.",
+          "error"
+        );
+
+      }
+
+    });
+
+    // Prevent submission before account verification
+    submitButton.disabled = true;
+
+    // Submit research request
+    form.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      if (!accountReady || !currentUser || !studentProfile) {
+        showMessage(
+          "Your account is still being verified. Please wait.",
+          "error"
+        );
+        return;
+      }
+
+      const title = document.getElementById("title").value.trim();
+      const category = document.getElementById("category").value;
+      const objective = document.getElementById("objective").value.trim();
+      const targetPopulation =
+        document.getElementById("targetPopulation").value.trim();
+      const researchQuestions =
+        document.getElementById("researchQuestions").value.trim();
+      const priority = document.getElementById("priority").value;
+      const preferredDeadline = deadlineInput.value;
+
+      if (
+        !title ||
+        !category ||
+        !objective ||
+        !targetPopulation ||
+        !researchQuestions ||
+        !priority ||
+        !preferredDeadline
+      ) {
+        showMessage(
+          "Please complete all required fields.",
+          "error"
+        );
+        return;
+      }
+
+      if (preferredDeadline < localDate) {
+        showMessage(
+          "Please select today or a future date.",
+          "error"
+        );
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
+
+      formMessage.className = "";
+      formMessage.style.display = "none";
+
+      try {
+
+        await addDoc(collection(db, "researchRequests"), {
+
+          uid: currentUser.uid,
+
+          registrationNumber: studentProfile.registrationNumber,
+
+          year: studentProfile.year,
+
+          course: studentProfile.course,
+
+          title: title,
+
+          category: category,
+
+          objective: objective,
+
+          targetPopulation: targetPopulation,
+
+          researchQuestions: researchQuestions,
+
+          priority: priority,
+
+          preferredDeadline: preferredDeadline,
+
+          status: "submitted",
+
+          createdAt: serverTimestamp()
+
+        });
+
+        form.reset();
+
+        showMessage(
+          "Your research request has been submitted successfully. Thank you for contributing to SIRI.",
+          "success"
+        );
+
+      } catch (error) {
+
+        console.error("Research request error:", error);
+
+        showMessage(
+          "We could not submit your request. Please try again. Error: " +
+          error.message,
+          "error"
+        );
+
+      } finally {
+
+        submitButton.disabled = false;
+        submitButton.textContent = "Submit Research Request";
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
