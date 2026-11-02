@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Login | SIRI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f9f7;
+      color: #171717;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 20px 7%;
+      background: white;
+      border-bottom: 1px solid #e4eae5;
+    }
+
+    .brand {
+      color: #176B45;
+      font-size: 26px;
+      font-weight: 800;
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+
+    .login-container {
+      width: 90%;
+      max-width: 430px;
+      margin: auto;
+      padding: 40px 0;
+    }
+
+    .login-card {
+      background: white;
+      padding: 35px;
+      border: 1px solid #e4eae5;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.04);
+    }
+
+    h1 {
+      font-size: 27px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #727d75;
+      line-height: 1.5;
+      margin-bottom: 28px;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #d9e1db;
+      border-radius: 6px;
+      font-size: 15px;
+      margin-bottom: 20px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #176B45;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #176B45;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .message {
+      margin-top: 15px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+      color: #727d75;
+    }
+
+    .register-link a {
+      color: #176B45;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 22px;
+      color: #727d75;
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="index.html" class="brand">SIRI</a>
+  </header>
+
+  <main class="login-container">
+    <div class="login-card">
+
+      <h1>Welcome Back</h1>
+
+      <p class="subtitle">
+        Sign in to your SIRI student account and access
+        research, polls, publications and student insights.
+      </p>
+
+      <form id="loginForm">
+
+        <label for="registrationNumber">
+          University Registration Number
+        </label>
+
+        <input
+          type="text"
+          id="registrationNumber"
+          placeholder="Enter your registration number"
+          required
+          autocomplete="username"
+        >
+
+        <label for="password">Password</label>
+
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter your password"
+          required
+          autocomplete="current-password"
+        >
+
+        <button type="submit" id="loginButton">
+          Sign In
+        </button>
+
+        <p class="message" id="message" role="status"></p>
+
+      </form>
+
+      <div class="register-link">
+        Don't have an account?
+        <a href="register.html">Create an account</a>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    SIRI | SOBO Research and Intelligence Hub<br>
+    University of Nairobi
+  </footer>
+
+  <script type="module">
+    import { auth } from "./js/firebase.js";
+
+    import {
+      signInWithEmailAndPassword
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+    const form = document.getElementById("loginForm");
+    const message = document.getElementById("message");
+    const button = document.getElementById("loginButton");
+
+    // Must match the registration page's identifier-generation method.
+    async function generateLoginEmail(registrationNumber) {
+      const normalized = registrationNumber
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "");
+
+      const data = new TextEncoder().encode(normalized);
+      const hash = await crypto.subtle.digest("SHA-256", data);
+
+      const hashArray = Array.from(new Uint8Array(hash));
+      const hashString = hashArray
+        .map(byte => byte.toString(16).padStart(2, "0"))
+        .join("");
+
+      return `student-${hashString}@accounts.siri.invalid`;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const registrationNumber =
+        document.getElementById("registrationNumber").value;
+
+      const password =
+        document.getElementById("password").value;
+
+      message.style.color = "#b42318";
+      message.textContent = "";
+
+      button.disabled = true;
+      button.textContent = "Signing in...";
+
+      try {
+        if (!registrationNumber.trim()) {
+          throw new Error("Enter your registration number.");
+        }
+
+        const loginEmail =
+          await generateLoginEmail(registrationNumber);
+
+        await signInWithEmailAndPassword(
+          auth,
+          loginEmail,
+          password
+        );
+
+        message.style.color = "#176B45";
+        message.textContent = "Login successful. Redirecting...";
+
+        window.location.href = "dashboard.html";
+
+      } catch (error) {
+        console.error(error);
+
+        if (
+          error.code === "auth/invalid-credential" ||
+          error.code === "auth/wrong-password" ||
+          error.code === "auth/user-not-found"
+        ) {
+          message.textContent =
+            "Incorrect registration number or password.";
+        } else if (error.code === "auth/too-many-requests") {
+          message.textContent =
+            "Too many attempts. Please try again later.";
+        } else {
+          message.textContent =
+            error.message || "Unable to sign in. Please try again.";
+        }
+
+        button.disabled = false;
+        button.textContent = "Sign In";
+      }
+    });
+  </script>
+
+</body>
+</html>
