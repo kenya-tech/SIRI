@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | SIRI</title>
+
+  <style>
+    :root {
+      --green: #176B45;
+      --dark-green: #10452F;
+      --black: #171717;
+      --white: #ffffff;
+      --background: #f7f9f7;
+      --muted: #727d75;
+      --border: #e4eae5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--background);
+      color: var(--black);
+    }
+
+    header {
+      background: var(--white);
+      padding: 18px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      color: var(--green);
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .logout {
+      background: var(--green);
+      color: white;
+      border: none;
+      padding: 11px 19px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .welcome {
+      background: var(--dark-green);
+      color: white;
+      padding: 35px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+
+    .welcome h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    .welcome p {
+      line-height: 1.6;
+      opacity: .9;
+    }
+
+    .profile {
+      background: white;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 35px;
+    }
+
+    .profile h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    .profile-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 18px;
+    }
+
+    .detail-label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .detail-value {
+      font-weight: 600;
+      overflow-wrap: anywhere;
+    }
+
+    .section-heading {
+      margin-bottom: 20px;
+    }
+
+    .section-heading h2 {
+      font-size: 23px;
+      margin-bottom: 8px;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .modules {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .module {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+    }
+
+    .module-icon {
+      font-size: 27px;
+      margin-bottom: 15px;
+    }
+
+    .module h3 {
+      margin-bottom: 10px;
+      color: var(--green);
+    }
+
+    .module p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 17px;
+      padding: 6px 10px;
+      border-radius: 20px;
+      background: #eaf4ee;
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 15px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    #message {
+      margin-top: 15px;
+      color: #b42318;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 5%;
+      }
+
+      main {
+        margin-top: 25px;
+      }
+
+      .welcome {
+        padding: 25px;
+      }
+
+      .welcome h1 {
+        font-size: 23px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="brand">SIRI</div>
+    <button class="logout" id="logoutButton">Sign Out</button>
+  </header>
+
+  <main>
+
+    <section class="welcome">
+      <h1>Welcome to SIRI</h1>
+      <p>
+        SOBO Research and Intelligence Hub.
+        Your platform for student voices, research,
+        insights and informed decision-making.
+      </p>
+      <p id="message">Loading your account...</p>
+    </section>
+
+    <section class="profile">
+      <h2>Your Student Profile</h2>
+
+      <div class="profile-details">
+        <div>
+          <p class="detail-label">Registration Number</p>
+          <p class="detail-value" id="regNumber">Loading...</p>
+        </div>
+
+        <div>
+          <p class="detail-label">Year of Study</p>
+          <p class="detail-value" id="year">Loading...</p>
+        </div>
+
+        <div>
+          <p class="detail-label">Course</p>
+          <p class="detail-value" id="course">Loading...</p>
+        </div>
+
+        <div>
+          <p class="detail-label">Phone Number</p>
+          <p class="detail-value" id="phone">Loading...</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Explore SIRI</h2>
+        <p>
+          Six connected research and intelligence functions
+          designed to strengthen student representation and
+          institutional decision-making.
+        </p>
+      </div>
+
+      <div class="modules">
+
+        <div class="module">
+          <div class="module-icon">📚</div>
+          <h3>Research Archive</h3>
+          <p>
+            Access previous research reports, survey findings
+            and institutional knowledge.
+          </p>
+          <span class="status">Being developed</span>
+        </div>
+
+        <div class="module">
+          <div class="module-icon">🔬</div>
+          <h3>Research Requests</h3>
+          <p>
+            Submit research requests and monitor their
+            progress across SOBO directorates.
+          </p>
+          <span class="status">Being developed</span>
+        </div>
+
+        <div class="module">
+          <div class="module-icon">📋</div>
+          <h3>Event Evaluation</h3>
+          <p>
+            Share feedback on events, activities,
+            organisation and student experiences.
+          </p>
+          <span class="status">Being developed</span>
+        </div>
+
+        <div class="module">
+          <div class="module-icon">📊</div>
+          <h3>Student Polls</h3>
+          <p>
+            Participate in student polls and contribute
+            to collective student insights.
+          </p>
+          <span class="status">Being developed</span>
+        </div>
+
+        <div class="module">
+          <div class="module-icon">💡</div>
+          <h3>Issue Tracking</h3>
+          <p>
+            Raise student concerns and follow the actions
+            taken to address them.
+          </p>
+          <span class="status">Being developed</span>
+        </div>
+
+        <div class="module">
+          <div class="module-icon">📰</div>
+          <h3>Research Publications</h3>
+          <p>
+            Explore research articles, student insights,
+            findings and analytical publications.
+          </p>
+          <span class="status">Being developed</span>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    SIRI | SOBO Research and Intelligence Hub<br>
+    University of Nairobi · School of Business Organizations
+  </footer>
+
+  <script type="module">
+    import { auth, db } from "./js/firebase.js";
+
+    import {
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+    import {
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+    const message = document.getElementById("message");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const profileRef = doc(db, "registrationRequests", user.uid);
+        const profileSnapshot = await getDoc(profileRef);
+
+        if (!profileSnapshot.exists()) {
+          message.textContent = "Your profile could not be found.";
+          return;
+        }
+
+        const profile = profileSnapshot.data();
+
+        if (profile.status !== "active") {
+          message.textContent = "Your account is not active.";
+          return;
+        }
+
+        document.getElementById("regNumber").textContent =
+          profile.registrationNumber || "Not available";
+
+        document.getElementById("year").textContent =
+          profile.year ? "Year " + profile.year : "Not available";
+
+        document.getElementById("course").textContent =
+          profile.course || "Not available";
+
+        document.getElementById("phone").textContent =
+          profile.phone || "Not available";
+
+        message.textContent = "Your account is active. Welcome aboard!";
+
+      } catch (error) {
+        console.error(error);
+        message.textContent =
+          "We could not load your profile. Please refresh the page.";
+      }
+    });
+
+    document.getElementById("logoutButton").addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "login.html";
+      } catch (error) {
+        message.textContent = "Unable to sign out. Please try again.";
+      }
+    });
+  </script>
+
+</body>
+</html>
