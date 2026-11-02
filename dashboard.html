@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -178,6 +178,32 @@
       font-weight: 600;
     }
 
+    .admin-section {
+      margin-top: 35px;
+      display: none;
+    }
+
+    .admin-heading {
+      margin-bottom: 18px;
+    }
+
+    .admin-heading h2 {
+      font-size: 21px;
+      margin-bottom: 7px;
+      color: var(--dark-green);
+    }
+
+    .admin-heading p {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    .admin-module {
+      border-color: #b7d8c3;
+      background: #fafffb;
+    }
+
     footer {
       text-align: center;
       padding: 30px 15px;
@@ -224,11 +250,13 @@
     <!-- Welcome Section -->
     <section class="welcome">
       <h1>Welcome to SIRI</h1>
+
       <p>
         SOBO Research and Intelligence Hub.
         Your platform for student voices, research,
         insights and informed decision-making.
       </p>
+
       <p id="message">Loading your account...</p>
     </section>
 
@@ -266,6 +294,7 @@
 
       <div class="section-heading">
         <h2>Explore SIRI</h2>
+
         <p>
           Six connected research and intelligence functions
           designed to strengthen student representation and
@@ -310,21 +339,21 @@
         <!-- 3. Event Evaluation -->
         <a href="pages/event-evaluation.html" class="module">
 
-  <div class="module-icon">📋</div>
+          <div class="module-icon">📋</div>
 
-  <h3>Event Evaluation</h3>
+          <h3>Event Evaluation</h3>
 
-  <p>
-    Share feedback on events, activities,
-    organisation and student experiences.
-  </p>
+          <p>
+            Share feedback on events, activities,
+            organisation and student experiences.
+          </p>
 
-  <span class="status">Evaluate an Event →</span>
+          <span class="status">Evaluate an Event →</span>
 
-</a>
+        </a>
 
         <!-- 4. Student Polls -->
-        <div class="module">
+        <a href="pages/student-polls.html" class="module">
 
           <div class="module-icon">📊</div>
 
@@ -335,9 +364,9 @@
             to collective student insights.
           </p>
 
-          <span class="status">Being developed</span>
+          <span class="status">View and Participate →</span>
 
-        </div>
+        </a>
 
         <!-- 5. Issue Tracking -->
         <div class="module">
@@ -372,6 +401,39 @@
         </div>
 
       </div>
+    </section>
+
+    <!-- Administrator Section -->
+    <section class="admin-section" id="adminSection">
+
+      <div class="admin-heading">
+        <h2>Administration</h2>
+
+        <p>
+          Restricted tools for authorised SIRI administrators.
+        </p>
+      </div>
+
+      <div class="modules">
+
+        <a href="pages/manage-polls.html"
+           class="module admin-module">
+
+          <div class="module-icon">🗳️</div>
+
+          <h3>Poll Administration</h3>
+
+          <p>
+            Create polls, manage publication status,
+            close voting and administer student polls.
+          </p>
+
+          <span class="status">Manage Polls →</span>
+
+        </a>
+
+      </div>
+
     </section>
 
   </main>
@@ -439,6 +501,17 @@
         document.getElementById("phone").textContent =
           profile.phone || "Not available";
 
+        // Check whether the signed-in user is a super administrator
+        const roleRef = doc(db, "roles", user.uid);
+        const roleSnapshot = await getDoc(roleRef);
+
+        if (
+          roleSnapshot.exists() &&
+          roleSnapshot.data().role === "super_admin"
+        ) {
+          document.getElementById("adminSection").style.display = "block";
+        }
+
         message.textContent =
           "Your account is active. Welcome aboard!";
 
@@ -478,4 +551,3 @@
 
 </body>
 </html>
-```
