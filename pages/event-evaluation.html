@@ -1,0 +1,619 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Evaluation | SIRI</title>
+
+  <style>
+    :root {
+      --green: #176B45;
+      --dark-green: #10452F;
+      --background: #f7f9f7;
+      --white: #ffffff;
+      --black: #171717;
+      --muted: #727d75;
+      --border: #e4eae5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--background);
+      color: var(--black);
+    }
+
+    header {
+      background: white;
+      padding: 18px 7%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      color: var(--green);
+      font-size: 25px;
+      font-weight: 800;
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+
+    .back {
+      color: var(--green);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    main {
+      max-width: 850px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .intro {
+      background: var(--dark-green);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+    }
+
+    .intro h1 {
+      font-size: 27px;
+      margin-bottom: 12px;
+    }
+
+    .intro p {
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .form-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+    }
+
+    .form-card h2 {
+      color: var(--green);
+      margin-bottom: 8px;
+      font-size: 21px;
+    }
+
+    .description {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      outline: none;
+      background: white;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--green);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.6;
+    }
+
+    .rating-options {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .rating-option {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 5px;
+      text-align: center;
+      cursor: pointer;
+      background: white;
+      font-size: 13px;
+    }
+
+    .rating-option input {
+      width: auto;
+      margin-bottom: 7px;
+      accent-color: var(--green);
+    }
+
+    .rating-option:has(input:checked) {
+      border-color: var(--green);
+      background: #eaf4ee;
+    }
+
+    .rating-labels {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 7px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 15px;
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .submit-button:hover {
+      background: var(--dark-green);
+    }
+
+    .submit-button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    #formMessage {
+      display: none;
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 7px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .success {
+      display: block !important;
+      background: #eaf4ee;
+      color: #176B45;
+    }
+
+    .error {
+      display: block !important;
+      background: #fcebea;
+      color: #b42318;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 15px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 16px 5%;
+      }
+
+      main {
+        margin-top: 25px;
+      }
+
+      .intro, .form-card {
+        padding: 22px;
+      }
+
+      .intro h1 {
+        font-size: 23px;
+      }
+
+      .rating-options {
+        gap: 4px;
+      }
+
+      .rating-option {
+        font-size: 11px;
+        padding: 10px 2px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="../dashboard.html" class="brand">SIRI</a>
+    <a href="../dashboard.html" class="back">← Back to Dashboard</a>
+  </header>
+
+  <main>
+
+    <section class="intro">
+      <h1>Event Evaluation</h1>
+      <p>
+        Your feedback helps SOBO understand student experiences,
+        assess the effectiveness of its activities and improve
+        future events. Please share your honest experience.
+      </p>
+    </section>
+
+    <section class="form-card">
+
+      <h2>Evaluate an Event</h2>
+
+      <p class="description">
+        Complete the form below. Your feedback will contribute
+        to institutional learning and better event planning.
+      </p>
+
+      <form id="evaluationForm">
+
+        <div class="form-group">
+          <label for="eventName">Event Name *</label>
+          <input
+            type="text"
+            id="eventName"
+            maxlength="150"
+            placeholder="e.g. SOBO Business Exhibition 2026"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="eventType">Event Category *</label>
+          <select id="eventType" required>
+            <option value="">Select event category</option>
+            <option value="Academic">Academic</option>
+            <option value="Business Exhibition">Business Exhibition</option>
+            <option value="Mentorship">Mentorship</option>
+            <option value="Social">Social</option>
+            <option value="Welfare">Welfare</option>
+            <option value="Leadership">Leadership</option>
+            <option value="Fundraising">Fundraising</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="eventDate">Event Date *</label>
+          <input type="date" id="eventDate" required>
+        </div>
+
+        <div class="form-group">
+          <label>Overall Satisfaction *</label>
+          <div class="rating-options">
+            <label class="rating-option">
+              <input type="radio" name="satisfaction" value="1" required>
+              <br>1
+            </label>
+            <label class="rating-option">
+              <input type="radio" name="satisfaction" value="2">
+              <br>2
+            </label>
+            <label class="rating-option">
+              <input type="radio" name="satisfaction" value="3">
+              <br>3
+            </label>
+            <label class="rating-option">
+              <input type="radio" name="satisfaction" value="4">
+              <br>4
+            </label>
+            <label class="rating-option">
+              <input type="radio" name="satisfaction" value="5">
+              <br>5
+            </label>
+          </div>
+          <div class="rating-labels">
+            <span>Very dissatisfied</span>
+            <span>Very satisfied</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Event Organisation *</label>
+          <select id="organisationRating" required>
+            <option value="">Rate the organisation</option>
+            <option value="1">1 - Very poor</option>
+            <option value="2">2 - Poor</option>
+            <option value="3">3 - Average</option>
+            <option value="4">4 - Good</option>
+            <option value="5">5 - Excellent</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Communication and Publicity *</label>
+          <select id="communicationRating" required>
+            <option value="">Rate communication</option>
+            <option value="1">1 - Very poor</option>
+            <option value="2">2 - Poor</option>
+            <option value="3">3 - Average</option>
+            <option value="4">4 - Good</option>
+            <option value="5">5 - Excellent</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Venue and Event Experience *</label>
+          <select id="venueRating" required>
+            <option value="">Rate the venue and experience</option>
+            <option value="1">1 - Very poor</option>
+            <option value="2">2 - Poor</option>
+            <option value="3">3 - Average</option>
+            <option value="4">4 - Good</option>
+            <option value="5">5 - Excellent</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="highlights">What Worked Well? *</label>
+          <textarea
+            id="highlights"
+            maxlength="3000"
+            placeholder="Tell us what you appreciated about the event."
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="improvements">What Needs Improvement? *</label>
+          <textarea
+            id="improvements"
+            maxlength="3000"
+            placeholder="What could have been organised or handled better?"
+            required
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="suggestions">Suggestions for Future Events</label>
+          <textarea
+            id="suggestions"
+            maxlength="3000"
+            placeholder="Share ideas that could improve future SOBO events."
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="submit-button"
+          id="submitButton"
+          disabled
+        >
+          Submit Evaluation
+        </button>
+
+        <div id="formMessage" role="status" aria-live="polite"></div>
+
+      </form>
+    </section>
+
+  </main>
+
+  <footer>
+    SIRI | SOBO Research and Intelligence Hub<br>
+    University of Nairobi · School of Business Organizations
+  </footer>
+
+  <script type="module">
+
+    import { auth, db } from "../js/firebase.js";
+
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+    import {
+      doc,
+      getDoc,
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+    const form = document.getElementById("evaluationForm");
+    const submitButton = document.getElementById("submitButton");
+    const formMessage = document.getElementById("formMessage");
+
+    let currentUser = null;
+    let studentProfile = null;
+    let accountReady = false;
+
+    function showMessage(message, type) {
+      formMessage.textContent = message;
+      formMessage.className = type;
+    }
+
+    // Verify the student's account
+    onAuthStateChanged(auth, async (user) => {
+
+      if (!user) {
+        window.location.href = "../login.html";
+        return;
+      }
+
+      currentUser = user;
+
+      try {
+
+        const profileRef = doc(
+          db,
+          "registrationRequests",
+          user.uid
+        );
+
+        const profileSnapshot = await getDoc(profileRef);
+
+        if (!profileSnapshot.exists()) {
+          showMessage("Your student profile could not be found.", "error");
+          return;
+        }
+
+        studentProfile = profileSnapshot.data();
+
+        if (studentProfile.status !== "active") {
+          showMessage("Your account is not active.", "error");
+          return;
+        }
+
+        accountReady = true;
+        submitButton.disabled = false;
+
+      } catch (error) {
+
+        console.error(error);
+
+        showMessage(
+          "Unable to verify your account. Please refresh the page.",
+          "error"
+        );
+
+      }
+
+    });
+
+    // Submit event evaluation
+    form.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      if (!accountReady || !currentUser || !studentProfile) {
+        showMessage("Please wait while your account is verified.", "error");
+        return;
+      }
+
+      const satisfaction = document.querySelector(
+        'input[name="satisfaction"]:checked'
+      );
+
+      if (!satisfaction) {
+        showMessage("Please rate your overall satisfaction.", "error");
+        return;
+      }
+
+      const eventName = document.getElementById("eventName").value.trim();
+      const eventType = document.getElementById("eventType").value;
+      const eventDate = document.getElementById("eventDate").value;
+
+      const organisationRating = Number(
+        document.getElementById("organisationRating").value
+      );
+
+      const communicationRating = Number(
+        document.getElementById("communicationRating").value
+      );
+
+      const venueRating = Number(
+        document.getElementById("venueRating").value
+      );
+
+      const highlights = document.getElementById("highlights").value.trim();
+      const improvements = document.getElementById("improvements").value.trim();
+      const suggestions = document.getElementById("suggestions").value.trim();
+
+      submitButton.disabled = true;
+      submitButton.textContent = "Submitting...";
+
+      formMessage.className = "";
+      formMessage.style.display = "none";
+
+      try {
+
+        await addDoc(collection(db, "eventEvaluations"), {
+
+          uid: currentUser.uid,
+
+          registrationNumber: studentProfile.registrationNumber,
+
+          year: studentProfile.year,
+
+          course: studentProfile.course,
+
+          eventName: eventName,
+
+          eventType: eventType,
+
+          eventDate: eventDate,
+
+          satisfaction: Number(satisfaction.value),
+
+          organisationRating: organisationRating,
+
+          communicationRating: communicationRating,
+
+          venueRating: venueRating,
+
+          highlights: highlights,
+
+          improvements: improvements,
+
+          suggestions: suggestions,
+
+          status: "submitted",
+
+          createdAt: serverTimestamp()
+
+        });
+
+        form.reset();
+
+        showMessage(
+          "Thank you! Your event evaluation has been submitted successfully.",
+          "success"
+        );
+
+      } catch (error) {
+
+        console.error("Event evaluation error:", error);
+
+        showMessage(
+          "We could not submit your evaluation. Please try again. Error: " +
+          error.message,
+          "error"
+        );
+
+      } finally {
+
+        submitButton.disabled = !accountReady;
+        submitButton.textContent = "Submit Evaluation";
+
+      }
+
+    });
+
+  </script>
+
+</body>
+</html>
+```
