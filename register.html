@@ -1,0 +1,403 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#176B45">
+  <title>Student Registration | SIRI</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f8f5;
+      color: #171717;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: white;
+      padding: 38px;
+      border-radius: 16px;
+      border: 1px solid #e4eae5;
+      box-shadow: 0 15px 45px rgba(0,0,0,.06);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    .logo {
+      background: #176B45;
+      color: white;
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .brand h2 { font-size: 23px; }
+    .brand small {
+      display: block;
+      font-size: 9px;
+      color: #727d75;
+      letter-spacing: 1px;
+    }
+
+    h1 { font-size: 26px; margin-bottom: 8px; }
+
+    .subtitle {
+      color: #727d75;
+      font-size: 14px;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 13px;
+      margin: 17px 0 7px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #dce4dd;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #176B45;
+      box-shadow: 0 0 0 3px #176b4515;
+    }
+
+    .hint {
+      color: #808a82;
+      font-size: 11px;
+      margin-top: 6px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: #176B45;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 25px;
+    }
+
+    button:hover { background: #10452F; }
+    button:disabled { opacity: .6; cursor: wait; }
+
+    #message {
+      display: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 18px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .success { background: #e8f5ec; color: #176B45; }
+    .error { background: #fff0f0; color: #b42318; }
+
+    .bottom {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+      color: #727d75;
+    }
+
+    .bottom a {
+      color: #176B45;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .back {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #727d75;
+      text-decoration: none;
+    }
+
+    @media(max-width: 480px) {
+      .container { padding: 26px 21px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container">
+
+    <div class="brand">
+      <div class="logo">S</div>
+      <div>
+        <h2>SIRI</h2>
+        <small>RESEARCH & INTELLIGENCE HUB</small>
+      </div>
+    </div>
+
+    <h1>Create your account</h1>
+
+    <p class="subtitle">
+      Register as a student of the School of Business Organizations.
+      Your application will require approval.
+    </p>
+
+    <form id="registrationForm">
+
+      <label for="registrationNumber">University Registration Number</label>
+      <input
+        id="registrationNumber"
+        type="text"
+        placeholder="Enter your registration number"
+        autocomplete="off"
+        required
+        maxlength="40"
+      >
+
+      <label for="year">Year of Study</label>
+      <select id="year" required>
+        <option value="">Select your year</option>
+        <option value="1">Year 1</option>
+        <option value="2">Year 2</option>
+        <option value="3">Year 3</option>
+        <option value="4">Year 4</option>
+      </select>
+
+      <label for="course">Course</label>
+      <select id="course" required>
+        <option value="">Select your course</option>
+        <option value="B.Com">Bachelor of Commerce (B.Com)</option>
+        <option value="PPM">Procurement and Project Management (PPM)</option>
+      </select>
+
+      <label for="phone">Phone Number</label>
+      <input
+        id="phone"
+        type="tel"
+        placeholder="07XXXXXXXX"
+        inputmode="numeric"
+        maxlength="10"
+        pattern="07[0-9]{8}"
+        required
+      >
+      <p class="hint">Enter your Kenyan mobile number, e.g. 0712345678.</p>
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Create a password"
+        autocomplete="new-password"
+        minlength="8"
+        required
+      >
+
+      <label for="confirmPassword">Confirm Password</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        placeholder="Enter your password again"
+        autocomplete="new-password"
+        minlength="8"
+        required
+      >
+
+      <button type="submit" id="registerButton">
+        Create Account
+      </button>
+
+      <div id="message" role="status"></div>
+
+    </form>
+
+    <div class="bottom">
+      Already registered?
+      <a href="login.html">Sign in</a>
+    </div>
+
+    <a href="index.html" class="back">← Back to SIRI homepage</a>
+
+  </main>
+
+  <script type="module">
+    import { auth, db } from "./js/firebase.js";
+
+    import {
+      createUserWithEmailAndPassword,
+      deleteUser
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+    import {
+      doc,
+      setDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+    const form = document.getElementById("registrationForm");
+    const button = document.getElementById("registerButton");
+    const message = document.getElementById("message");
+
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = type;
+      message.style.display = "block";
+    }
+
+    async function createInternalEmail(registrationNumber) {
+      const normalized = registrationNumber
+        .trim()
+        .toUpperCase()
+        .replace(/\s+/g, "");
+
+      const bytes = new TextEncoder().encode(normalized);
+      const hash = await crypto.subtle.digest("SHA-256", bytes);
+
+      const hashString = Array.from(new Uint8Array(hash))
+        .map(byte => byte.toString(16).padStart(2, "0"))
+        .join("");
+
+      return `student-${hashString}@accounts.siri.invalid`;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      message.style.display = "none";
+
+      const registrationNumber =
+        document.getElementById("registrationNumber").value.trim();
+
+      const year = Number(document.getElementById("year").value);
+
+      const course = document.getElementById("course").value;
+
+      const phone = document.getElementById("phone").value.trim();
+
+      const password =
+        document.getElementById("password").value;
+
+      const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+      if (!registrationNumber) {
+        showMessage("Enter your university registration number.", "error");
+        return;
+      }
+
+      if (!/^07[0-9]{8}$/.test(phone)) {
+        showMessage("Enter a valid Kenyan phone number in the format 07XXXXXXXX.", "error");
+        return;
+      }
+
+      if (password.length < 8) {
+        showMessage("Your password must contain at least 8 characters.", "error");
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showMessage("Your passwords do not match.", "error");
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "Creating your account...";
+
+      let createdUser = null;
+
+      try {
+        const internalEmail =
+          await createInternalEmail(registrationNumber);
+
+        const credential = await createUserWithEmailAndPassword(
+          auth,
+          internalEmail,
+          password
+        );
+
+        createdUser = credential.user;
+
+        await setDoc(
+          doc(db, "registrationRequests", createdUser.uid),
+          {
+            uid: createdUser.uid,
+            registrationNumber: registrationNumber,
+            year: year,
+            course: course,
+            phone: "+254" + phone.substring(1),
+            status: "pending",
+            createdAt: serverTimestamp()
+          }
+        );
+
+        showMessage(
+          "Your account application has been submitted successfully. Your registration is pending administrator approval.",
+          "success"
+        );
+
+        form.reset();
+
+      } catch (error) {
+
+        if (createdUser) {
+          try {
+            await deleteUser(createdUser);
+          } catch (cleanupError) {
+            console.error("Account cleanup failed:", cleanupError);
+          }
+        }
+
+        console.error(error);
+
+        let errorText = "Registration failed. Please try again.";
+
+        if (error.code === "auth/email-already-in-use") {
+          errorText = "This registration number already has an account.";
+        } else if (error.code === "auth/weak-password") {
+          errorText = "Please choose a stronger password.";
+        } else if (error.code === "auth/operation-not-allowed") {
+          errorText = "Email and password authentication is not enabled in Firebase.";
+        } else if (error.code === "permission-denied") {
+          errorText = "Database permission denied. Please contact the administrator.";
+        } else if (error.code === "auth/network-request-failed") {
+          errorText = "Network error. Check your internet connection.";
+        }
+
+        showMessage(errorText, "error");
+
+      } finally {
+        button.disabled = false;
+        button.textContent = "Create Account";
+      }
+    });
+  </script>
+
+</body>
+</html>
