@@ -1,0 +1,408 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Archive | SIRI</title>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f9f7;
+      color: #171717;
+    }
+
+    header {
+      background: white;
+      padding: 18px 7%;
+      border-bottom: 1px solid #e4eae5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      color: #176B45;
+      font-size: 25px;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .back {
+      color: #176B45;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .hero {
+      background: #10452F;
+      color: white;
+      padding: 35px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 {
+      font-size: 29px;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      line-height: 1.6;
+      max-width: 700px;
+      opacity: .9;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d9e1db;
+      border-radius: 6px;
+      background: white;
+      font-size: 14px;
+    }
+
+    .section-title {
+      margin-bottom: 18px;
+    }
+
+    .section-title h2 {
+      font-size: 21px;
+      margin-bottom: 7px;
+    }
+
+    .section-title p {
+      color: #727d75;
+      font-size: 14px;
+    }
+
+    #reportList {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+    }
+
+    .report {
+      background: white;
+      border: 1px solid #e4eae5;
+      border-radius: 10px;
+      padding: 23px;
+    }
+
+    .category {
+      display: inline-block;
+      background: #eaf4ee;
+      color: #176B45;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .report h3 {
+      font-size: 18px;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .report p {
+      color: #727d75;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .report-meta {
+      font-size: 12px;
+      color: #727d75;
+      margin-bottom: 17px;
+    }
+
+    .download {
+      display: inline-block;
+      background: #176B45;
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .empty {
+      background: white;
+      border: 1px solid #e4eae5;
+      padding: 35px;
+      border-radius: 10px;
+      color: #727d75;
+      text-align: center;
+      grid-column: 1 / -1;
+      line-height: 1.6;
+    }
+
+    #message {
+      margin-bottom: 20px;
+      color: #727d75;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 15px;
+      color: #727d75;
+      font-size: 12px;
+    }
+
+    @media (max-width: 650px) {
+      .filters { grid-template-columns: 1fr; }
+      .hero { padding: 25px; }
+      .hero h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="../index.html" class="brand">SIRI</a>
+    <a href="../dashboard.html" class="back">← Student Dashboard</a>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <h1>Research Archive</h1>
+      <p>
+        Explore research reports, student surveys, institutional
+        findings and insights produced within the SOBO community.
+        Preserving knowledge. Informing decisions.
+      </p>
+    </section>
+
+    <section class="filters">
+      <input
+        type="search"
+        id="searchInput"
+        placeholder="Search reports by title or topic..."
+      >
+
+      <select id="categoryFilter">
+        <option value="">All Categories</option>
+        <option value="Student Welfare">Student Welfare</option>
+        <option value="Academic">Academic</option>
+        <option value="Campus Life">Campus Life</option>
+        <option value="Business">Business</option>
+        <option value="Institutional Research">Institutional Research</option>
+        <option value="Other">Other</option>
+      </select>
+
+      <select id="yearFilter">
+        <option value="">All Years</option>
+      </select>
+    </section>
+
+    <section>
+      <div class="section-title">
+        <h2>Published Research</h2>
+        <p>Reports approved for access by the SOBO community.</p>
+      </div>
+
+      <p id="message">Loading published reports...</p>
+
+      <div id="reportList"></div>
+    </section>
+
+  </main>
+
+  <footer>
+    SIRI | SOBO Research and Intelligence Hub<br>
+    University of Nairobi
+  </footer>
+
+  <script type="module">
+    import { auth, db } from "../js/firebase.js";
+
+    import {
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+    import {
+      collection,
+      query,
+      where,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+    const reportList = document.getElementById("reportList");
+    const message = document.getElementById("message");
+    const searchInput = document.getElementById("searchInput");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const yearFilter = document.getElementById("yearFilter");
+
+    let reports = [];
+
+    function createReportCard(report) {
+      const card = document.createElement("article");
+      card.className = "report";
+
+      const category = document.createElement("span");
+      category.className = "category";
+      category.textContent = report.category || "Other";
+
+      const title = document.createElement("h3");
+      title.textContent = report.title || "Untitled report";
+
+      const description = document.createElement("p");
+      description.textContent =
+        report.description || "No report description available.";
+
+      const meta = document.createElement("div");
+      meta.className = "report-meta";
+
+      const year = report.year || "Year not specified";
+      const author = report.author || "SOBO Research";
+
+      meta.textContent = `${year} · ${author}`;
+
+      card.append(category, title, description, meta);
+
+      if (report.fileUrl) {
+        try {
+          const url = new URL(report.fileUrl);
+
+          if (url.protocol === "https:") {
+            const link = document.createElement("a");
+            link.className = "download";
+            link.href = url.href;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = "View / Download Report";
+            card.appendChild(link);
+          }
+        } catch (error) {
+          console.warn("Invalid report link:", error);
+        }
+      }
+
+      return card;
+    }
+
+    function displayReports() {
+      const search = searchInput.value.trim().toLowerCase();
+      const category = categoryFilter.value;
+      const year = yearFilter.value;
+
+      const filtered = reports.filter(report => {
+        const searchableText = [
+          report.title || "",
+          report.description || "",
+          report.author || "",
+          report.category || ""
+        ].join(" ").toLowerCase();
+
+        const matchesSearch = searchableText.includes(search);
+        const matchesCategory = !category || report.category === category;
+        const matchesYear = !year || String(report.year) === year;
+
+        return matchesSearch && matchesCategory && matchesYear;
+      });
+
+      reportList.replaceChildren();
+
+      if (filtered.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent =
+          reports.length === 0
+            ? "There are currently no published reports in the archive. Check back as SOBO research is added."
+            : "No reports match your search. Try different filters.";
+
+        reportList.appendChild(empty);
+        return;
+      }
+
+      filtered.forEach(report => {
+        reportList.appendChild(createReportCard(report));
+      });
+    }
+
+    async function loadReports() {
+      try {
+        const reportsQuery = query(
+          collection(db, "researchReports"),
+          where("status", "==", "published")
+        );
+
+        const snapshot = await getDocs(reportsQuery);
+
+        reports = snapshot.docs.map(document => ({
+          id: document.id,
+          ...document.data()
+        }));
+
+        const years = [...new Set(
+          reports.map(report => String(report.year || "")).filter(Boolean)
+        )].sort((a, b) => b.localeCompare(a));
+
+        years.forEach(year => {
+          const option = document.createElement("option");
+          option.value = year;
+          option.textContent = year;
+          yearFilter.appendChild(option);
+        });
+
+        message.textContent = `${reports.length} published report(s) found.`;
+
+        displayReports();
+
+      } catch (error) {
+        console.error(error);
+
+        message.textContent =
+          "We could not load the archive. Database access may not yet be configured.";
+
+        reportList.replaceChildren();
+
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent =
+          "The archive is not connected yet. We will configure its database permissions in the next step.";
+
+        reportList.appendChild(empty);
+      }
+    }
+
+    searchInput.addEventListener("input", displayReports);
+    categoryFilter.addEventListener("change", displayReports);
+    yearFilter.addEventListener("change", displayReports);
+
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = "../login.html";
+        return;
+      }
+
+      loadReports();
+    });
+  </script>
+
+</body>
+</html>
