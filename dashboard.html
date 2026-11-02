@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,6 +52,10 @@
       padding: 11px 19px;
       border-radius: 6px;
       cursor: pointer;
+    }
+
+    .logout:hover {
+      background: var(--dark-green);
     }
 
     main {
@@ -133,6 +137,18 @@
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 24px;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    a.module {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    a.module:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 18px rgba(0,0,0,.07);
     }
 
     .module-icon {
@@ -167,11 +183,12 @@
       padding: 30px 15px;
       color: var(--muted);
       font-size: 13px;
+      line-height: 1.7;
     }
 
     #message {
       margin-top: 15px;
-      color: #b42318;
+      color: white;
       font-size: 14px;
     }
 
@@ -204,6 +221,7 @@
 
   <main>
 
+    <!-- Welcome Section -->
     <section class="welcome">
       <h1>Welcome to SIRI</h1>
       <p>
@@ -214,10 +232,12 @@
       <p id="message">Loading your account...</p>
     </section>
 
+    <!-- Student Profile -->
     <section class="profile">
       <h2>Your Student Profile</h2>
 
       <div class="profile-details">
+
         <div>
           <p class="detail-label">Registration Number</p>
           <p class="detail-value" id="regNumber">Loading...</p>
@@ -237,10 +257,13 @@
           <p class="detail-label">Phone Number</p>
           <p class="detail-value" id="phone">Loading...</p>
         </div>
+
       </div>
     </section>
 
+    <!-- SIRI Modules -->
     <section>
+
       <div class="section-heading">
         <h2>Explore SIRI</h2>
         <p>
@@ -250,68 +273,102 @@
         </p>
       </div>
 
-      <a href="pages/research-archive.html"
-   class="module"
-   style="text-decoration:none; color:inherit; display:block; cursor:pointer;">
+      <div class="modules">
 
-  <div class="module-icon">📚</div>
-  <h3>Research Archive</h3>
-  <p>
-    Access previous research reports, survey findings
-    and institutional knowledge.
-  </p>
-  <span class="status">Open Research Archive →</span>
+        <!-- 1. Research Archive -->
+        <a href="pages/research-archive.html" class="module">
 
-</a>
+          <div class="module-icon">📚</div>
 
-        <div class="module">
+          <h3>Research Archive</h3>
+
+          <p>
+            Access previous research reports, survey findings
+            and institutional knowledge.
+          </p>
+
+          <span class="status">Open Research Archive →</span>
+
+        </a>
+
+        <!-- 2. Research Requests -->
+        <a href="pages/research-requests.html" class="module">
+
           <div class="module-icon">🔬</div>
+
           <h3>Research Requests</h3>
+
           <p>
             Submit research requests and monitor their
             progress across SOBO directorates.
           </p>
-          <span class="status">Being developed</span>
-        </div>
 
+          <span class="status">Submit a Request →</span>
+
+        </a>
+
+        <!-- 3. Event Evaluation -->
         <div class="module">
+
           <div class="module-icon">📋</div>
+
           <h3>Event Evaluation</h3>
+
           <p>
             Share feedback on events, activities,
             organisation and student experiences.
           </p>
+
           <span class="status">Being developed</span>
+
         </div>
 
+        <!-- 4. Student Polls -->
         <div class="module">
+
           <div class="module-icon">📊</div>
+
           <h3>Student Polls</h3>
+
           <p>
             Participate in student polls and contribute
             to collective student insights.
           </p>
+
           <span class="status">Being developed</span>
+
         </div>
 
+        <!-- 5. Issue Tracking -->
         <div class="module">
+
           <div class="module-icon">💡</div>
+
           <h3>Issue Tracking</h3>
+
           <p>
             Raise student concerns and follow the actions
             taken to address them.
           </p>
+
           <span class="status">Being developed</span>
+
         </div>
 
+        <!-- 6. Research Publications -->
         <div class="module">
+
           <div class="module-icon">📰</div>
+
           <h3>Research Publications</h3>
+
           <p>
             Explore research articles, student insights,
             findings and analytical publications.
           </p>
+
           <span class="status">Being developed</span>
+
         </div>
 
       </div>
@@ -325,6 +382,7 @@
   </footer>
 
   <script type="module">
+
     import { auth, db } from "./js/firebase.js";
 
     import {
@@ -339,14 +397,22 @@
 
     const message = document.getElementById("message");
 
+    // Check authentication and load student profile
     onAuthStateChanged(auth, async (user) => {
+
       if (!user) {
         window.location.href = "login.html";
         return;
       }
 
       try {
-        const profileRef = doc(db, "registrationRequests", user.uid);
+
+        const profileRef = doc(
+          db,
+          "registrationRequests",
+          user.uid
+        );
+
         const profileSnapshot = await getDoc(profileRef);
 
         if (!profileSnapshot.exists()) {
@@ -373,24 +439,43 @@
         document.getElementById("phone").textContent =
           profile.phone || "Not available";
 
-        message.textContent = "Your account is active. Welcome aboard!";
+        message.textContent =
+          "Your account is active. Welcome aboard!";
 
       } catch (error) {
+
         console.error(error);
+
         message.textContent =
           "We could not load your profile. Please refresh the page.";
+
       }
+
     });
 
-    document.getElementById("logoutButton").addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-        window.location.href = "login.html";
-      } catch (error) {
-        message.textContent = "Unable to sign out. Please try again.";
-      }
-    });
+    // Sign out
+    document.getElementById("logoutButton")
+      .addEventListener("click", async () => {
+
+        try {
+
+          await signOut(auth);
+
+          window.location.href = "login.html";
+
+        } catch (error) {
+
+          console.error(error);
+
+          message.textContent =
+            "Unable to sign out. Please try again.";
+
+        }
+
+      });
+
   </script>
 
 </body>
 </html>
+```
