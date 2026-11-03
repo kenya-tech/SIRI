@@ -189,12 +189,11 @@
     } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 
     import {
-      collection,
-      getDocs,
-      query,
-      where,
-      orderBy
-    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+  collection,
+  getDocs,
+  query,
+  where
+} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
     const statusMessage = document.getElementById("statusMessage");
     const publicationList = document.getElementById("publicationList");
@@ -227,36 +226,42 @@
       });
     }
 
-    async function loadPublications() {
-      statusMessage.textContent = "Loading publications...";
+   async function loadPublications() {
+  statusMessage.textContent = "Loading publications...";
 
-      try {
-        const publicationsQuery = query(
-          collection(db, "publications"),
-          where("status", "==", "published"),
-          orderBy("publishedAt", "desc")
-        );
+  try {
+    const publicationsQuery = query(
+      collection(db, "publications"),
+      where("status", "==", "published")
+    );
 
-        const snapshot = await getDocs(publicationsQuery);
+    const snapshot = await getDocs(publicationsQuery);
 
-        publications = snapshot.docs.map(document => ({
-          id: document.id,
-          ...document.data()
-        }));
+    publications = snapshot.docs.map(document => ({
+      id: document.id,
+      ...document.data()
+    }));
 
-        statusMessage.textContent = publications.length
-          ? `${publications.length} publication(s) available`
-          : "No publications have been published yet.";
+    // Sort newest publications first.
+    publications.sort((a, b) => {
+      const dateA = a.publishedAt?.toMillis?.() || 0;
+      const dateB = b.publishedAt?.toMillis?.() || 0;
+      return dateB - dateA;
+    });
 
-        displayPublications();
+    statusMessage.textContent = publications.length
+      ? `${publications.length} publication(s) available`
+      : "No publications have been published yet.";
 
-      } catch (error) {
-        console.error("Publication loading error:", error);
+    displayPublications();
 
-        statusMessage.textContent =
-          "Unable to load publications. Please refresh the page or contact the SIRI administrator.";
-      }
-    }
+  } catch (error) {
+    console.error("Publication loading error:", error);
+
+    statusMessage.textContent =
+      `Unable to load publications: ${error.code || error.message}`;
+  }
+}
 
     function displayPublications() {
       const search = searchInput.value.trim().toLowerCase();
