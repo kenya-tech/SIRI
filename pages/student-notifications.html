@@ -1,0 +1,542 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications | SIRI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f7f5;
+      color: #24352b;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 850px;
+      margin: 25px auto;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 18px;
+      color: #17643c;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .header {
+      background: #145c38;
+      color: white;
+      padding: 28px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      line-height: 1.6;
+      opacity: .9;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.04);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 28px;
+      color: #17643c;
+      margin-bottom: 5px;
+    }
+
+    .stat span {
+      color: #66736b;
+      font-size: 13px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    select, .refresh {
+      padding: 12px;
+      border: 1px solid #dce5de;
+      border-radius: 8px;
+      background: white;
+      font-size: 14px;
+    }
+
+    select {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .refresh {
+      color: #17643c;
+    }
+
+    .notification {
+      background: white;
+      padding: 22px;
+      border-radius: 12px;
+      margin-bottom: 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.05);
+      border-left: 4px solid #cbd8ce;
+    }
+
+    .notification.unread {
+      border-left-color: #17643c;
+    }
+
+    .topline {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .category {
+      background: #eaf4ed;
+      color: #17643c;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .status {
+      color: #17643c;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .notification h2 {
+      font-size: 19px;
+      margin-bottom: 10px;
+    }
+
+    .message {
+      color: #58675e;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .date {
+      color: #87938a;
+      font-size: 12px;
+      margin-top: 15px;
+    }
+
+    .read-button {
+      background: #17643c;
+      color: white;
+      padding: 11px 15px;
+      margin-top: 15px;
+    }
+
+    .read-button:disabled {
+      background: #8b9b90;
+      cursor: not-allowed;
+    }
+
+    .empty {
+      background: white;
+      padding: 28px;
+      border-radius: 12px;
+      text-align: center;
+      color: #66736b;
+      line-height: 1.6;
+    }
+
+    .error {
+      color: #c0392b;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 35px;
+      color: #77837b;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 500px) {
+      body {
+        padding: 13px;
+      }
+
+      .header {
+        padding: 22px;
+      }
+
+      .notification {
+        padding: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <a href="../dashboard.html" class="back">
+    ← Back to Dashboard
+  </a>
+
+  <div class="header">
+    <h1>Notifications</h1>
+    <p>
+      Stay informed about SOBO announcements, student activities,
+      research updates and important university notices.
+    </p>
+  </div>
+
+  <div class="summary">
+    <div class="stat">
+      <strong id="totalCount">0</strong>
+      <span>Total notifications</span>
+    </div>
+
+    <div class="stat">
+      <strong id="unreadCount">0</strong>
+      <span>Unread notifications</span>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <select id="categoryFilter">
+      <option value="all">All categories</option>
+      <option value="General">General</option>
+      <option value="Academic">Academic</option>
+      <option value="Events">Events</option>
+      <option value="Research">Research</option>
+      <option value="Student Welfare">Student Welfare</option>
+      <option value="Important">Important</option>
+    </select>
+
+    <select id="statusFilter">
+      <option value="all">All notifications</option>
+      <option value="unread">Unread only</option>
+      <option value="read">Read only</option>
+    </select>
+
+    <button class="refresh" id="refreshButton" type="button">
+      ↻ Refresh
+    </button>
+  </div>
+
+  <div id="notificationContainer">
+    <div class="empty">Loading notifications...</div>
+  </div>
+
+  <footer>
+    SIRI – SOBO Research and Intelligence Hub<br>
+    University of Nairobi
+  </footer>
+
+</div>
+
+<script type="module">
+  import { auth, db } from "../js/firebase.js";
+
+  import {
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  import { onAuthStateChanged } from
+    "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+  const notificationContainer =
+    document.getElementById("notificationContainer");
+
+  const totalCount = document.getElementById("totalCount");
+  const unreadCount = document.getElementById("unreadCount");
+
+  const categoryFilter =
+    document.getElementById("categoryFilter");
+
+  const statusFilter =
+    document.getElementById("statusFilter");
+
+  const refreshButton =
+    document.getElementById("refreshButton");
+
+  let currentUser = null;
+  let notifications = [];
+  let readIds = new Set();
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "../login.html";
+      return;
+    }
+
+    currentUser = user;
+    await loadNotifications();
+  });
+
+  refreshButton.addEventListener("click", loadNotifications);
+  categoryFilter.addEventListener("change", renderNotifications);
+  statusFilter.addEventListener("change", renderNotifications);
+
+  async function loadNotifications() {
+    notificationContainer.innerHTML =
+      '<div class="empty">Loading notifications...</div>';
+
+    refreshButton.disabled = true;
+
+    try {
+      // Verify that the student account is active.
+      const profileRef = doc(
+        db,
+        "registrationRequests",
+        currentUser.uid
+      );
+
+      const profileSnapshot = await getDoc(profileRef);
+
+      if (!profileSnapshot.exists() ||
+          profileSnapshot.data().status !== "active") {
+        notificationContainer.innerHTML =
+          '<div class="empty error">Your student account could not be verified.</div>';
+        totalCount.textContent = "0";
+        unreadCount.textContent = "0";
+        return;
+      }
+
+      // Load published notifications.
+      const notificationsQuery = query(
+        collection(db, "notifications"),
+        where("status", "==", "published")
+      );
+
+      const notificationSnapshot =
+        await getDocs(notificationsQuery);
+
+      notifications = notificationSnapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+
+      // Load only this student's read receipts.
+      const readsQuery = query(
+        collection(db, "notificationReads"),
+        where("uid", "==", currentUser.uid)
+      );
+
+      const readsSnapshot = await getDocs(readsQuery);
+
+      readIds = new Set(
+        readsSnapshot.docs.map(item => item.data().notificationId)
+      );
+
+      // Sort newest first.
+      notifications.sort((a, b) => {
+        return getDate(b.createdAt) - getDate(a.createdAt);
+      });
+
+      renderNotifications();
+
+    } catch (error) {
+      console.error("Notification loading error:", error);
+
+      notificationContainer.innerHTML =
+        '<div class="empty error">Unable to load notifications. Please try again. Details: ' +
+        escapeHTML(error.message) +
+        '</div>';
+
+    } finally {
+      refreshButton.disabled = false;
+    }
+  }
+
+  function renderNotifications() {
+    totalCount.textContent = notifications.length;
+
+    const unread = notifications.filter(
+      item => !readIds.has(item.id)
+    ).length;
+
+    unreadCount.textContent = unread;
+
+    const selectedCategory = categoryFilter.value;
+    const selectedStatus = statusFilter.value;
+
+    let filtered = notifications.filter(item => {
+      const category = item.category || "General";
+
+      const categoryMatch =
+        selectedCategory === "all" ||
+        category === selectedCategory;
+
+      const isRead = readIds.has(item.id);
+
+      const statusMatch =
+        selectedStatus === "all" ||
+        (selectedStatus === "read" && isRead) ||
+        (selectedStatus === "unread" && !isRead);
+
+      return categoryMatch && statusMatch;
+    });
+
+    if (!filtered.length) {
+      notificationContainer.innerHTML =
+        '<div class="empty">No notifications found in this category.</div>';
+      return;
+    }
+
+    notificationContainer.innerHTML = "";
+
+    filtered.forEach(item => {
+      const isRead = readIds.has(item.id);
+
+      const card = document.createElement("article");
+      card.className = "notification" + (isRead ? "" : " unread");
+
+      const topLine = document.createElement("div");
+      topLine.className = "topline";
+
+      const category = document.createElement("span");
+      category.className = "category";
+      category.textContent = item.category || "General";
+
+      const status = document.createElement("span");
+      status.className = "status";
+      status.textContent = isRead ? "READ" : "● UNREAD";
+
+      topLine.appendChild(category);
+      topLine.appendChild(status);
+
+      const heading = document.createElement("h2");
+      heading.textContent = item.title || "Untitled notification";
+
+      const message = document.createElement("p");
+      message.className = "message";
+      message.textContent = item.message || "";
+
+      const date = document.createElement("p");
+      date.className = "date";
+      date.textContent = "Published: " + formatDate(item.createdAt);
+
+      card.appendChild(topLine);
+      card.appendChild(heading);
+      card.appendChild(message);
+      card.appendChild(date);
+
+      if (!isRead) {
+        const button = document.createElement("button");
+        button.className = "read-button";
+        button.textContent = "Mark as Read";
+
+        button.addEventListener("click", () => {
+          markAsRead(item.id, button);
+        });
+
+        card.appendChild(button);
+      }
+
+      notificationContainer.appendChild(card);
+    });
+  }
+
+  async function markAsRead(notificationId, button) {
+    button.disabled = true;
+    button.textContent = "Saving...";
+
+    try {
+      const readId = notificationId + "_" + currentUser.uid;
+
+      const readRef = doc(db, "notificationReads", readId);
+
+      await setDoc(readRef, {
+        notificationId: notificationId,
+        uid: currentUser.uid,
+        readAt: serverTimestamp()
+      });
+
+      readIds.add(notificationId);
+      renderNotifications();
+
+    } catch (error) {
+      console.error("Read receipt error:", error);
+
+      button.disabled = false;
+      button.textContent = "Mark as Read";
+
+      alert("Unable to update notification. Please try again.");
+    }
+  }
+
+  function getDate(value) {
+    if (!value) return 0;
+
+    if (value.toDate) return value.toDate().getTime();
+
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? 0 : date.getTime();
+  }
+
+  function formatDate(value) {
+    const timestamp = getDate(value);
+
+    if (!timestamp) return "Date unavailable";
+
+    return new Date(timestamp).toLocaleString();
+  }
+
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[character]);
+  }
+</script>
+
+</body>
+</html>
