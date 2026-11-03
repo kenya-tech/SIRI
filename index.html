@@ -2,128 +2,1105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101b35">
-  <meta name="description" content="SOBO Research and Intelligence Hub - University of Nairobi">
-  <title>SIRI | SOBO Research and Intelligence Hub</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080d1b">
+<meta name="description" content="SIRI — SOBO Research and Intelligence Hub, University of Nairobi.">
+<title>SIRI | Intelligence Beyond Information</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#080d1b;
+  --bg2:#0c1428;
+  --panel:#111c34;
+  --blue:#5795ff;
+  --cyan:#57d9f5;
+  --purple:#7054b5;
+  --green:#159b62;
+  --green-light:#36d995;
+  --white:#f4f7ff;
+  --muted:#9ba9c3;
+  --border:rgba(255,255,255,.09);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--bg);
+  color:var(--white);
+  font-family:'DM Sans',sans-serif;
+  overflow-x:hidden;
+}
+
+a{text-decoration:none;color:inherit}
+
+button,a{-webkit-tap-highlight-color:transparent}
+
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 75% 15%,rgba(77,112,255,.14),transparent 38%),
+    radial-gradient(ellipse at 10% 55%,rgba(21,155,98,.12),transparent 38%),
+    radial-gradient(ellipse at 90% 80%,rgba(112,84,181,.08),transparent 35%);
+}
+
+.grid-bg{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  opacity:.17;
+  background-image:
+    linear-gradient(rgba(120,155,220,.09) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(120,155,220,.09) 1px,transparent 1px);
+  background-size:55px 55px;
+  mask-image:linear-gradient(to bottom,black,transparent 90%);
+}
+
+/* NAVIGATION */
+
+.navbar{
+  height:82px;
+  padding:0 7%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  background:rgba(8,13,27,.86);
+  backdrop-filter:blur(18px);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:21px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+
+.brand-icon{
+  width:40px;
+  height:40px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#12834f,#36d995);
+  box-shadow:0 0 25px rgba(21,155,98,.35);
+  color:white;
+}
+
+.brand small{
+  display:block;
+  font-family:'DM Sans',sans-serif;
+  font-size:8px;
+  letter-spacing:1.5px;
+  color:var(--muted);
+  font-weight:600;
+  margin-top:3px;
+}
+
+.nav-links{
+  display:flex;
+  align-items:center;
+  gap:34px;
+}
+
+.nav-links a{
+  color:#b9c5db;
+  font-size:13px;
+  transition:.25s;
+}
+
+.nav-links a:hover{color:var(--green-light)}
+
+.nav-links .nav-login{
+  padding:11px 21px;
+  border:1px solid rgba(54,217,149,.45);
+  border-radius:8px;
+  color:white;
+  background:rgba(21,155,98,.12);
+}
+
+.nav-login:hover{
+  background:var(--green);
+  border-color:var(--green);
+}
+
+/* HERO */
+
+.hero{
+  max-width:1250px;
+  margin:auto;
+  min-height:690px;
+  padding:110px 35px 100px;
+  display:grid;
+  grid-template-columns:1.05fr .95fr;
+  align-items:center;
+  gap:50px;
+}
+
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  color:var(--green-light);
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+}
+
+.eyebrow:before{
+  content:"";
+  width:25px;
+  height:1px;
+  background:var(--green-light);
+}
+
+.hero h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(43px,5.4vw,72px);
+  line-height:1.08;
+  letter-spacing:-3px;
+  margin:26px 0;
+  max-width:680px;
+}
+
+.gradient-text{
+  background:linear-gradient(100deg,#36d995,#57d9f5,#8b8aff);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+
+.hero-description{
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.9;
+  max-width:540px;
+}
+
+.hero-actions{
+  display:flex;
+  gap:14px;
+  margin-top:35px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px 23px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:700;
+  transition:.25s;
+}
+
+.btn-primary{
+  background:linear-gradient(110deg,#12834f,#20b879);
+  color:white;
+  box-shadow:0 8px 30px rgba(21,155,98,.25);
+}
+
+.btn-primary:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 35px rgba(21,155,98,.4);
+}
+
+.btn-secondary{
+  border:1px solid var(--border);
+  color:#dce6fa;
+  background:rgba(255,255,255,.035);
+}
+
+.btn-secondary:hover{
+  border-color:var(--green);
+  background:rgba(21,155,98,.09);
+}
+
+.hero-note{
+  margin-top:30px;
+  color:#7787a4;
+  font-size:11px;
+}
+
+/* INTELLIGENCE VISUAL */
+
+.visual-area{
+  position:relative;
+  min-height:430px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.orbit{
+  position:absolute;
+  width:390px;
+  height:390px;
+  border:1px solid rgba(54,217,149,.18);
+  border-radius:50%;
+  animation:rotate 35s linear infinite;
+}
+
+.orbit:before,.orbit:after{
+  content:"";
+  position:absolute;
+  border:1px solid rgba(99,145,255,.12);
+  border-radius:50%;
+}
+
+.orbit:before{inset:35px}
+.orbit:after{inset:75px}
+
+.orbit-dot{
+  position:absolute;
+  top:48px;
+  right:50px;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--green-light);
+  box-shadow:0 0 18px var(--green-light);
+}
+
+@keyframes rotate{
+  to{transform:rotate(360deg)}
+}
+
+.intelligence-card{
+  width:min(100%,390px);
+  position:relative;
+  z-index:2;
+  padding:27px;
+  border:1px solid rgba(54,217,149,.2);
+  border-radius:19px;
+  background:linear-gradient(145deg,rgba(23,39,72,.94),rgba(13,22,43,.96));
+  box-shadow:0 25px 80px rgba(0,0,0,.4),0 0 55px rgba(21,155,98,.1);
+  backdrop-filter:blur(20px);
+  animation:float 5s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-12px)}
+}
+
+.card-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding-bottom:19px;
+  border-bottom:1px solid var(--border);
+}
+
+.card-label{
+  color:#9cacc9;
+  font-size:9px;
+  letter-spacing:1.8px;
+  font-weight:700;
+}
+
+.live-indicator{
+  color:#75e8c2;
+  font-size:9px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+
+.live-indicator:before{
+  content:"";
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#75e8c2;
+  box-shadow:0 0 10px #75e8c2;
+}
+
+.core{
+  width:100px;
+  height:100px;
+  margin:28px auto;
+  border-radius:28px;
+  display:grid;
+  place-items:center;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:43px;
+  font-weight:700;
+  background:linear-gradient(145deg,#12834f,#36d995);
+  box-shadow:0 0 55px rgba(21,155,98,.35);
+}
+
+.card-title{
+  text-align:center;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:21px;
+}
+
+.card-subtitle{
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:8px;
+}
+
+.signal-line{
+  display:flex;
+  gap:5px;
+  align-items:center;
+  height:35px;
+  margin:24px 0 17px;
+}
+
+.signal-line span{
+  flex:1;
+  border-radius:5px;
+  background:linear-gradient(to top,var(--green),var(--cyan));
+  opacity:.8;
+}
+
+.signal-line span:nth-child(1){height:25%}
+.signal-line span:nth-child(2){height:50%}
+.signal-line span:nth-child(3){height:35%}
+.signal-line span:nth-child(4){height:85%}
+.signal-line span:nth-child(5){height:65%}
+.signal-line span:nth-child(6){height:100%}
+.signal-line span:nth-child(7){height:55%}
+.signal-line span:nth-child(8){height:75%}
+.signal-line span:nth-child(9){height:40%}
+.signal-line span:nth-child(10){height:90%}
+.signal-line span:nth-child(11){height:60%}
+.signal-line span:nth-child(12){height:100%}
+
+.card-footer{
+  padding-top:14px;
+  border-top:1px solid var(--border);
+  color:#8293b1;
+  font-size:9px;
+  letter-spacing:1.3px;
+  text-align:center;
+}
+
+/* PLATFORM STRIP */
+
+.platform-strip{
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.018);
+  padding:26px 7%;
+}
+
+.strip-inner{
+  max-width:1150px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:25px;
+  flex-wrap:wrap;
+}
+
+.strip-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  color:#b3c1d9;
+  font-size:12px;
+}
+
+.strip-icon{
+  color:var(--green-light);
+  font-size:19px;
+}
+
+/* ABOUT */
+
+.section{
+  max-width:1150px;
+  margin:auto;
+  padding:110px 30px;
+}
+
+.section-heading{
+  max-width:650px;
+  margin-bottom:45px;
+}
+
+.section-heading h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(30px,4vw,45px);
+  letter-spacing:-1.5px;
+  margin:19px 0 15px;
+}
+
+.section-heading p{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.9;
+}
+
+.about-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:50px;
+  align-items:center;
+}
+
+.about-panel{
+  padding:35px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:linear-gradient(140deg,rgba(25,42,77,.7),rgba(13,22,42,.7));
+}
+
+.about-panel h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;
+  margin-bottom:15px;
+}
+
+.about-panel p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.9;
+}
+
+.about-panel strong{color:var(--green-light)}
+
+.about-list{
+  display:grid;
+  gap:18px;
+}
+
+.about-list div{
+  display:flex;
+  gap:15px;
+  align-items:flex-start;
+}
+
+.check{
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  border-radius:8px;
+  color:var(--green-light);
+  background:rgba(21,155,98,.13);
+  border:1px solid rgba(54,217,149,.12);
+}
+
+.about-list strong{
+  font-size:13px;
+  display:block;
+  margin-bottom:5px;
+}
+
+.about-list p{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.7;
+}
+
+/* FEATURES */
+
+.features-section{
+  background:linear-gradient(180deg,transparent,rgba(21,155,98,.055),rgba(24,39,72,.25),transparent);
+  border-top:1px solid rgba(255,255,255,.04);
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+
+.feature-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:17px;
+}
+
+.feature-card{
+  padding:27px;
+  min-height:205px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  background:rgba(16,28,52,.65);
+  transition:.3s;
+}
+
+.feature-card:hover{
+  transform:translateY(-5px);
+  border-color:rgba(54,217,149,.4);
+  background:rgba(25,42,77,.75);
+}
+
+.feature-number{
+  color:var(--green-light);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:11px;
+  letter-spacing:2px;
+}
+
+.feature-symbol{
+  font-size:23px;
+  margin:20px 0 13px;
+  color:#91cdb1;
+}
+
+.feature-card h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:17px;
+  margin-bottom:10px;
+}
+
+.feature-card p{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.8;
+}
+
+/* STATEMENT */
+
+.statement{
+  max-width:1050px;
+  margin:90px auto;
+  padding:70px 35px;
+  text-align:center;
+  border:1px solid rgba(54,217,149,.2);
+  border-radius:20px;
+  background:
+    radial-gradient(ellipse at 50% 0%,rgba(21,155,98,.16),transparent 65%),
+    rgba(17,28,52,.65);
+}
+
+.statement h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(29px,4vw,43px);
+  letter-spacing:-1.5px;
+  max-width:750px;
+  margin:20px auto;
+}
+
+.statement p{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:28px;
+}
+
+/* FOOTER */
+
+footer{
+  border-top:1px solid var(--border);
+  padding:45px 7% 25px;
+  background:#070b16;
+}
+
+.footer-inner{
+  max-width:1150px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  gap:30px;
+  flex-wrap:wrap;
+}
+
+.footer-brand{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:24px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.footer-description{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.8;
+}
+
+.footer-links{
+  display:flex;
+  gap:22px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.footer-links a{
+  color:#a6b4cc;
+  font-size:11px;
+  transition:.2s;
+}
+
+.footer-links a:hover{color:var(--green-light)}
+
+.footer-bottom{
+  max-width:1150px;
+  margin:30px auto 0;
+  padding-top:20px;
+  border-top:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+  color:#73829d;
+  font-size:10px;
+}
+
+/* REVEAL ANIMATION */
+
+.reveal{
+  opacity:0;
+  transform:translateY(22px);
+  transition:opacity .7s ease,transform .7s ease;
+}
+
+.reveal.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+  .hero{
+    grid-template-columns:1fr;
+    padding-top:85px;
+    text-align:center;
+  }
+
+  .hero-description{margin:auto}
+  .hero-actions{justify-content:center}
+  .visual-area{min-height:440px}
+  .about-grid{grid-template-columns:1fr}
+  .feature-grid{grid-template-columns:repeat(2,1fr)}
+  .strip-inner{justify-content:center}
+}
+
+@media(max-width:600px){
+  .navbar{height:70px;padding:0 5%}
+  .brand{font-size:18px}
+  .brand-icon{width:35px;height:35px}
+  .brand small{font-size:7px}
+  .nav-links{gap:15px}
+  .nav-links a{font-size:11px}
+  .nav-links a:first-child,
+  .nav-links a:nth-child(2){display:none}
+  .nav-links .nav-login{padding:10px 15px}
+
+  .hero{
+    padding:75px 22px 65px;
+    gap:20px;
+  }
+
+  .hero h1{letter-spacing:-2px}
+  .hero-description{font-size:13px}
+  .visual-area{min-height:390px}
+  .orbit{width:310px;height:310px}
+  .intelligence-card{max-width:330px;padding:22px}
+  .section{padding:75px 22px}
+  .feature-grid{grid-template-columns:1fr}
+  .feature-card{min-height:auto}
+  .statement{margin:50px 18px;padding:55px 22px}
+  .footer-inner{flex-direction:column}
+  .footer-bottom{flex-direction:column}
+}
+
+/* ACCESSIBILITY */
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    scroll-behavior:auto!important;
+    animation:none!important;
+    transition:none!important;
+  }
+
+  .reveal{
+    opacity:1;
+    transform:none;
+  }
+}
+</style>
 </head>
+
 <body>
 
-  <header class="navbar">
-    <a href="index.html" class="brand">
-      <span class="brand-icon">S</span>
-      <span>SIRI<small>SOBO RESEARCH & INTELLIGENCE HUB</small></span>
-    </a>
+<div class="grid-bg"></div>
 
-    <nav>
-      <a href="#about">About</a>
-      <a href="#features">Our Platform</a>
-      <a href="login.html" class="nav-login">Sign In</a>
-    </nav>
-  </header>
+<header class="navbar">
+  <a href="index.html" class="brand">
+    <span class="brand-icon">S</span>
+    <span>
+      SIRI
+      <small>RESEARCH & INTELLIGENCE HUB</small>
+    </span>
+  </a>
 
-  <main>
-    <section class="hero">
-      <div class="hero-content">
-        <span class="eyebrow">UNIVERSITY OF NAIROBI · SOBO</span>
+  <nav class="nav-links">
+    <a href="#about">About</a>
+    <a href="#features">Platform</a>
+    <a href="login.html" class="nav-login">Sign In ↗</a>
+  </nav>
+</header>
 
-        <h1>Turning Student Voices Into <span>Intelligence.</span></h1>
+<main>
 
-        <p>
-          A central research and intelligence hub connecting student
-          experiences, institutional research and evidence-based
-          decision-making within the School of Business Organizations.
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="hero-content reveal">
+
+      <span class="eyebrow">UNIVERSITY OF NAIROBI · SOBO</span>
+
+      <h1>
+        Intelligence<br>
+        Beyond <span class="gradient-text">Information.</span>
+      </h1>
+
+      <p class="hero-description">
+        A central intelligence space connecting student experiences,
+        research, institutional insights and evidence-informed
+        decision-making within the School of Business Organizations.
+      </p>
+
+      <div class="hero-actions">
+        <a href="register.html" class="btn btn-primary">
+          Join SIRI ↗
+        </a>
+
+        <a href="#about" class="btn btn-secondary">
+          Explore the platform
+        </a>
+      </div>
+
+      <div class="hero-note">
+        An initiative of SOBO's ICT, Research and Insights Directorate.
+      </div>
+
+    </div>
+
+    <div class="visual-area reveal">
+
+      <div class="orbit">
+        <div class="orbit-dot"></div>
+      </div>
+
+      <div class="intelligence-card">
+
+        <div class="card-top">
+          <span class="card-label">SIRI INTELLIGENCE SYSTEM</span>
+          <span class="live-indicator">PLATFORM</span>
+        </div>
+
+        <div class="core">S</div>
+
+        <h2 class="card-title">Student Intelligence</h2>
+
+        <p class="card-subtitle">
+          Research. Insights. Understanding.
         </p>
 
-        <div class="hero-actions">
-          <a href="register.html" class="btn-primary">Join SIRI</a>
-          <a href="#about" class="btn-secondary">Discover SIRI</a>
+        <div class="signal-line">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="card-footer">
+          SOBO · UNIVERSITY OF NAIROBI
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- PLATFORM STRIP -->
+
+  <div class="platform-strip">
+
+    <div class="strip-inner">
+
+      <div class="strip-item">
+        <span class="strip-icon">⌘</span>
+        Research & Knowledge
+      </div>
+
+      <div class="strip-item">
+        <span class="strip-icon">◈</span>
+        Student Intelligence
+      </div>
+
+      <div class="strip-item">
+        <span class="strip-icon">⌁</span>
+        Institutional Insights
+      </div>
+
+      <div class="strip-item">
+        <span class="strip-icon">◎</span>
+        Evidence-informed Action
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ABOUT -->
+
+  <section class="section" id="about">
+
+    <div class="about-grid">
+
+      <div class="section-heading reveal">
+
+        <span class="eyebrow">THE SIRI INITIATIVE</span>
+
+        <h2>
+          Turning information into institutional intelligence.
+        </h2>
+
+        <p>
+          SIRI is the digital research and intelligence platform of SOBO.
+          It creates a structured environment for collecting student
+          feedback, coordinating research, evaluating activities,
+          monitoring concerns and preserving institutional knowledge.
+        </p>
+
+      </div>
+
+      <div class="about-panel reveal">
+
+        <h3>One platform. Multiple perspectives.</h3>
+
+        <p>
+          Through integrated digital tools, SIRI helps transform
+          scattered student experiences and research contributions
+          into organised information that can inform representation,
+          planning and decision-making.
+        </p>
+
+        <br>
+
+        <p>
+          <strong>SOBO</strong> — School of Business Organizations<br>
+          <strong>SIRI</strong> — SOBO's Research and Intelligence Hub
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="about-list reveal" style="margin-top:45px;max-width:650px">
+
+      <div>
+        <span class="check">✓</span>
+        <div>
+          <strong>Structured information</strong>
+          <p>Bring student feedback and research records into one organised environment.</p>
         </div>
       </div>
 
-      <div class="hero-visual">
-        <div class="visual-card">
-          <span class="visual-label">RESEARCH · INSIGHTS · ACTION</span>
-          <div class="visual-icon">S</div>
-          <h2>Student Intelligence</h2>
-          <p>Research that informs. Insights that inspire. Action that matters.</p>
-          <div class="visual-line"></div>
-          <span class="visual-footer">SOBO | UNIVERSITY OF NAIROBI</span>
+      <div>
+        <span class="check">✓</span>
+        <div>
+          <strong>Research coordination</strong>
+          <p>Support research requests, publications and institutional knowledge sharing.</p>
         </div>
       </div>
-    </section>
 
-    <section class="intro" id="about">
-      <span class="eyebrow">ABOUT SIRI</span>
-      <h2>Knowledge for better student representation.</h2>
-      <p>
-        SIRI is the digital research and intelligence platform of SOBO.
-        It provides a structured way to collect student feedback,
-        coordinate research, evaluate events, track concerns and
-        preserve institutional knowledge.
-      </p>
-    </section>
+      <div>
+        <span class="check">✓</span>
+        <div>
+          <strong>Evidence-informed representation</strong>
+          <p>Make student concerns and perspectives more visible in institutional conversations.</p>
+        </div>
+      </div>
 
-    <section class="features" id="features">
-      <div class="section-heading">
+    </div>
+
+  </section>
+
+  <!-- FEATURES -->
+
+  <section class="features-section" id="features">
+
+    <div class="section">
+
+      <div class="section-heading reveal">
+
         <span class="eyebrow">THE PLATFORM</span>
-        <h2>Six integrated research functions.</h2>
+
+        <h2>Built around the intelligence lifecycle.</h2>
+
+        <p>
+          Six connected functions designed to collect, organise,
+          analyse and communicate information across the SOBO community.
+        </p>
+
       </div>
 
       <div class="feature-grid">
-        <article class="feature-card">
-          <span>01</span>
+
+        <article class="feature-card reveal">
+          <span class="feature-number">01 / KNOWLEDGE</span>
+          <div class="feature-symbol">⌕</div>
           <h3>Research Archive</h3>
-          <p>Preserve research reports, findings and institutional knowledge.</p>
+          <p>
+            Preserve research reports, findings and institutional
+            knowledge in one accessible repository.
+          </p>
         </article>
 
-        <article class="feature-card">
-          <span>02</span>
+        <article class="feature-card reveal">
+          <span class="feature-number">02 / COORDINATION</span>
+          <div class="feature-symbol">⌘</div>
           <h3>Research Requests</h3>
-          <p>Coordinate research needs across SOBO directorates.</p>
+          <p>
+            Coordinate research needs and support structured
+            collaboration across SOBO.
+          </p>
         </article>
 
-        <article class="feature-card">
-          <span>03</span>
+        <article class="feature-card reveal">
+          <span class="feature-number">03 / EVALUATION</span>
+          <div class="feature-symbol">◫</div>
           <h3>Event Evaluation</h3>
-          <p>Measure student experiences and event effectiveness.</p>
+          <p>
+            Understand student experiences and assess the
+            effectiveness of events and activities.
+          </p>
         </article>
 
-        <article class="feature-card">
-          <span>04</span>
+        <article class="feature-card reveal">
+          <span class="feature-number">04 / ENGAGEMENT</span>
+          <div class="feature-symbol">◉</div>
           <h3>Student Polls</h3>
-          <p>Capture student opinions through interactive polls.</p>
+          <p>
+            Capture student opinions and perspectives
+            through interactive polls.
+          </p>
         </article>
 
-        <article class="feature-card">
-          <span>05</span>
+        <article class="feature-card reveal">
+          <span class="feature-number">05 / ACCOUNTABILITY</span>
+          <div class="feature-symbol">⌁</div>
           <h3>Issue Tracking</h3>
-          <p>Monitor student concerns and institutional responses.</p>
+          <p>
+            Monitor reported concerns and follow their
+            progress towards resolution.
+          </p>
         </article>
 
-        <article class="feature-card">
-          <span>06</span>
+        <article class="feature-card reveal">
+          <span class="feature-number">06 / PUBLICATION</span>
+          <div class="feature-symbol">▤</div>
           <h3>Research Publications</h3>
-          <p>Share research articles, insights and student perspectives.</p>
+          <p>
+            Share research articles, student perspectives
+            and relevant insights.
+          </p>
         </article>
+
       </div>
-    </section>
 
-    <section class="closing">
-      <h2>Better decisions begin with better information.</h2>
-      <p>Research. Understand. Represent. Transform.</p>
-      <a href="register.html" class="btn-primary">Get Started</a>
-    </section>
-  </main>
+    </div>
 
-  <footer>
-    <strong>SIRI</strong>
-    <p>SOBO Research and Intelligence Hub</p>
-    <p>University of Nairobi · Faculty of Business & Management Sciences</p>
-    <small>© 2026 SOBO. All rights reserved.</small>
-  </footer>
+  </section>
+
+  <!-- CLOSING STATEMENT -->
+
+  <section class="statement reveal">
+
+    <span class="eyebrow">
+      THE NEXT GENERATION OF STUDENT INTELLIGENCE
+    </span>
+
+    <h2>
+      Better decisions begin with
+      <span class="gradient-text">better information.</span>
+    </h2>
+
+    <p>Research. Understand. Represent. Transform.</p>
+
+    <a href="register.html" class="btn btn-primary">
+      Get started with SIRI ↗
+    </a>
+
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+
+<footer>
+
+  <div class="footer-inner">
+
+    <div>
+
+      <div class="footer-brand">
+        SIRI<span class="gradient-text">.</span>
+      </div>
+
+      <p class="footer-description">
+        SOBO Research and Intelligence Hub<br>
+        School of Business Organizations<br>
+        University of Nairobi
+      </p>
+
+    </div>
+
+    <div class="footer-links">
+      <a href="#about">About SIRI</a>
+      <a href="#features">Our Platform</a>
+      <a href="register.html">Register</a>
+      <a href="login.html">Sign In</a>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <span>© 2026 SOBO. All rights reserved.</span>
+    <span>Faculty of Business & Management Sciences · University of Nairobi</span>
+  </div>
+
+</footer>
+
+<script>
+const observer = new IntersectionObserver(entries => {
+
+  entries.forEach(entry => {
+
+    if(entry.isIntersecting){
+
+      entry.target.classList.add("visible");
+
+      observer.unobserve(entry.target);
+
+    }
+
+  });
+
+},{threshold:0.12});
+
+document.querySelectorAll(".reveal").forEach(element => {
+  observer.observe(element);
+});
+</script>
 
 </body>
 </html>
