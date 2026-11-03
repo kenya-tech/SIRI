@@ -2,264 +2,764 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Dashboard | SIRI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Dashboard | SIRI</title>
 
-  <style>
-    :root {
-      --green: #176B45;
-      --dark-green: #10452F;
-      --black: #171717;
-      --white: #ffffff;
-      --background: #f7f9f7;
-      --muted: #727d75;
-      --border: #e4eae5;
-    }
+<style>
+:root {
+  --green: #087b49;
+  --green-dark: #075b38;
+  --green-deep: #043d29;
+  --green-light: #e9f7ef;
+  --green-pale: #f4fbf6;
+  --white: #ffffff;
+  --text: #173529;
+  --muted: #718278;
+  --border: #e1eee5;
+}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    body {
-      font-family: Arial, sans-serif;
-      background: var(--background);
-      color: var(--black);
-    }
+body {
+  font-family: Arial, sans-serif;
+  background: #f8fbf9;
+  color: var(--text);
+  overflow-x: hidden;
+}
 
-    header {
-      background: var(--white);
-      padding: 18px 7%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-    }
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
 
-    .brand {
-      color: var(--green);
-      font-size: 25px;
-      font-weight: 800;
-      letter-spacing: 1px;
-    }
+/* HEADER */
 
-    .logout {
-      background: var(--green);
-      color: white;
-      border: none;
-      padding: 11px 19px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+header {
+  height: 76px;
+  padding: 0 7%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,.94);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: blur(15px);
+}
 
-    .logout:hover {
-      background: var(--dark-green);
-    }
+.brand-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-    main {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
+.brand-symbol {
+  width: 39px;
+  height: 39px;
+  border-radius: 11px;
+  background: linear-gradient(145deg, #0c9b5c, #075b38);
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 20px;
+  font-weight: 900;
+  box-shadow: 0 5px 15px rgba(8,123,73,.2);
+}
 
-    .welcome {
-      background: var(--dark-green);
-      color: white;
-      padding: 35px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-    }
+.brand {
+  color: var(--green);
+  font-size: 25px;
+  font-weight: 900;
+  letter-spacing: 3px;
+}
 
-    .welcome h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
+.brand-sub {
+  font-size: 8px;
+  color: #82958a;
+  letter-spacing: 1.6px;
+  margin-top: 3px;
+}
 
-    .welcome p {
-      line-height: 1.6;
-      opacity: .9;
-    }
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 17px;
+}
 
-    .profile {
-      background: white;
-      padding: 22px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin-bottom: 35px;
-    }
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: var(--green);
+  font-weight: bold;
+  letter-spacing: 1px;
+}
 
-    .profile h2 {
-      font-size: 18px;
-      margin-bottom: 15px;
-    }
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #14b86c;
+  box-shadow: 0 0 9px #14b86c;
+  animation: blink 1.8s infinite;
+}
 
-    .profile-details {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 18px;
-    }
+@keyframes blink {
+  50% { opacity: .35; }
+}
 
-    .detail-label {
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 6px;
-    }
+.logout {
+  border: 1px solid #d9e9de;
+  background: white;
+  color: var(--green-dark);
+  padding: 11px 17px;
+  border-radius: 7px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: .25s;
+}
 
-    .detail-value {
-      font-weight: 600;
-      overflow-wrap: anywhere;
-    }
+.logout:hover {
+  background: var(--green);
+  color: white;
+  border-color: var(--green);
+  transform: translateY(-2px);
+}
 
-    .section-heading {
-      margin-bottom: 20px;
-    }
+/* MAIN */
 
-    .section-heading h2 {
-      font-size: 23px;
-      margin-bottom: 8px;
-    }
+main {
+  max-width: 1180px;
+  margin: 35px auto 60px;
+  padding: 0 24px;
+}
 
-    .section-heading p {
-      color: var(--muted);
-      line-height: 1.5;
-    }
+/* WELCOME HERO */
 
-    .modules {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 18px;
-    }
+.welcome {
+  position: relative;
+  min-height: 255px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 42px 48px;
+  border-radius: 17px;
+  margin-bottom: 25px;
+  color: white;
+  background:
+    radial-gradient(circle at 85% 40%, rgba(53,195,119,.3), transparent 30%),
+    linear-gradient(115deg, #075b38, #087b49 58%, #10965b);
+  box-shadow: 0 13px 35px rgba(5,91,56,.13);
+}
 
-    .module {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 24px;
-      transition: transform .2s, box-shadow .2s;
-    }
+.welcome::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .12;
+  background-image:
+    linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.3) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(90deg, black, transparent);
+}
 
-    a.module {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-    }
+.welcome-content {
+  position: relative;
+  z-index: 2;
+  max-width: 580px;
+}
 
-    a.module:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 18px rgba(0,0,0,.07);
-    }
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: bold;
+  color: #c4ffdc;
+  margin-bottom: 17px;
+}
 
-    .module-icon {
-      font-size: 27px;
-      margin-bottom: 15px;
-    }
+.eyebrow-line {
+  width: 22px;
+  height: 2px;
+  background: #a5ffca;
+}
 
-    .module h3 {
-      margin-bottom: 10px;
-      color: var(--green);
-    }
+.welcome h1 {
+  font-size: clamp(27px, 4vw, 37px);
+  letter-spacing: -.8px;
+  margin-bottom: 13px;
+  line-height: 1.2;
+}
 
-    .module p {
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 14px;
-    }
+.welcome p {
+  color: rgba(255,255,255,.85);
+  line-height: 1.7;
+  font-size: 13px;
+  max-width: 520px;
+}
 
-    .status {
-      display: inline-block;
-      margin-top: 17px;
-      padding: 6px 10px;
-      border-radius: 20px;
-      background: #eaf4ee;
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 600;
-    }
+#message {
+  margin-top: 16px;
+  color: #d2ffe2;
+  font-size: 12px;
+  line-height: 1.5;
+}
 
-    .notification-badge {
-      display: inline-block;
-      background: #c0392b;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      padding: 5px 9px;
-      border-radius: 20px;
-      margin-left: 6px;
-    }
+/* ROTATING TECH ORB */
 
-    .admin-section {
-      margin-top: 35px;
-      display: none;
-    }
+.orbital-system {
+  width: 210px;
+  height: 210px;
+  position: relative;
+  flex-shrink: 0;
+  margin-right: 35px;
+  z-index: 2;
+}
 
-    .admin-heading {
-      margin-bottom: 18px;
-    }
+.orb-core {
+  position: absolute;
+  width: 68px;
+  height: 68px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 24px;
+  font-weight: 900;
+  background: radial-gradient(circle at 35% 30%, #69eaa5, #07814c 70%);
+  box-shadow:
+    0 0 25px rgba(130,255,183,.65),
+    0 0 65px rgba(130,255,183,.3),
+    inset 0 0 12px rgba(255,255,255,.5);
+  animation: corePulse 3s ease-in-out infinite;
+}
 
-    .admin-heading h2 {
-      font-size: 21px;
-      margin-bottom: 7px;
-      color: var(--dark-green);
-    }
+@keyframes corePulse {
+  50% { box-shadow: 0 0 45px rgba(130,255,183,.9), 0 0 85px rgba(130,255,183,.4); }
+}
 
-    .admin-heading p {
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: 14px;
-    }
+.orbit {
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(255,255,255,.55);
+  border-radius: 50%;
+  animation: orbitSpin 9s linear infinite;
+}
 
-    .admin-module {
-      border-color: #b7d8c3;
-      background: #fafffb;
-    }
+.orbit-two {
+  inset: 0;
+  border: 1px dashed rgba(255,255,255,.65);
+  animation: orbitSpin 14s linear infinite reverse;
+}
 
-    footer {
-      text-align: center;
-      padding: 30px 15px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-    }
+.orbit-three {
+  inset: 31px -15px;
+  border: 1px solid rgba(190,255,214,.55);
+  transform: rotate(55deg);
+  animation: orbitTilt 8s linear infinite;
+}
 
-    #message {
-      margin-top: 15px;
-      color: white;
-      font-size: 14px;
-    }
+@keyframes orbitSpin {
+  to { transform: rotate(360deg); }
+}
 
-    @media (max-width: 600px) {
-      header {
-        padding: 16px 5%;
-      }
+@keyframes orbitTilt {
+  from { transform: rotate(55deg); }
+  to { transform: rotate(415deg); }
+}
 
-      main {
-        margin-top: 25px;
-      }
+.orbit-node {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #d8ffe6;
+  border: 2px solid white;
+  box-shadow: 0 0 13px white;
+  top: 50%;
+  left: -6px;
+  transform: translateY(-50%);
+}
 
-      .welcome {
-        padding: 25px;
-      }
+.orbit-two .orbit-node {
+  width: 8px;
+  height: 8px;
+  background: #9bffc1;
+}
 
-      .welcome h1 {
-        font-size: 23px;
-      }
-    }
-  </style>
+.orb-label {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,.7);
+  font-size: 8px;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+/* PROFILE */
+
+.profile {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 25px 27px;
+  margin-bottom: 40px;
+  box-shadow: 0 5px 22px rgba(16,75,43,.025);
+}
+
+.profile-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.profile-heading h2 {
+  font-size: 17px;
+  color: var(--green-dark);
+}
+
+.profile-tag {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--green);
+  background: var(--green-light);
+  padding: 7px 10px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.profile-details {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.profile-item {
+  padding: 5px 15px;
+  border-left: 2px solid #d8f0e1;
+  min-width: 0;
+}
+
+.detail-label {
+  color: var(--muted);
+  font-size: 10px;
+  margin-bottom: 8px;
+  letter-spacing: .5px;
+}
+
+.detail-value {
+  font-weight: 700;
+  color: #214b35;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+/* SECTION HEADING */
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.section-heading h2 {
+  color: var(--green-deep);
+  font-size: 23px;
+  margin-bottom: 8px;
+}
+
+.section-heading p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.section-label {
+  color: var(--green);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 1.7px;
+  white-space: nowrap;
+}
+
+/* MODULE CARDS */
+
+.modules {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.module {
+  position: relative;
+  min-height: 205px;
+  overflow: hidden;
+  display: block;
+  padding: 23px;
+  text-decoration: none;
+  color: inherit;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: transform .3s, box-shadow .3s, border-color .3s;
+}
+
+.module::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #087b49, #70dda1);
+  transition: width .4s;
+}
+
+.module:hover {
+  transform: translateY(-6px);
+  border-color: #a8d9ba;
+  box-shadow: 0 13px 30px rgba(8,123,73,.09);
+}
+
+.module:hover::after {
+  width: 100%;
+}
+
+.module-icon {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--green-light);
+  color: var(--green);
+  font-size: 21px;
+  margin-bottom: 17px;
+  transition: transform .4s, background .3s;
+}
+
+.module:hover .module-icon {
+  transform: rotate(-8deg) scale(1.08);
+  background: #d5f3df;
+}
+
+.module h3 {
+  font-size: 15px;
+  color: var(--green-dark);
+  margin-bottom: 9px;
+}
+
+.module p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+  min-height: 40px;
+}
+
+.module-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 17px;
+}
+
+.module-action {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--green);
+}
+
+.module-arrow {
+  color: var(--green);
+  font-size: 17px;
+  transition: transform .3s;
+}
+
+.module:hover .module-arrow {
+  transform: translateX(5px);
+}
+
+.notification-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 21px;
+  height: 21px;
+  padding: 0 6px;
+  border-radius: 20px;
+  background: #dc4d4d;
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+/* ADMIN */
+
+.admin-section {
+  margin-top: 55px;
+  display: none;
+}
+
+.admin-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 22px;
+}
+
+.admin-heading h2 {
+  font-size: 22px;
+  color: var(--green-deep);
+  margin-bottom: 7px;
+}
+
+.admin-heading p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.admin-tag {
+  background: var(--green-light);
+  color: var(--green);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 8px 11px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.admin-module {
+  background: #fcfffd;
+  border-color: #cfe7d7;
+}
+
+/* FOOTER */
+
+footer {
+  background: white;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  padding: 27px 15px;
+  color: #82958a;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+.footer-brand {
+  color: var(--green);
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* PAGE TRANSITION */
+
+#pageTransition {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: #087b49;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+
+#pageTransition.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.transition-orb {
+  width: 100px;
+  height: 100px;
+  border: 2px solid rgba(255,255,255,.7);
+  border-radius: 50%;
+  position: relative;
+  animation: transitionSpin 1.2s linear infinite;
+}
+
+.transition-orb::before,
+.transition-orb::after {
+  content: "";
+  position: absolute;
+  inset: 13px -13px;
+  border: 2px dashed white;
+  border-radius: 50%;
+  transform: rotate(60deg);
+}
+
+.transition-orb::after {
+  transform: rotate(-60deg);
+}
+
+.transition-name {
+  position: absolute;
+  color: white;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: 4px;
+}
+
+@keyframes transitionSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+  .modules {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .profile-details {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .orbital-system {
+    margin-right: 0;
+    transform: scale(.85);
+  }
+}
+
+@media (max-width: 600px) {
+  header {
+    padding: 0 5%;
+    height: 68px;
+  }
+
+  .system-status {
+    display: none;
+  }
+
+  main {
+    margin-top: 23px;
+    padding: 0 15px;
+  }
+
+  .welcome {
+    padding: 29px 24px;
+    min-height: 235px;
+  }
+
+  .welcome-content {
+    max-width: 100%;
+  }
+
+  .welcome h1 {
+    font-size: 26px;
+  }
+
+  .welcome p {
+    font-size: 12px;
+  }
+
+  .orbital-system {
+    position: absolute;
+    right: -76px;
+    bottom: -70px;
+    opacity: .25;
+    transform: scale(.9);
+  }
+
+  .profile {
+    padding: 22px 18px;
+  }
+
+  .profile-details {
+    gap: 22px 10px;
+  }
+
+  .profile-item {
+    padding-left: 10px;
+  }
+
+  .section-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .modules {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .module {
+    min-height: 185px;
+  }
+
+  .admin-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <div class="brand">SIRI</div>
-    <button class="logout" id="logoutButton">Sign Out</button>
-  </header>
+<header>
+  <div class="brand-area">
+    <div class="brand-symbol">S</div>
+    <div>
+      <div class="brand">SIRI</div>
+      <div class="brand-sub">RESEARCH & INTELLIGENCE HUB</div>
+    </div>
+  </div>
 
-  <main>
+  <div class="header-right">
+    <div class="system-status">
+      <span class="status-dot"></span>
+      SYSTEM ONLINE
+    </div>
+    <button class="logout" id="logoutButton">Sign Out ↗</button>
+  </div>
+</header>
 
-    <section class="welcome">
-      <h1>Welcome to SIRI</h1>
+<main>
+
+  <section class="welcome">
+
+    <div class="welcome-content">
+      <div class="eyebrow">
+        <span class="eyebrow-line"></span>
+        YOUR INTELLIGENCE SPACE
+      </div>
+
+      <h1>Welcome to SIRI.</h1>
 
       <p>
         SOBO Research and Intelligence Hub.
@@ -267,368 +767,456 @@
         insights and informed decision-making.
       </p>
 
-      <p id="message">Loading your account...</p>
-    </section>
+      <p id="message">Connecting to your student account...</p>
+    </div>
 
-    <section class="profile">
-      <h2>Your Student Profile</h2>
-
-      <div class="profile-details">
-
-        <div>
-          <p class="detail-label">Registration Number</p>
-          <p class="detail-value" id="regNumber">Loading...</p>
-        </div>
-
-        <div>
-          <p class="detail-label">Year of Study</p>
-          <p class="detail-value" id="year">Loading...</p>
-        </div>
-
-        <div>
-          <p class="detail-label">Course</p>
-          <p class="detail-value" id="course">Loading...</p>
-        </div>
-
-        <div>
-          <p class="detail-label">Phone Number</p>
-          <p class="detail-value" id="phone">Loading...</p>
-        </div>
-
+    <div class="orbital-system" aria-hidden="true">
+      <div class="orbit">
+        <span class="orbit-node"></span>
       </div>
-    </section>
 
-    <section>
+      <div class="orbit orbit-two">
+        <span class="orbit-node"></span>
+      </div>
 
-      <div class="section-heading">
+      <div class="orbit orbit-three"></div>
+
+      <div class="orb-core">S</div>
+      <div class="orb-label">SIRI NETWORK</div>
+    </div>
+
+  </section>
+
+  <section class="profile">
+
+    <div class="profile-heading">
+      <h2>Your Student Profile</h2>
+      <span class="profile-tag">STUDENT ACCOUNT</span>
+    </div>
+
+    <div class="profile-details">
+
+      <div class="profile-item">
+        <p class="detail-label">REGISTRATION NUMBER</p>
+        <p class="detail-value" id="regNumber">Loading...</p>
+      </div>
+
+      <div class="profile-item">
+        <p class="detail-label">YEAR OF STUDY</p>
+        <p class="detail-value" id="year">Loading...</p>
+      </div>
+
+      <div class="profile-item">
+        <p class="detail-label">COURSE</p>
+        <p class="detail-value" id="course">Loading...</p>
+      </div>
+
+      <div class="profile-item">
+        <p class="detail-label">PHONE NUMBER</p>
+        <p class="detail-value" id="phone">Loading...</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+
+    <div class="section-heading">
+      <div>
+        <div class="section-label">DISCOVER YOUR PLATFORM</div>
         <h2>Explore SIRI</h2>
-
         <p>
           Research and intelligence functions designed to
           strengthen student representation and
           institutional decision-making.
         </p>
       </div>
+    </div>
 
-      <div class="modules">
+    <div class="modules">
 
-        <a href="pages/research-archive.html" class="module">
-          <div class="module-icon">📚</div>
-          <h3>Research Archive</h3>
-          <p>
-            Access previous research reports, survey findings
-            and institutional knowledge.
-          </p>
-          <span class="status">Open Research Archive →</span>
-        </a>
-
-        <a href="pages/research-requests.html" class="module">
-          <div class="module-icon">🔬</div>
-          <h3>Research Requests</h3>
-          <p>
-            Submit research requests and monitor their
-            progress across SOBO directorates.
-          </p>
-          <span class="status">Submit a Request →</span>
-        </a>
-
-        <a href="pages/event-evaluation.html" class="module">
-          <div class="module-icon">📋</div>
-          <h3>Event Evaluation</h3>
-          <p>
-            Share feedback on events, activities,
-            organisation and student experiences.
-          </p>
-          <span class="status">Evaluate an Event →</span>
-        </a>
-
-        <a href="pages/student-polls.html" class="module">
-          <div class="module-icon">📊</div>
-          <h3>Student Polls</h3>
-          <p>
-            Participate in student polls and contribute
-            to collective student insights.
-          </p>
-          <span class="status">View and Participate →</span>
-        </a>
-
-        <a href="pages/issue-tracking.html" class="module">
-          <div class="module-icon">💡</div>
-          <h3>Issue Tracking</h3>
-          <p>
-            Report academic, administrative and student welfare concerns.
-            Track submitted issues and follow their progress.
-          </p>
-          <span class="status">Report or Track an Issue →</span>
-        </a>
-
-        <a href="pages/research-publications.html" class="module">
-          <div class="module-icon">📰</div>
-          <h3>Research Publications</h3>
-          <p>
-            Explore research articles, student insights,
-            findings and analytical publications.
-          </p>
-          <span class="status">Explore Publications →</span>
-        </a>
-
-        <!-- Student Notifications -->
-        <a href="pages/student-notifications.html" class="module">
-          <div class="module-icon">🔔</div>
-          <h3>
-            Notifications
-            <span class="notification-badge" id="unreadBadge" hidden>0</span>
-          </h3>
-          <p>
-            Receive important SOBO announcements, academic updates,
-            event notices and student welfare information.
-          </p>
-          <span class="status">View Notifications →</span>
-        </a>
-
-      </div>
-    </section>
-
-    <!-- Administrator Section -->
-    <section class="admin-section" id="adminSection">
-
-      <div class="admin-heading">
-        <h2>Administration</h2>
+      <a href="pages/research-archive.html" class="module">
+        <div class="module-icon">📚</div>
+        <h3>Research Archive</h3>
         <p>
-          Restricted tools for authorised SIRI administrators.
+          Access previous research reports, survey findings
+          and institutional knowledge.
         </p>
+        <div class="module-bottom">
+          <span class="module-action">Open Research Archive</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="pages/research-requests.html" class="module">
+        <div class="module-icon">🔬</div>
+        <h3>Research Requests</h3>
+        <p>
+          Submit research requests and monitor their
+          progress across SOBO directorates.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">Submit a Request</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="pages/event-evaluation.html" class="module">
+        <div class="module-icon">📋</div>
+        <h3>Event Evaluation</h3>
+        <p>
+          Share feedback on events, activities,
+          organisation and student experiences.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">Evaluate an Event</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="pages/student-polls.html" class="module">
+        <div class="module-icon">📊</div>
+        <h3>Student Polls</h3>
+        <p>
+          Participate in student polls and contribute
+          to collective student insights.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">View and Participate</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="pages/issue-tracking.html" class="module">
+        <div class="module-icon">💡</div>
+        <h3>Issue Tracking</h3>
+        <p>
+          Report academic, administrative and student welfare concerns.
+          Track submitted issues and follow their progress.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">Report or Track an Issue</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="pages/research-publications.html" class="module">
+        <div class="module-icon">📰</div>
+        <h3>Research Publications</h3>
+        <p>
+          Explore research articles, student insights,
+          findings and analytical publications.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">Explore Publications</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
+
+      <a href="pages/student-notifications.html" class="module">
+        <div class="module-icon">🔔</div>
+        <h3>
+          Notifications
+          <span class="notification-badge" id="unreadBadge" hidden>0</span>
+        </h3>
+        <p>
+          Receive important SOBO announcements, academic updates,
+          event notices and student welfare information.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">View Notifications</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ADMINISTRATOR SECTION -->
+
+  <section class="admin-section" id="adminSection">
+
+    <div class="admin-heading">
+      <div>
+        <div class="section-label">RESTRICTED ACCESS</div>
+        <h2>Administration</h2>
+        <p>Management and intelligence tools for authorised SIRI administrators.</p>
       </div>
 
-      <div class="modules">
+      <span class="admin-tag">ADMINISTRATOR ACCESS</span>
+    </div>
 
-        <a href="pages/manage-polls.html"
-           class="module admin-module">
-          <div class="module-icon">🗳️</div>
-          <h3>Poll Administration</h3>
-          <p>
-            Create polls, manage publication status,
-            close voting and administer student polls.
-          </p>
-          <span class="status">Manage Polls →</span>
-        </a>
+    <div class="modules">
 
-        <a href="pages/intelligence-centre.html"
-           class="module admin-module">
-          <div class="module-icon">📈</div>
-          <h3>SIRI Intelligence Centre</h3>
-          <p>
-            Access institutional analytics, student demographics,
-            research insights, poll results and event evaluations.
-          </p>
-          <span class="status">Open Intelligence Centre →</span>
-        </a>
+      <a href="pages/manage-polls.html" class="module admin-module">
+        <div class="module-icon">🗳️</div>
+        <h3>Poll Administration</h3>
+        <p>
+          Create polls, manage publication status,
+          close voting and administer student polls.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">Manage Polls</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
 
-        <a href="pages/manage-issues.html"
-           class="module admin-module">
-          <div class="module-icon">🛠️</div>
-          <h3>Issue Management Centre</h3>
-          <p>
-            Review student concerns, monitor reported issues,
-            update progress and provide official responses.
-          </p>
-          <span class="status">Manage Student Issues →</span>
-        </a>
+      <a href="pages/intelligence-centre.html" class="module admin-module">
+        <div class="module-icon">📈</div>
+        <h3>SIRI Intelligence Centre</h3>
+        <p>
+          Access institutional analytics, student demographics,
+          research insights, poll results and event evaluations.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">Open Intelligence Centre</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
 
-        <a href="pages/manage-publications.html"
-           class="module admin-module">
-          <div class="module-icon">📝</div>
-          <h3>Publication Management Centre</h3>
-          <p>
-            Create research articles, save drafts, publish findings,
-            edit publications and archive older content.
-          </p>
-          <span class="status">Manage Publications →</span>
-        </a>
+      <a href="pages/manage-issues.html" class="module admin-module">
+        <div class="module-icon">🛠️</div>
+        <h3>Issue Management Centre</h3>
+        <p>
+          Review student concerns, monitor reported issues,
+          update progress and provide official responses.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">Manage Student Issues</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
 
-        <!-- Notification Management -->
-        <a href="pages/manage-notifications.html"
-           class="module admin-module">
-          <div class="module-icon">📢</div>
-          <h3>Notification Management</h3>
-          <p>
-            Create SOBO announcements, save drafts,
-            publish updates and manage student notifications.
-          </p>
-          <span class="status">Manage Notifications →</span>
-        </a>
+      <a href="pages/manage-publications.html" class="module admin-module">
+        <div class="module-icon">📝</div>
+        <h3>Publication Management Centre</h3>
+        <p>
+          Create research articles, save drafts, publish findings,
+          edit publications and archive older content.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">Manage Publications</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
 
-      </div>
+      <a href="pages/manage-notifications.html" class="module admin-module">
+        <div class="module-icon">📢</div>
+        <h3>Notification Management</h3>
+        <p>
+          Create SOBO announcements, save drafts,
+          publish updates and manage student notifications.
+        </p>
+        <div class="module-bottom">
+          <span class="module-action">Manage Notifications</span>
+          <span class="module-arrow">→</span>
+        </div>
+      </a>
 
-    </section>
+    </div>
+  </section>
 
-  </main>
+</main>
 
-  <footer>
-    SIRI | SOBO Research and Intelligence Hub<br>
-    University of Nairobi · School of Business Organizations
-  </footer>
+<footer>
+  <span class="footer-brand">SIRI</span> · SOBO Research and Intelligence Hub<br>
+  University of Nairobi · School of Business Organizations
+</footer>
 
-  <script type="module">
+<div id="pageTransition">
+  <div class="transition-orb"></div>
+  <div class="transition-name">SIRI</div>
+</div>
 
-    import { auth, db } from "./js/firebase.js";
+<script type="module">
 
-    import {
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+import { auth, db } from "./js/firebase.js";
 
-    import {
-      doc,
-      getDoc,
-      collection,
-      query,
-      where,
-      getDocs
-    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+import {
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 
-    const message = document.getElementById("message");
-    const unreadBadge = document.getElementById("unreadBadge");
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
-    onAuthStateChanged(auth, async (user) => {
+const message = document.getElementById("message");
+const unreadBadge = document.getElementById("unreadBadge");
 
-      if (!user) {
-        window.location.href = "login.html";
-        return;
-      }
+onAuthStateChanged(auth, async (user) => {
 
-      try {
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
 
-        const profileRef = doc(
-          db,
-          "registrationRequests",
-          user.uid
-        );
+  try {
 
-        const profileSnapshot = await getDoc(profileRef);
+    const profileRef = doc(
+      db,
+      "registrationRequests",
+      user.uid
+    );
 
-        if (!profileSnapshot.exists()) {
-          message.textContent = "Your profile could not be found.";
-          return;
-        }
+    const profileSnapshot = await getDoc(profileRef);
 
-        const profile = profileSnapshot.data();
+    if (!profileSnapshot.exists()) {
+      message.textContent = "Your profile could not be found.";
+      return;
+    }
 
-        if (profile.status !== "active") {
-          message.textContent = "Your account is not active.";
-          return;
-        }
+    const profile = profileSnapshot.data();
 
-        document.getElementById("regNumber").textContent =
-          profile.registrationNumber || "Not available";
+    if (profile.status !== "active") {
+      message.textContent = "Your account is not active.";
+      return;
+    }
 
-        document.getElementById("year").textContent =
-          profile.year ? "Year " + profile.year : "Not available";
+    document.getElementById("regNumber").textContent =
+      profile.registrationNumber || "Not available";
 
-        document.getElementById("course").textContent =
-          profile.course || "Not available";
+    document.getElementById("year").textContent =
+      profile.year ? "Year " + profile.year : "Not available";
 
-        document.getElementById("phone").textContent =
-          profile.phone || "Not available";
+    document.getElementById("course").textContent =
+      profile.course || "Not available";
 
-        const roleRef = doc(db, "roles", user.uid);
-        const roleSnapshot = await getDoc(roleRef);
+    document.getElementById("phone").textContent =
+      profile.phone || "Not available";
 
-        if (
-          roleSnapshot.exists() &&
-          roleSnapshot.data().role === "super_admin"
-        ) {
-          document.getElementById("adminSection").style.display = "block";
-        }
+    const roleRef = doc(db, "roles", user.uid);
+    const roleSnapshot = await getDoc(roleRef);
 
-        message.textContent =
-          "Your account is active. Welcome aboard!";
+    if (
+      roleSnapshot.exists() &&
+      roleSnapshot.data().role === "super_admin"
+    ) {
+      document.getElementById("adminSection").style.display = "block";
+    }
 
-        // Load the student's unread notification count.
-        await loadUnreadCount(user.uid);
+    message.textContent =
+      "Your account is active. Welcome aboard!";
 
-      } catch (error) {
+    await loadUnreadCount(user.uid);
 
-        console.error(error);
+  } catch (error) {
 
-        message.textContent =
-          "We could not load your profile. Please refresh the page.";
+    console.error(error);
 
-      }
+    message.textContent =
+      "We could not load your profile. Please refresh the page.";
 
-    });
+  }
 
-    async function loadUnreadCount(uid) {
+});
 
-      try {
+async function loadUnreadCount(uid) {
 
-        const publishedQuery = query(
-          collection(db, "notifications"),
-          where("status", "==", "published")
-        );
+  try {
 
-        const readsQuery = query(
-          collection(db, "notificationReads"),
-          where("uid", "==", uid)
-        );
+    const publishedQuery = query(
+      collection(db, "notifications"),
+      where("status", "==", "published")
+    );
 
-        const [publishedSnapshot, readsSnapshot] =
-          await Promise.all([
-            getDocs(publishedQuery),
-            getDocs(readsQuery)
-          ]);
+    const readsQuery = query(
+      collection(db, "notificationReads"),
+      where("uid", "==", uid)
+    );
 
-        const readIds = new Set(
-          readsSnapshot.docs.map(item =>
-            item.data().notificationId
-          )
-        );
+    const [publishedSnapshot, readsSnapshot] =
+      await Promise.all([
+        getDocs(publishedQuery),
+        getDocs(readsQuery)
+      ]);
 
-        const unread = publishedSnapshot.docs.filter(
-          item => !readIds.has(item.id)
-        ).length;
+    const readIds = new Set(
+      readsSnapshot.docs.map(item =>
+        item.data().notificationId
+      )
+    );
 
-        if (unread > 0) {
-          unreadBadge.textContent =
-            unread > 99 ? "99+" : unread;
+    const unread = publishedSnapshot.docs.filter(
+      item => !readIds.has(item.id)
+    ).length;
 
-          unreadBadge.hidden = false;
-        } else {
-          unreadBadge.hidden = true;
-        }
+    if (unread > 0) {
+      unreadBadge.textContent =
+        unread > 99 ? "99+" : unread;
 
-      } catch (error) {
+      unreadBadge.hidden = false;
+    } else {
+      unreadBadge.hidden = true;
+    }
 
-        console.error("Unread notification count:", error);
+  } catch (error) {
 
-        // Keep the dashboard working even if the count
-        // cannot be retrieved.
+    console.error("Unread notification count:", error);
+    unreadBadge.hidden = true;
 
-        unreadBadge.hidden = true;
+  }
 
-      }
+}
+
+// Sign out
+document.getElementById("logoutButton")
+  .addEventListener("click", async () => {
+
+    try {
+
+      await signOut(auth);
+      window.location.href = "login.html";
+
+    } catch (error) {
+
+      console.error(error);
+
+      message.textContent =
+        "Unable to sign out. Please try again.";
 
     }
 
-    document.getElementById("logoutButton")
-      .addEventListener("click", async () => {
+  });
 
-        try {
+// Smooth transition when opening a module.
+const pageTransition = document.getElementById("pageTransition");
 
-          await signOut(auth);
-          window.location.href = "login.html";
+document.querySelectorAll("a.module").forEach(link => {
 
-        } catch (error) {
+  link.addEventListener("click", (event) => {
 
-          console.error(error);
+    // Allow normal browser behaviour for new tabs
+    // and modified clicks.
+    if (
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.button !== 0
+    ) {
+      return;
+    }
 
-          message.textContent =
-            "Unable to sign out. Please try again.";
+    event.preventDefault();
 
-        }
+    const destination = link.href;
 
-      });
+    pageTransition.classList.add("active");
 
-  </script>
+    setTimeout(() => {
+      window.location.href = destination;
+    }, 450);
+
+  });
+
+});
+
+</script>
 
 </body>
 </html>
