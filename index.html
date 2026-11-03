@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#080d1b">
+<meta name="theme-color" content="#061321">
 <meta name="description" content="SIRI — SOBO Research and Intelligence Hub, University of Nairobi.">
 <title>SIRI | Intelligence Beyond Information</title>
 
@@ -14,144 +14,171 @@
 
 <style>
 :root{
-  --bg:#080d1b;
-  --bg2:#0c1428;
-  --panel:#111c34;
-  --blue:#5795ff;
-  --cyan:#57d9f5;
-  --purple:#7054b5;
-  --green:#159b62;
-  --green-light:#36d995;
-  --white:#f4f7ff;
-  --muted:#9ba9c3;
-  --border:rgba(255,255,255,.09);
+  --green:#20c77b;
+  --green-light:#65f2b1;
+  --blue:#35aaff;
+  --cyan:#65e5ff;
+  --navy:#061321;
+  --white:#f5f9ff;
+  --muted:#a6b8ce;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
+*{margin:0;padding:0;box-sizing:border-box}
 
-html{scroll-behavior:smooth}
-
-body{
-  background:var(--bg);
+html,body{
+  width:100%;
+  min-height:100%;
+  background:var(--navy);
   color:var(--white);
   font-family:'DM Sans',sans-serif;
   overflow-x:hidden;
 }
 
-a{text-decoration:none;color:inherit}
-
-button,a{-webkit-tap-highlight-color:transparent}
-
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  z-index:-2;
-  pointer-events:none;
+body{
+  min-height:100vh;
+  position:relative;
   background:
-    radial-gradient(ellipse at 75% 15%,rgba(77,112,255,.14),transparent 38%),
-    radial-gradient(ellipse at 10% 55%,rgba(21,155,98,.12),transparent 38%),
-    radial-gradient(ellipse at 90% 80%,rgba(112,84,181,.08),transparent 35%);
+    radial-gradient(ellipse at 50% 50%,#0b2940 0%,#061827 48%,#040d18 100%);
 }
 
-.grid-bg{
+#network{
   position:fixed;
   inset:0;
-  z-index:-1;
+  width:100%;
+  height:100%;
+  z-index:0;
   pointer-events:none;
-  opacity:.17;
-  background-image:
-    linear-gradient(rgba(120,155,220,.09) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(120,155,220,.09) 1px,transparent 1px);
-  background-size:55px 55px;
-  mask-image:linear-gradient(to bottom,black,transparent 90%);
+}
+
+/* BACKGROUND EFFECTS */
+
+.background-glow{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 50% 48%,transparent 10%,rgba(3,12,24,.2) 55%,rgba(3,10,20,.75) 100%),
+    linear-gradient(90deg,rgba(4,15,27,.45),transparent 50%,rgba(4,15,27,.45));
+}
+
+.scanline{
+  position:fixed;
+  top:-30%;
+  left:0;
+  width:100%;
+  height:25%;
+  z-index:2;
+  pointer-events:none;
+  background:linear-gradient(transparent,rgba(48,183,255,.045),transparent);
+  animation:scan 9s linear infinite;
+}
+
+@keyframes scan{
+  to{top:120%}
 }
 
 /* NAVIGATION */
 
 .navbar{
-  height:82px;
+  position:relative;
+  z-index:5;
+  height:85px;
   padding:0 7%;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  border-bottom:1px solid var(--border);
-  background:rgba(8,13,27,.86);
-  backdrop-filter:blur(18px);
-  position:sticky;
-  top:0;
-  z-index:100;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background:rgba(4,15,27,.55);
+  backdrop-filter:blur(15px);
 }
 
 .brand{
   display:flex;
   align-items:center;
   gap:12px;
-  font-family:'Space Grotesk',sans-serif;
-  font-size:21px;
-  font-weight:700;
-  letter-spacing:1px;
-}
-
-.brand-icon{
-  width:40px;
-  height:40px;
-  border-radius:12px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,#12834f,#36d995);
-  box-shadow:0 0 25px rgba(21,155,98,.35);
+  text-decoration:none;
   color:white;
 }
 
-.brand small{
+.brand-symbol{
+  width:43px;
+  height:43px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:linear-gradient(140deg,#087c4b,#2ce69a);
+  box-shadow:0 0 25px rgba(32,199,123,.35);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:25px;
+  font-weight:700;
+}
+
+.brand-name{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:2px;
+}
+
+.brand-caption{
   display:block;
-  font-family:'DM Sans',sans-serif;
   font-size:8px;
-  letter-spacing:1.5px;
-  color:var(--muted);
-  font-weight:600;
+  letter-spacing:1.8px;
+  color:#a3b8cb;
   margin-top:3px;
 }
 
-.nav-links{
+.nav-right{
   display:flex;
   align-items:center;
-  gap:34px;
+  gap:12px;
 }
 
-.nav-links a{
-  color:#b9c5db;
-  font-size:13px;
-  transition:.25s;
+.nav-status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#a8c6d8;
+  font-size:10px;
+  letter-spacing:1.5px;
 }
 
-.nav-links a:hover{color:var(--green-light)}
-
-.nav-links .nav-login{
-  padding:11px 21px;
-  border:1px solid rgba(54,217,149,.45);
-  border-radius:8px;
-  color:white;
-  background:rgba(21,155,98,.12);
+.status-dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green-light);
+  box-shadow:0 0 12px var(--green-light);
+  animation:pulse 1.8s infinite;
 }
 
-.nav-login:hover{
-  background:var(--green);
-  border-color:var(--green);
+@keyframes pulse{
+  50%{opacity:.35;transform:scale(.75)}
 }
 
-/* HERO */
+/* MAIN CONTENT */
 
 .hero{
-  max-width:1250px;
-  margin:auto;
-  min-height:690px;
-  padding:110px 35px 100px;
-  display:grid;
-  grid-template-columns:1.05fr .95fr;
+  position:relative;
+  z-index:3;
+  min-height:calc(100vh - 145px);
+  display:flex;
+  flex-direction:column;
   align-items:center;
-  gap:50px;
+  justify-content:center;
+  text-align:center;
+  padding:65px 22px 55px;
+}
+
+.hero-content{
+  max-width:850px;
+  animation:appear 1.2s ease both;
+}
+
+@keyframes appear{
+  from{opacity:0;transform:translateY(25px)}
+  to{opacity:1;transform:translateY(0)}
 }
 
 .eyebrow{
@@ -161,576 +188,282 @@ body:before{
   color:var(--green-light);
   font-size:10px;
   font-weight:700;
-  letter-spacing:2.5px;
-  text-transform:uppercase;
+  letter-spacing:3px;
+  margin-bottom:28px;
 }
 
-.eyebrow:before{
+.eyebrow:before,
+.eyebrow:after{
   content:"";
-  width:25px;
   height:1px;
-  background:var(--green-light);
+  width:27px;
+  background:var(--green);
 }
 
-.hero h1{
+h1{
   font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(43px,5.4vw,72px);
-  line-height:1.08;
-  letter-spacing:-3px;
-  margin:26px 0;
-  max-width:680px;
+  font-size:clamp(52px,9vw,100px);
+  font-weight:700;
+  letter-spacing:-5px;
+  line-height:1;
+  text-shadow:0 0 45px rgba(53,170,255,.12);
 }
 
-.gradient-text{
-  background:linear-gradient(100deg,#36d995,#57d9f5,#8b8aff);
+.gradient{
+  background:linear-gradient(100deg,#55e9a6,#56d9ff,#70aaff);
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
 }
 
 .hero-description{
-  color:var(--muted);
+  max-width:570px;
+  margin:27px auto 0;
+  color:#b3c4d7;
   font-size:15px;
-  line-height:1.9;
-  max-width:540px;
+  line-height:1.8;
 }
 
 .hero-actions{
   display:flex;
-  gap:14px;
-  margin-top:35px;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
   flex-wrap:wrap;
+  margin-top:38px;
 }
 
 .btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:14px 23px;
+  position:relative;
+  overflow:hidden;
+  min-width:155px;
+  padding:15px 27px;
   border-radius:8px;
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  font-family:'DM Sans',sans-serif;
   font-size:13px;
   font-weight:700;
-  transition:.25s;
+  text-decoration:none;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
 }
 
+.btn:after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-120%;
+  height:100%;
+  width:70%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.25),transparent);
+  transform:skewX(-20deg);
+  transition:left .6s;
+}
+
+.btn:hover:after{left:150%}
+
+.btn:hover{transform:translateY(-3px)}
+
 .btn-primary{
-  background:linear-gradient(110deg,#12834f,#20b879);
-  color:white;
-  box-shadow:0 8px 30px rgba(21,155,98,.25);
+  color:#041b13;
+  background:linear-gradient(110deg,#19b86d,#65f2b1);
+  box-shadow:0 8px 35px rgba(32,199,123,.25);
 }
 
 .btn-primary:hover{
-  transform:translateY(-3px);
-  box-shadow:0 12px 35px rgba(21,155,98,.4);
+  box-shadow:0 10px 45px rgba(32,199,123,.45);
 }
 
 .btn-secondary{
-  border:1px solid var(--border);
-  color:#dce6fa;
-  background:rgba(255,255,255,.035);
+  color:white;
+  border:1px solid rgba(111,204,255,.35);
+  background:rgba(13,43,66,.55);
+  backdrop-filter:blur(10px);
 }
 
 .btn-secondary:hover{
-  border-color:var(--green);
-  background:rgba(21,155,98,.09);
+  border-color:var(--cyan);
+  box-shadow:0 0 25px rgba(53,170,255,.18);
 }
 
-.hero-note{
-  margin-top:30px;
-  color:#7787a4;
-  font-size:11px;
-}
-
-/* INTELLIGENCE VISUAL */
-
-.visual-area{
-  position:relative;
-  min-height:430px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.orbit{
-  position:absolute;
-  width:390px;
-  height:390px;
-  border:1px solid rgba(54,217,149,.18);
-  border-radius:50%;
-  animation:rotate 35s linear infinite;
-}
-
-.orbit:before,.orbit:after{
-  content:"";
-  position:absolute;
-  border:1px solid rgba(99,145,255,.12);
-  border-radius:50%;
-}
-
-.orbit:before{inset:35px}
-.orbit:after{inset:75px}
-
-.orbit-dot{
-  position:absolute;
-  top:48px;
-  right:50px;
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:var(--green-light);
-  box-shadow:0 0 18px var(--green-light);
-}
-
-@keyframes rotate{
-  to{transform:rotate(360deg)}
-}
-
-.intelligence-card{
-  width:min(100%,390px);
-  position:relative;
-  z-index:2;
-  padding:27px;
-  border:1px solid rgba(54,217,149,.2);
-  border-radius:19px;
-  background:linear-gradient(145deg,rgba(23,39,72,.94),rgba(13,22,43,.96));
-  box-shadow:0 25px 80px rgba(0,0,0,.4),0 0 55px rgba(21,155,98,.1);
-  backdrop-filter:blur(20px);
-  animation:float 5s ease-in-out infinite;
-}
-
-@keyframes float{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
-}
-
-.card-top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding-bottom:19px;
-  border-bottom:1px solid var(--border);
-}
-
-.card-label{
-  color:#9cacc9;
-  font-size:9px;
-  letter-spacing:1.8px;
-  font-weight:700;
-}
-
-.live-indicator{
-  color:#75e8c2;
-  font-size:9px;
-  display:flex;
-  align-items:center;
-  gap:7px;
-}
-
-.live-indicator:before{
-  content:"";
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#75e8c2;
-  box-shadow:0 0 10px #75e8c2;
-}
-
-.core{
-  width:100px;
-  height:100px;
-  margin:28px auto;
-  border-radius:28px;
-  display:grid;
-  place-items:center;
-  font-family:'Space Grotesk',sans-serif;
-  font-size:43px;
-  font-weight:700;
-  background:linear-gradient(145deg,#12834f,#36d995);
-  box-shadow:0 0 55px rgba(21,155,98,.35);
-}
-
-.card-title{
-  text-align:center;
-  font-family:'Space Grotesk',sans-serif;
-  font-size:21px;
-}
-
-.card-subtitle{
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-  margin-top:8px;
-}
-
-.signal-line{
-  display:flex;
-  gap:5px;
-  align-items:center;
-  height:35px;
-  margin:24px 0 17px;
-}
-
-.signal-line span{
-  flex:1;
-  border-radius:5px;
-  background:linear-gradient(to top,var(--green),var(--cyan));
-  opacity:.8;
-}
-
-.signal-line span:nth-child(1){height:25%}
-.signal-line span:nth-child(2){height:50%}
-.signal-line span:nth-child(3){height:35%}
-.signal-line span:nth-child(4){height:85%}
-.signal-line span:nth-child(5){height:65%}
-.signal-line span:nth-child(6){height:100%}
-.signal-line span:nth-child(7){height:55%}
-.signal-line span:nth-child(8){height:75%}
-.signal-line span:nth-child(9){height:40%}
-.signal-line span:nth-child(10){height:90%}
-.signal-line span:nth-child(11){height:60%}
-.signal-line span:nth-child(12){height:100%}
-
-.card-footer{
-  padding-top:14px;
-  border-top:1px solid var(--border);
-  color:#8293b1;
-  font-size:9px;
-  letter-spacing:1.3px;
-  text-align:center;
-}
-
-/* PLATFORM STRIP */
-
-.platform-strip{
-  border-top:1px solid var(--border);
-  border-bottom:1px solid var(--border);
-  background:rgba(255,255,255,.018);
-  padding:26px 7%;
-}
-
-.strip-inner{
-  max-width:1150px;
-  margin:auto;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:25px;
-  flex-wrap:wrap;
-}
-
-.strip-item{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  color:#b3c1d9;
-  font-size:12px;
-}
-
-.strip-icon{
-  color:var(--green-light);
-  font-size:19px;
-}
-
-/* ABOUT */
-
-.section{
-  max-width:1150px;
-  margin:auto;
-  padding:110px 30px;
-}
-
-.section-heading{
-  max-width:650px;
-  margin-bottom:45px;
-}
-
-.section-heading h2{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(30px,4vw,45px);
-  letter-spacing:-1.5px;
-  margin:19px 0 15px;
-}
-
-.section-heading p{
-  color:var(--muted);
-  font-size:14px;
-  line-height:1.9;
-}
-
-.about-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:50px;
-  align-items:center;
-}
-
-.about-panel{
-  padding:35px;
-  border:1px solid var(--border);
-  border-radius:15px;
-  background:linear-gradient(140deg,rgba(25,42,77,.7),rgba(13,22,42,.7));
-}
-
-.about-panel h3{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:22px;
-  margin-bottom:15px;
-}
-
-.about-panel p{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.9;
-}
-
-.about-panel strong{color:var(--green-light)}
-
-.about-list{
-  display:grid;
-  gap:18px;
-}
-
-.about-list div{
-  display:flex;
-  gap:15px;
-  align-items:flex-start;
-}
-
-.check{
-  width:28px;
-  height:28px;
-  display:grid;
-  place-items:center;
-  flex-shrink:0;
-  border-radius:8px;
-  color:var(--green-light);
-  background:rgba(21,155,98,.13);
-  border:1px solid rgba(54,217,149,.12);
-}
-
-.about-list strong{
-  font-size:13px;
-  display:block;
-  margin-bottom:5px;
-}
-
-.about-list p{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.7;
-}
-
-/* FEATURES */
-
-.features-section{
-  background:linear-gradient(180deg,transparent,rgba(21,155,98,.055),rgba(24,39,72,.25),transparent);
-  border-top:1px solid rgba(255,255,255,.04);
-  border-bottom:1px solid rgba(255,255,255,.04);
-}
-
-.feature-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:17px;
-}
-
-.feature-card{
-  padding:27px;
-  min-height:205px;
-  border:1px solid var(--border);
-  border-radius:13px;
-  background:rgba(16,28,52,.65);
-  transition:.3s;
-}
-
-.feature-card:hover{
-  transform:translateY(-5px);
-  border-color:rgba(54,217,149,.4);
-  background:rgba(25,42,77,.75);
-}
-
-.feature-number{
-  color:var(--green-light);
-  font-family:'Space Grotesk',sans-serif;
-  font-size:11px;
+.hero-caption{
+  margin-top:34px;
+  color:#7e9ab1;
+  font-size:10px;
   letter-spacing:2px;
 }
 
-.feature-symbol{
-  font-size:23px;
-  margin:20px 0 13px;
-  color:#91cdb1;
-}
+/* BOTTOM INFORMATION */
 
-.feature-card h3{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:17px;
-  margin-bottom:10px;
-}
-
-.feature-card p{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.8;
-}
-
-/* STATEMENT */
-
-.statement{
-  max-width:1050px;
-  margin:90px auto;
-  padding:70px 35px;
-  text-align:center;
-  border:1px solid rgba(54,217,149,.2);
-  border-radius:20px;
-  background:
-    radial-gradient(ellipse at 50% 0%,rgba(21,155,98,.16),transparent 65%),
-    rgba(17,28,52,.65);
-}
-
-.statement h2{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:clamp(29px,4vw,43px);
-  letter-spacing:-1.5px;
-  max-width:750px;
-  margin:20px auto;
-}
-
-.statement p{
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:28px;
-}
-
-/* FOOTER */
-
-footer{
-  border-top:1px solid var(--border);
-  padding:45px 7% 25px;
-  background:#070b16;
-}
-
-.footer-inner{
-  max-width:1150px;
-  margin:auto;
+.bottom-bar{
+  position:relative;
+  z-index:4;
+  min-height:60px;
+  padding:18px 7%;
+  border-top:1px solid rgba(255,255,255,.07);
+  background:rgba(3,12,22,.65);
   display:flex;
   justify-content:space-between;
-  gap:30px;
-  flex-wrap:wrap;
-}
-
-.footer-brand{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:24px;
-  font-weight:700;
-  margin-bottom:10px;
-}
-
-.footer-description{
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.8;
-}
-
-.footer-links{
-  display:flex;
-  gap:22px;
-  flex-wrap:wrap;
   align-items:center;
-}
-
-.footer-links a{
-  color:#a6b4cc;
-  font-size:11px;
-  transition:.2s;
-}
-
-.footer-links a:hover{color:var(--green-light)}
-
-.footer-bottom{
-  max-width:1150px;
-  margin:30px auto 0;
-  padding-top:20px;
-  border-top:1px solid var(--border);
-  display:flex;
-  justify-content:space-between;
   gap:15px;
   flex-wrap:wrap;
-  color:#73829d;
+  color:#8198ad;
   font-size:10px;
+  letter-spacing:.5px;
 }
 
-/* REVEAL ANIMATION */
+/* BUTTON TRANSITION */
 
-.reveal{
+.transition-screen{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  pointer-events:none;
   opacity:0;
-  transform:translateY(22px);
-  transition:opacity .7s ease,transform .7s ease;
+  background:
+    radial-gradient(circle at center,rgba(32,199,123,.35),transparent 35%),
+    #041321;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  transition:opacity .35s ease;
 }
 
-.reveal.visible{
+.transition-screen.active{
   opacity:1;
-  transform:translateY(0);
+  pointer-events:all;
 }
 
-/* RESPONSIVE */
-
-@media(max-width:900px){
-  .hero{
-    grid-template-columns:1fr;
-    padding-top:85px;
-    text-align:center;
-  }
-
-  .hero-description{margin:auto}
-  .hero-actions{justify-content:center}
-  .visual-area{min-height:440px}
-  .about-grid{grid-template-columns:1fr}
-  .feature-grid{grid-template-columns:repeat(2,1fr)}
-  .strip-inner{justify-content:center}
+.transition-content{
+  text-align:center;
+  transform:scale(.8);
+  opacity:0;
+  transition:all .35s ease;
 }
+
+.transition-screen.active .transition-content{
+  transform:scale(1);
+  opacity:1;
+}
+
+.transition-logo{
+  width:75px;
+  height:75px;
+  margin:auto auto 20px;
+  border-radius:20px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(140deg,#087c4b,#2ce69a);
+  color:white;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:42px;
+  font-weight:700;
+  box-shadow:0 0 55px rgba(32,199,123,.5);
+  animation:logoPulse 1s infinite alternate;
+}
+
+@keyframes logoPulse{
+  to{box-shadow:0 0 80px rgba(32,199,123,.8)}
+}
+
+.transition-text{
+  color:#d8eaff;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;
+  letter-spacing:4px;
+}
+
+.transition-line{
+  width:150px;
+  height:2px;
+  margin:18px auto;
+  background:rgba(255,255,255,.12);
+  overflow:hidden;
+}
+
+.transition-line:after{
+  content:"";
+  display:block;
+  height:100%;
+  width:40%;
+  background:var(--green-light);
+  box-shadow:0 0 15px var(--green-light);
+  animation:loading 1s infinite ease-in-out;
+}
+
+@keyframes loading{
+  from{transform:translateX(-100%)}
+  to{transform:translateX(350%)}
+}
+
+/* MOBILE */
 
 @media(max-width:600px){
-  .navbar{height:70px;padding:0 5%}
-  .brand{font-size:18px}
-  .brand-icon{width:35px;height:35px}
-  .brand small{font-size:7px}
-  .nav-links{gap:15px}
-  .nav-links a{font-size:11px}
-  .nav-links a:first-child,
-  .nav-links a:nth-child(2){display:none}
-  .nav-links .nav-login{padding:10px 15px}
 
-  .hero{
-    padding:75px 22px 65px;
-    gap:20px;
+  .navbar{
+    height:72px;
+    padding:0 5%;
   }
 
-  .hero h1{letter-spacing:-2px}
-  .hero-description{font-size:13px}
-  .visual-area{min-height:390px}
-  .orbit{width:310px;height:310px}
-  .intelligence-card{max-width:330px;padding:22px}
-  .section{padding:75px 22px}
-  .feature-grid{grid-template-columns:1fr}
-  .feature-card{min-height:auto}
-  .statement{margin:50px 18px;padding:55px 22px}
-  .footer-inner{flex-direction:column}
-  .footer-bottom{flex-direction:column}
-}
+  .brand-symbol{
+    width:37px;
+    height:37px;
+    font-size:22px;
+  }
 
-/* ACCESSIBILITY */
+  .brand-name{font-size:19px}
+  .brand-caption{font-size:7px}
+
+  .nav-status{
+    font-size:8px;
+    letter-spacing:1px;
+  }
+
+  .hero{
+    min-height:calc(100svh - 132px);
+    padding:75px 20px 55px;
+  }
+
+  h1{
+    font-size:clamp(48px,13vw,70px);
+    letter-spacing:-3px;
+  }
+
+  .hero-description{
+    font-size:13px;
+    max-width:360px;
+  }
+
+  .eyebrow{
+    font-size:8px;
+    letter-spacing:2px;
+  }
+
+  .btn{
+    min-width:140px;
+    padding:14px 20px;
+    font-size:12px;
+  }
+
+  .hero-caption{
+    font-size:8px;
+    letter-spacing:1.5px;
+  }
+
+  .bottom-bar{
+    justify-content:center;
+    text-align:center;
+    font-size:9px;
+  }
+}
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
     scroll-behavior:auto!important;
-    animation:none!important;
-    transition:none!important;
-  }
-
-  .reveal{
-    opacity:1;
-    transform:none;
   }
 }
 </style>
@@ -738,367 +471,231 @@ footer{
 
 <body>
 
-<div class="grid-bg"></div>
+<canvas id="network"></canvas>
+<div class="background-glow"></div>
+<div class="scanline"></div>
 
 <header class="navbar">
+
   <a href="index.html" class="brand">
-    <span class="brand-icon">S</span>
+    <span class="brand-symbol">S</span>
     <span>
-      SIRI
-      <small>RESEARCH & INTELLIGENCE HUB</small>
+      <span class="brand-name">SIRI</span>
+      <span class="brand-caption">RESEARCH & INTELLIGENCE HUB</span>
     </span>
   </a>
 
-  <nav class="nav-links">
-    <a href="#about">About</a>
-    <a href="#features">Platform</a>
-    <a href="login.html" class="nav-login">Sign In ↗</a>
-  </nav>
+  <div class="nav-right">
+    <span class="nav-status">
+      <span class="status-dot"></span>
+      SOBO DIGITAL INITIATIVE
+    </span>
+  </div>
+
 </header>
 
-<main>
+<main class="hero">
 
-  <!-- HERO -->
+  <div class="hero-content">
 
-  <section class="hero">
+    <div class="eyebrow">
+      UNIVERSITY OF NAIROBI
+    </div>
 
-    <div class="hero-content reveal">
+    <h1>
+      Think Beyond.<br>
+      <span class="gradient">See Further.</span>
+    </h1>
 
-      <span class="eyebrow">UNIVERSITY OF NAIROBI · SOBO</span>
+    <p class="hero-description">
+      Welcome to SIRI — where student voices, research and intelligence
+      converge to shape a more informed SOBO community.
+    </p>
 
-      <h1>
-        Intelligence<br>
-        Beyond <span class="gradient-text">Information.</span>
-      </h1>
+    <div class="hero-actions">
 
-      <p class="hero-description">
-        A central intelligence space connecting student experiences,
-        research, institutional insights and evidence-informed
-        decision-making within the School of Business Organizations.
-      </p>
+      <a href="register.html" class="btn btn-primary transition-link">
+        Join SIRI <span>↗</span>
+      </a>
 
-      <div class="hero-actions">
-        <a href="register.html" class="btn btn-primary">
-          Join SIRI ↗
-        </a>
-
-        <a href="#about" class="btn btn-secondary">
-          Explore the platform
-        </a>
-      </div>
-
-      <div class="hero-note">
-        An initiative of SOBO's ICT, Research and Insights Directorate.
-      </div>
+      <a href="login.html" class="btn btn-secondary transition-link">
+        Sign In <span>→</span>
+      </a>
 
     </div>
 
-    <div class="visual-area reveal">
-
-      <div class="orbit">
-        <div class="orbit-dot"></div>
-      </div>
-
-      <div class="intelligence-card">
-
-        <div class="card-top">
-          <span class="card-label">SIRI INTELLIGENCE SYSTEM</span>
-          <span class="live-indicator">PLATFORM</span>
-        </div>
-
-        <div class="core">S</div>
-
-        <h2 class="card-title">Student Intelligence</h2>
-
-        <p class="card-subtitle">
-          Research. Insights. Understanding.
-        </p>
-
-        <div class="signal-line">
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-        </div>
-
-        <div class="card-footer">
-          SOBO · UNIVERSITY OF NAIROBI
-        </div>
-
-      </div>
-    </div>
-
-  </section>
-
-  <!-- PLATFORM STRIP -->
-
-  <div class="platform-strip">
-
-    <div class="strip-inner">
-
-      <div class="strip-item">
-        <span class="strip-icon">⌘</span>
-        Research & Knowledge
-      </div>
-
-      <div class="strip-item">
-        <span class="strip-icon">◈</span>
-        Student Intelligence
-      </div>
-
-      <div class="strip-item">
-        <span class="strip-icon">⌁</span>
-        Institutional Insights
-      </div>
-
-      <div class="strip-item">
-        <span class="strip-icon">◎</span>
-        Evidence-informed Action
-      </div>
-
+    <div class="hero-caption">
+      RESEARCH · INTELLIGENCE · INSIGHT
     </div>
 
   </div>
-
-  <!-- ABOUT -->
-
-  <section class="section" id="about">
-
-    <div class="about-grid">
-
-      <div class="section-heading reveal">
-
-        <span class="eyebrow">THE SIRI INITIATIVE</span>
-
-        <h2>
-          Turning information into institutional intelligence.
-        </h2>
-
-        <p>
-          SIRI is the digital research and intelligence platform of SOBO.
-          It creates a structured environment for collecting student
-          feedback, coordinating research, evaluating activities,
-          monitoring concerns and preserving institutional knowledge.
-        </p>
-
-      </div>
-
-      <div class="about-panel reveal">
-
-        <h3>One platform. Multiple perspectives.</h3>
-
-        <p>
-          Through integrated digital tools, SIRI helps transform
-          scattered student experiences and research contributions
-          into organised information that can inform representation,
-          planning and decision-making.
-        </p>
-
-        <br>
-
-        <p>
-          <strong>SOBO</strong> — School of Business Organizations<br>
-          <strong>SIRI</strong> — SOBO's Research and Intelligence Hub
-        </p>
-
-      </div>
-
-    </div>
-
-    <div class="about-list reveal" style="margin-top:45px;max-width:650px">
-
-      <div>
-        <span class="check">✓</span>
-        <div>
-          <strong>Structured information</strong>
-          <p>Bring student feedback and research records into one organised environment.</p>
-        </div>
-      </div>
-
-      <div>
-        <span class="check">✓</span>
-        <div>
-          <strong>Research coordination</strong>
-          <p>Support research requests, publications and institutional knowledge sharing.</p>
-        </div>
-      </div>
-
-      <div>
-        <span class="check">✓</span>
-        <div>
-          <strong>Evidence-informed representation</strong>
-          <p>Make student concerns and perspectives more visible in institutional conversations.</p>
-        </div>
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- FEATURES -->
-
-  <section class="features-section" id="features">
-
-    <div class="section">
-
-      <div class="section-heading reveal">
-
-        <span class="eyebrow">THE PLATFORM</span>
-
-        <h2>Built around the intelligence lifecycle.</h2>
-
-        <p>
-          Six connected functions designed to collect, organise,
-          analyse and communicate information across the SOBO community.
-        </p>
-
-      </div>
-
-      <div class="feature-grid">
-
-        <article class="feature-card reveal">
-          <span class="feature-number">01 / KNOWLEDGE</span>
-          <div class="feature-symbol">⌕</div>
-          <h3>Research Archive</h3>
-          <p>
-            Preserve research reports, findings and institutional
-            knowledge in one accessible repository.
-          </p>
-        </article>
-
-        <article class="feature-card reveal">
-          <span class="feature-number">02 / COORDINATION</span>
-          <div class="feature-symbol">⌘</div>
-          <h3>Research Requests</h3>
-          <p>
-            Coordinate research needs and support structured
-            collaboration across SOBO.
-          </p>
-        </article>
-
-        <article class="feature-card reveal">
-          <span class="feature-number">03 / EVALUATION</span>
-          <div class="feature-symbol">◫</div>
-          <h3>Event Evaluation</h3>
-          <p>
-            Understand student experiences and assess the
-            effectiveness of events and activities.
-          </p>
-        </article>
-
-        <article class="feature-card reveal">
-          <span class="feature-number">04 / ENGAGEMENT</span>
-          <div class="feature-symbol">◉</div>
-          <h3>Student Polls</h3>
-          <p>
-            Capture student opinions and perspectives
-            through interactive polls.
-          </p>
-        </article>
-
-        <article class="feature-card reveal">
-          <span class="feature-number">05 / ACCOUNTABILITY</span>
-          <div class="feature-symbol">⌁</div>
-          <h3>Issue Tracking</h3>
-          <p>
-            Monitor reported concerns and follow their
-            progress towards resolution.
-          </p>
-        </article>
-
-        <article class="feature-card reveal">
-          <span class="feature-number">06 / PUBLICATION</span>
-          <div class="feature-symbol">▤</div>
-          <h3>Research Publications</h3>
-          <p>
-            Share research articles, student perspectives
-            and relevant insights.
-          </p>
-        </article>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- CLOSING STATEMENT -->
-
-  <section class="statement reveal">
-
-    <span class="eyebrow">
-      THE NEXT GENERATION OF STUDENT INTELLIGENCE
-    </span>
-
-    <h2>
-      Better decisions begin with
-      <span class="gradient-text">better information.</span>
-    </h2>
-
-    <p>Research. Understand. Represent. Transform.</p>
-
-    <a href="register.html" class="btn btn-primary">
-      Get started with SIRI ↗
-    </a>
-
-  </section>
 
 </main>
 
-<!-- FOOTER -->
-
-<footer>
-
-  <div class="footer-inner">
-
-    <div>
-
-      <div class="footer-brand">
-        SIRI<span class="gradient-text">.</span>
-      </div>
-
-      <p class="footer-description">
-        SOBO Research and Intelligence Hub<br>
-        School of Business Organizations<br>
-        University of Nairobi
-      </p>
-
-    </div>
-
-    <div class="footer-links">
-      <a href="#about">About SIRI</a>
-      <a href="#features">Our Platform</a>
-      <a href="register.html">Register</a>
-      <a href="login.html">Sign In</a>
-    </div>
-
-  </div>
-
-  <div class="footer-bottom">
-    <span>© 2026 SOBO. All rights reserved.</span>
-    <span>Faculty of Business & Management Sciences · University of Nairobi</span>
-  </div>
-
+<footer class="bottom-bar">
+  <span>SOBO — School of Business Organizations</span>
+  <span>ICT, Research & Insights Directorate</span>
+  <span>University of Nairobi © 2026</span>
 </footer>
 
+<!-- TRANSITION OVERLAY -->
+
+<div class="transition-screen" id="transitionScreen">
+  <div class="transition-content">
+    <div class="transition-logo">S</div>
+    <div class="transition-text">INITIALISING SIRI</div>
+    <div class="transition-line"></div>
+  </div>
+</div>
+
 <script>
-const observer = new IntersectionObserver(entries => {
+/* ANIMATED NETWORK BACKGROUND */
 
-  entries.forEach(entry => {
+const canvas = document.getElementById("network");
+const ctx = canvas.getContext("2d");
 
-    if(entry.isIntersecting){
+let width, height, particles = [];
+let animationFrame;
 
-      entry.target.classList.add("visible");
+const isMobile = window.matchMedia("(max-width: 600px)").matches;
+const particleCount = isMobile ? 65 : 115;
+const connectionDistance = isMobile ? 95 : 135;
 
-      observer.unobserve(entry.target);
+function resizeCanvas(){
+  const dpr = Math.min(window.devicePixelRatio || 1,2);
 
+  width = window.innerWidth;
+  height = window.innerHeight;
+
+  canvas.width = width*dpr;
+  canvas.height = height*dpr;
+
+  canvas.style.width = width+"px";
+  canvas.style.height = height+"px";
+
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+function createParticles(){
+  particles = [];
+
+  for(let i=0;i<particleCount;i++){
+    particles.push({
+      x:Math.random()*width,
+      y:Math.random()*height,
+      vx:(Math.random()-.5)*.65,
+      vy:(Math.random()-.5)*.65,
+      radius:Math.random()*1.8+.5,
+      glow:Math.random()
+    });
+  }
+}
+
+function drawNetwork(){
+
+  ctx.clearRect(0,0,width,height);
+
+  // Draw connections
+  for(let i=0;i<particles.length;i++){
+
+    const p = particles[i];
+
+    for(let j=i+1;j<particles.length;j++){
+
+      const q = particles[j];
+
+      const dx=p.x-q.x;
+      const dy=p.y-q.y;
+      const distance=Math.sqrt(dx*dx+dy*dy);
+
+      if(distance<connectionDistance){
+
+        const opacity=(1-distance/connectionDistance)*.55;
+
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);
+        ctx.lineTo(q.x,q.y);
+
+        ctx.strokeStyle=`rgba(65,190,255,${opacity})`;
+        ctx.lineWidth=.65;
+        ctx.stroke();
+      }
     }
+  }
+
+  // Draw particles
+  particles.forEach(p=>{
+
+    p.x+=p.vx;
+    p.y+=p.vy;
+
+    if(p.x<0 || p.x>width)p.vx*=-1;
+    if(p.y<0 || p.y>height)p.vy*=-1;
+
+    const glow= p.glow>.82 ? 1 : .65;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
+
+    ctx.fillStyle=`rgba(100,225,255,${glow})`;
+    ctx.shadowBlur=12;
+    ctx.shadowColor="#36baff";
+    ctx.fill();
+
+    ctx.shadowBlur=0;
+  });
+
+  // Soft green light pulses
+  const pulseX=width*.5+Math.sin(Date.now()*.00035)*width*.12;
+  const pulseY=height*.48+Math.cos(Date.now()*.0003)*height*.08;
+
+  const glowGradient=ctx.createRadialGradient(
+    pulseX,pulseY,0,
+    pulseX,pulseY,Math.min(width,height)*.25
+  );
+
+  glowGradient.addColorStop(0,"rgba(30,210,130,.09)");
+  glowGradient.addColorStop(1,"rgba(30,210,130,0)");
+
+  ctx.fillStyle=glowGradient;
+  ctx.fillRect(0,0,width,height);
+
+  animationFrame=requestAnimationFrame(drawNetwork);
+}
+
+function startAnimation(){
+  resizeCanvas();
+  createParticles();
+
+  if(animationFrame)cancelAnimationFrame(animationFrame);
+
+  drawNetwork();
+}
+
+window.addEventListener("resize",startAnimation);
+
+startAnimation();
+
+/* DIGITAL BUTTON TRANSITION */
+
+const transitionScreen=document.getElementById("transitionScreen");
+
+document.querySelectorAll(".transition-link").forEach(link=>{
+
+  link.addEventListener("click",function(event){
+
+    event.preventDefault();
+
+    const destination=this.href;
+
+    transitionScreen.classList.add("active");
+
+    setTimeout(()=>{
+      window.location.href=destination;
+    },750);
 
   });
 
-},{threshold:0.12});
-
-document.querySelectorAll(".reveal").forEach(element => {
-  observer.observe(element);
 });
 </script>
 
