@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Research Publications | SIRI</title>
   <link rel="stylesheet" href="../css/style.css">
+
   <style>
     .publications-container {
       max-width: 1100px;
@@ -129,6 +130,7 @@
 </head>
 
 <body>
+
   <main class="publications-container">
 
     <div class="publication-header">
@@ -145,7 +147,9 @@
     </div>
 
     <section id="browseSection">
+
       <div class="publication-tools">
+
         <input
           type="search"
           id="searchInput"
@@ -161,52 +165,75 @@
           <option value="Policy and Administration">Policy and Administration</option>
           <option value="Other">Other</option>
         </select>
+
       </div>
 
       <div id="publicationList" class="publication-list"></div>
+
     </section>
 
     <section id="reader" class="reader">
+
       <button class="read-button back-button" id="backButton">
         ← Back to publications
       </button>
 
       <span id="readerCategory" class="publication-category"></span>
+
       <h2 id="readerTitle"></h2>
+
       <div id="readerMeta" class="publication-meta"></div>
+
       <p id="readerSummary"></p>
+
       <hr>
+
       <div id="readerContent" class="reader-content"></div>
+
     </section>
 
   </main>
 
   <script type="module">
+
     import { auth, db } from "../js/firebase.js";
 
     import {
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 
-   import {
-  collection,
-  getDocs,
-  query,
-  where,
-  doc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+    import {
+      collection,
+      getDocs,
+      query,
+      where,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+
+    // PAGE ELEMENTS
 
     const statusMessage = document.getElementById("statusMessage");
+
     const publicationList = document.getElementById("publicationList");
+
     const searchInput = document.getElementById("searchInput");
+
     const categoryFilter = document.getElementById("categoryFilter");
+
     const browseSection = document.getElementById("browseSection");
+
     const reader = document.getElementById("reader");
+
 
     let publications = [];
 
+
+    // ESCAPE HTML
+
     function escapeHTML(value = "") {
+
       return String(value).replace(/[&<>"']/g, character => ({
         "&": "&amp;",
         "<": "&lt;",
@@ -214,9 +241,14 @@
         '"': "&quot;",
         "'": "&#039;"
       })[character]);
+
     }
 
+
+    // FORMAT PUBLICATION DATE
+
     function formatDate(timestamp) {
+
       if (!timestamp || typeof timestamp.toDate !== "function") {
         return "Date unavailable";
       }
@@ -226,170 +258,277 @@
         month: "long",
         year: "numeric"
       });
+
     }
 
-   async function loadPublications() {
-  statusMessage.textContent = "Loading publications...";
 
-  try {
-    const publicationsQuery = query(
-      collection(db, "publications"),
-      where("status", "==", "published")
-    );
+    // LOAD PUBLISHED PUBLICATIONS
 
-    const snapshot = await getDocs(publicationsQuery);
+    async function loadPublications() {
 
-    publications = snapshot.docs.map(document => ({
-      id: document.id,
-      ...document.data()
-    }));
+      statusMessage.textContent = "Loading publications...";
 
-    // Sort newest publications first.
-    publications.sort((a, b) => {
-      const dateA = a.publishedAt?.toMillis?.() || 0;
-      const dateB = b.publishedAt?.toMillis?.() || 0;
-      return dateB - dateA;
-    });
+      try {
 
-    statusMessage.textContent = publications.length
-      ? `${publications.length} publication(s) available`
-      : "No publications have been published yet.";
+        const publicationsQuery = query(
+          collection(db, "publications"),
+          where("status", "==", "published")
+        );
 
-    displayPublications();
+        const snapshot = await getDocs(publicationsQuery);
 
-  } catch (error) {
-    console.error("Publication loading error:", error);
+        publications = snapshot.docs.map(document => ({
+          id: document.id,
+          ...document.data()
+        }));
 
-    statusMessage.textContent =
-      `Unable to load publications: ${error.code || error.message}`;
-  }
-}
+
+        // Sort newest publications first.
+
+        publications.sort((a, b) => {
+
+          const dateA = a.publishedAt?.toMillis?.() || 0;
+
+          const dateB = b.publishedAt?.toMillis?.() || 0;
+
+          return dateB - dateA;
+
+        });
+
+
+        statusMessage.textContent = publications.length
+          ? `${publications.length} publication(s) available`
+          : "No publications have been published yet.";
+
+        displayPublications();
+
+      } catch (error) {
+
+        console.error("Publication loading error:", error);
+
+        statusMessage.textContent =
+          `Unable to load publications: ${error.code || error.message}`;
+
+      }
+
+    }
+
+
+    // DISPLAY PUBLICATIONS
 
     function displayPublications() {
+
       const search = searchInput.value.trim().toLowerCase();
+
       const category = categoryFilter.value;
 
+
       const filtered = publications.filter(publication => {
+
         const searchableText = [
+
           publication.title,
+
           publication.author,
+
           publication.summary,
+
           publication.content,
+
           publication.category,
+
           ...(Array.isArray(publication.keywords)
             ? publication.keywords
             : [])
+
         ].join(" ").toLowerCase();
+
 
         return searchableText.includes(search)
           && (!category || publication.category === category);
+
       });
+
 
       publicationList.innerHTML = "";
 
+
       if (!filtered.length) {
+
         publicationList.innerHTML = `
           <div class="empty-message">
             No matching publications found.
           </div>
         `;
+
         return;
+
       }
 
+
       filtered.forEach(publication => {
+
         const card = document.createElement("article");
+
         card.className = "publication-card";
 
+
         card.innerHTML = `
+
           <span class="publication-category">
             ${escapeHTML(publication.category || "Other")}
           </span>
 
-          <h3>${escapeHTML(publication.title || "Untitled publication")}</h3>
+          <h3>
+            ${escapeHTML(publication.title || "Untitled publication")}
+          </h3>
 
-          <p>${escapeHTML(publication.summary || "No summary available.")}</p>
+          <p>
+            ${escapeHTML(publication.summary || "No summary available.")}
+          </p>
 
           <div class="publication-meta">
+
             By ${escapeHTML(publication.author || "SOBO Research Team")}
+
             <br>
+
             ${formatDate(publication.publishedAt)}
+
           </div>
 
-          <button class="read-button">Read publication</button>
+          <button class="read-button">
+            Read publication
+          </button>
+
         `;
 
+
         card.querySelector("button").addEventListener("click", () => {
+
           openPublication(publication);
+
         });
 
+
         publicationList.appendChild(card);
+
       });
+
     }
 
+
+    // OPEN A PUBLICATION
+
     function openPublication(publication) {
+
       browseSection.style.display = "none";
+
       reader.style.display = "block";
+
 
       document.getElementById("readerCategory").textContent =
         publication.category || "Other";
 
+
       document.getElementById("readerTitle").textContent =
         publication.title || "Untitled publication";
+
 
       document.getElementById("readerMeta").textContent =
         `By ${publication.author || "SOBO Research Team"} · ${formatDate(publication.publishedAt)}`;
 
+
       document.getElementById("readerSummary").textContent =
         publication.summary || "";
+
 
       document.getElementById("readerContent").textContent =
         publication.content || "No publication content available.";
 
-      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
     }
+
+
+    // BACK TO PUBLICATIONS
 
     document.getElementById("backButton").addEventListener("click", () => {
+
       reader.style.display = "none";
+
       browseSection.style.display = "block";
-      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
     });
+
+
+    // SEARCH AND CATEGORY FILTERS
 
     searchInput.addEventListener("input", displayPublications);
+
     categoryFilter.addEventListener("change", displayPublications);
 
+
+    // VERIFY STUDENT AND LOAD PUBLICATIONS
+
     onAuthStateChanged(auth, async user => {
-  if (!user) {
-    window.location.href = "../login.html";
-    return;
-  }
 
-  try {
-    // Fetch only this student's profile using their Firebase UID.
-    const profileRef = doc(db, "registrationRequests", user.uid);
-    const profileSnapshot = await getDoc(profileRef);
+      if (!user) {
 
-    if (!profileSnapshot.exists() ||
-        profileSnapshot.data().status !== "active") {
-      window.location.href = "../login.html";
-      return;
-    }
+        window.location.href = "../login.html";
 
-    // Student is verified. Load published research.
-    await loadPublications();
+        return;
 
-  } catch (error) {
-    console.error("Student verification error:", error);
-
-    statusMessage.textContent =
-      "We could not verify your student account. Please sign in again.";
-  }
-});
-      } catch (error) {
-        console.error(error);
-        statusMessage.textContent =
-          "We could not verify your student account. Please sign in again.";
       }
+
+
+      try {
+
+        // Fetch only this student's profile using their Firebase UID.
+
+        const profileRef = doc(db, "registrationRequests", user.uid);
+
+        const profileSnapshot = await getDoc(profileRef);
+
+
+        if (
+          !profileSnapshot.exists() ||
+          profileSnapshot.data().status !== "active"
+        ) {
+
+          window.location.href = "../login.html";
+
+          return;
+
+        }
+
+
+        // Student verified. Load published research.
+
+        await loadPublications();
+
+
+      } catch (error) {
+
+        console.error("Student verification or publication error:", error);
+
+        statusMessage.textContent =
+          `Unable to load publications: ${error.code || error.message}`;
+
+      }
+
     });
+
   </script>
+
 </body>
 </html>
