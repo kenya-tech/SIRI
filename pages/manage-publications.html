@@ -1,0 +1,749 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publication Management | SIRI</title>
+  <link rel="stylesheet" href="../css/style.css">
+
+  <style>
+    .manager {
+      max-width: 1150px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    .manager-header {
+      margin-bottom: 25px;
+    }
+
+    .manager-header h1 {
+      margin-bottom: 8px;
+    }
+
+    .panel {
+      background: white;
+      padding: 22px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      margin-bottom: 22px;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 7px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d8d8df;
+      border-radius: 8px;
+      font: inherit;
+      box-sizing: border-box;
+    }
+
+    .form-group textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    #content {
+      min-height: 280px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .btn {
+      padding: 11px 17px;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: #5633a5;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #eee;
+      color: #333;
+    }
+
+    .btn-danger {
+      background: #fce8e8;
+      color: #a12626;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
+      padding: 18px;
+      border-radius: 10px;
+      background: #f6f3fc;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 25px;
+      color: #5633a5;
+    }
+
+    .publication-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 17px;
+      margin-top: 13px;
+    }
+
+    .publication-item h3 {
+      margin: 9px 0;
+    }
+
+    .meta {
+      color: #777;
+      font-size: 13px;
+      margin: 8px 0;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      background: #eee;
+      font-size: 12px;
+      text-transform: capitalize;
+    }
+
+    .status.published {
+      background: #e3f5e9;
+      color: #23723c;
+    }
+
+    .status.draft {
+      background: #fff2d8;
+      color: #875b00;
+    }
+
+    .status.archived {
+      background: #eee;
+      color: #555;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 15px 0;
+    }
+
+    .filters input,
+    .filters select {
+      flex: 1;
+      min-width: 180px;
+      padding: 11px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    .notice {
+      color: #666;
+      margin: 12px 0;
+    }
+
+    @media (max-width: 650px) {
+      .form-grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<main class="manager">
+
+  <header class="manager-header">
+    <p>SOBO RESEARCH AND INTELLIGENCE HUB</p>
+    <h1>Publication Management Centre</h1>
+    <p>Create, manage and publish research and analytical content.</p>
+  </header>
+
+  <div id="accessMessage" class="notice">
+    Verifying administrator access...
+  </div>
+
+  <div id="adminContent" style="display:none;">
+
+    <section class="stats">
+      <div class="stat-card">
+        <span>Total publications</span>
+        <strong id="totalCount">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Published</span>
+        <strong id="publishedCount">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <span>Drafts</span>
+        <strong id="draftCount">0</strong>
+      </div>
+    </section>
+
+    <section class="panel" id="editorPanel">
+
+      <h2 id="formHeading">Create a publication</h2>
+
+      <p class="notice">
+        Complete the details below. You can publish immediately
+        or save your work as a draft.
+      </p>
+
+      <form id="publicationForm">
+
+        <div class="form-grid">
+
+          <div class="form-group full">
+            <label for="title">Publication title *</label>
+            <input id="title" maxlength="200" required
+              placeholder="Enter the publication title">
+          </div>
+
+          <div class="form-group">
+            <label for="author">Author *</label>
+            <input id="author" maxlength="100" required
+              placeholder="Author or research team">
+          </div>
+
+          <div class="form-group">
+            <label for="category">Category *</label>
+            <select id="category" required>
+              <option value="">Select category</option>
+              <option>Research Articles</option>
+              <option>Student Insights</option>
+              <option>Business and Finance</option>
+              <option>Campus Research</option>
+              <option>Policy and Administration</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group full">
+            <label for="summary">Publication summary *</label>
+            <textarea id="summary" maxlength="1000" required
+              placeholder="Briefly explain what this publication covers..."></textarea>
+          </div>
+
+          <div class="form-group full">
+            <label for="keywords">Keywords</label>
+            <input id="keywords"
+              placeholder="e.g. Finance, Students, Entrepreneurship">
+            <small>Separate keywords using commas.</small>
+          </div>
+
+          <div class="form-group full">
+            <label for="content">Full publication content *</label>
+            <textarea id="content" required
+              placeholder="Write or paste the complete publication here..."></textarea>
+          </div>
+
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn btn-primary" id="publishButton">
+            Publish
+          </button>
+
+          <button type="button" class="btn btn-secondary" id="draftButton">
+            Save as draft
+          </button>
+
+          <button type="button" class="btn btn-secondary"
+            id="cancelButton" style="display:none;">
+            Cancel editing
+          </button>
+        </div>
+
+      </form>
+
+      <p id="formMessage" class="notice"></p>
+
+    </section>
+
+    <section class="panel">
+
+      <h2>Manage publications</h2>
+
+      <div class="filters">
+        <input id="searchInput" type="search"
+          placeholder="Search by title, author or keyword">
+
+        <select id="statusFilter">
+          <option value="">All statuses</option>
+          <option value="published">Published</option>
+          <option value="draft">Drafts</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+
+      <div id="publicationList">
+        Loading publications...
+      </div>
+
+    </section>
+
+  </div>
+
+</main>
+
+<script type="module">
+  import { auth, db } from "../js/firebase.js";
+
+  import {
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+  import {
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    serverTimestamp,
+    query,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  const accessMessage = document.getElementById("accessMessage");
+  const adminContent = document.getElementById("adminContent");
+  const form = document.getElementById("publicationForm");
+  const formMessage = document.getElementById("formMessage");
+  const publicationList = document.getElementById("publicationList");
+
+  let publications = [];
+  let editingId = null;
+  let saving = false;
+
+  function escapeHTML(value = "") {
+    return String(value).replace(/[&<>"']/g, character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[character]);
+  }
+
+  function formatDate(timestamp) {
+    if (!timestamp || typeof timestamp.toDate !== "function") {
+      return "Date unavailable";
+    }
+
+    return timestamp.toDate().toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    });
+  }
+
+  function resetForm() {
+    form.reset();
+    editingId = null;
+
+    document.getElementById("formHeading").textContent =
+      "Create a publication";
+
+    document.getElementById("publishButton").textContent = "Publish";
+    document.getElementById("cancelButton").style.display = "none";
+    formMessage.textContent = "";
+  }
+
+  function getFormData(status) {
+    const keywords = document.getElementById("keywords").value
+      .split(",")
+      .map(word => word.trim())
+      .filter(Boolean)
+      .slice(0, 20);
+
+    return {
+      title: document.getElementById("title").value.trim(),
+      author: document.getElementById("author").value.trim(),
+      category: document.getElementById("category").value,
+      summary: document.getElementById("summary").value.trim(),
+      content: document.getElementById("content").value.trim(),
+      keywords,
+      status,
+      updatedAt: serverTimestamp()
+    };
+  }
+
+  async function savePublication(status) {
+    if (saving) return;
+
+    if (!form.reportValidity()) return;
+
+    saving = true;
+    const publishButton = document.getElementById("publishButton");
+    const draftButton = document.getElementById("draftButton");
+
+    publishButton.disabled = true;
+    draftButton.disabled = true;
+    formMessage.textContent = "Saving publication...";
+
+    try {
+      const data = getFormData(status);
+
+      if (editingId) {
+        const updateData = { ...data };
+
+        if (status === "published") {
+          updateData.publishedAt = serverTimestamp();
+        }
+
+        await updateDoc(
+          doc(db, "publications", editingId),
+          updateData
+        );
+
+      } else {
+        const newPublication = {
+          ...data,
+          createdAt: serverTimestamp(),
+          publishedAt: status === "published"
+            ? serverTimestamp()
+            : null
+        };
+
+        await addDoc(
+          collection(db, "publications"),
+          newPublication
+        );
+      }
+
+      formMessage.textContent = status === "published"
+        ? "Publication successfully published."
+        : "Publication saved as a draft.";
+
+      resetForm();
+      await loadPublications();
+
+    } catch (error) {
+      console.error(error);
+      formMessage.textContent =
+        "Could not save publication. Check your connection and permissions.";
+    } finally {
+      saving = false;
+      publishButton.disabled = false;
+      draftButton.disabled = false;
+    }
+  }
+
+  async function loadPublications() {
+    publicationList.textContent = "Loading publications...";
+
+    try {
+      const snapshot = await getDocs(
+        query(
+          collection(db, "publications"),
+          orderBy("updatedAt", "desc")
+        )
+      );
+
+      publications = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+
+      updateStatistics();
+      displayPublications();
+
+    } catch (error) {
+      console.error(error);
+      publicationList.textContent =
+        "Unable to load publications. Please refresh the page.";
+    }
+  }
+
+  function updateStatistics() {
+    document.getElementById("totalCount").textContent =
+      publications.length;
+
+    document.getElementById("publishedCount").textContent =
+      publications.filter(item => item.status === "published").length;
+
+    document.getElementById("draftCount").textContent =
+      publications.filter(item => item.status === "draft").length;
+  }
+
+  function displayPublications() {
+    const search = document.getElementById("searchInput")
+      .value.trim().toLowerCase();
+
+    const status = document.getElementById("statusFilter").value;
+
+    const filtered = publications.filter(item => {
+      const searchable = [
+        item.title,
+        item.author,
+        item.category,
+        item.summary,
+        ...(Array.isArray(item.keywords) ? item.keywords : [])
+      ].join(" ").toLowerCase();
+
+      return searchable.includes(search)
+        && (!status || item.status === status);
+    });
+
+    publicationList.innerHTML = "";
+
+    if (!filtered.length) {
+      publicationList.textContent = "No publications found.";
+      return;
+    }
+
+    filtered.forEach(item => {
+      const article = document.createElement("article");
+      article.className = "publication-item";
+
+      const safeStatus = ["published", "draft", "archived"]
+        .includes(item.status) ? item.status : "unknown";
+
+      article.innerHTML = `
+        <span class="status ${safeStatus}">
+          ${escapeHTML(safeStatus)}
+        </span>
+
+        <h3>${escapeHTML(item.title || "Untitled")}</h3>
+
+        <div class="meta">
+          ${escapeHTML(item.author || "Unknown author")}
+          · ${escapeHTML(item.category || "Other")}
+          · Updated ${formatDate(item.updatedAt)}
+        </div>
+
+        <p>${escapeHTML(item.summary || "")}</p>
+
+        <div class="actions">
+          <button class="btn btn-secondary edit-button">Edit</button>
+
+          ${safeStatus !== "published" ? `
+            <button class="btn btn-primary publish-button">
+              Publish
+            </button>
+          ` : `
+            <button class="btn btn-secondary archive-button">
+              Archive
+            </button>
+          `}
+
+          ${safeStatus === "archived" ? `
+            <button class="btn btn-secondary draft-button">
+              Restore as draft
+            </button>
+          ` : ""}
+
+          <button class="btn btn-danger delete-button">Delete</button>
+        </div>
+      `;
+
+      article.querySelector(".edit-button").addEventListener("click", () => {
+        editPublication(item);
+      });
+
+      const publish = article.querySelector(".publish-button");
+      if (publish) {
+        publish.addEventListener("click", () => {
+          changeStatus(item, "published");
+        });
+      }
+
+      const archive = article.querySelector(".archive-button");
+      if (archive) {
+        archive.addEventListener("click", () => {
+          changeStatus(item, "archived");
+        });
+      }
+
+      const restore = article.querySelector(".draft-button");
+      if (restore) {
+        restore.addEventListener("click", () => {
+          changeStatus(item, "draft");
+        });
+      }
+
+      article.querySelector(".delete-button").addEventListener("click", () => {
+        removePublication(item);
+      });
+
+      publicationList.appendChild(article);
+    });
+  }
+
+  function editPublication(item) {
+    editingId = item.id;
+
+    document.getElementById("title").value = item.title || "";
+    document.getElementById("author").value = item.author || "";
+    document.getElementById("category").value = item.category || "";
+    document.getElementById("summary").value = item.summary || "";
+    document.getElementById("content").value = item.content || "";
+    document.getElementById("keywords").value =
+      Array.isArray(item.keywords) ? item.keywords.join(", ") : "";
+
+    document.getElementById("formHeading").textContent =
+      "Edit publication";
+
+    document.getElementById("publishButton").textContent =
+      item.status === "published" ? "Save changes" : "Save and publish";
+
+    document.getElementById("cancelButton").style.display = "inline-block";
+
+    formMessage.textContent = `Editing: ${item.title}`;
+
+    document.getElementById("editorPanel").scrollIntoView({
+      behavior: "smooth"
+    });
+  }
+
+  async function changeStatus(item, status) {
+    const action = status === "published"
+      ? "publish"
+      : status === "archived"
+        ? "archive"
+        : "restore as draft";
+
+    if (!confirm(`Are you sure you want to ${action} this publication?`)) {
+      return;
+    }
+
+    try {
+      const updates = {
+        status,
+        updatedAt: serverTimestamp()
+      };
+
+      if (status === "published") {
+        updates.publishedAt = serverTimestamp();
+      }
+
+      await updateDoc(
+        doc(db, "publications", item.id),
+        updates
+      );
+
+      await loadPublications();
+
+    } catch (error) {
+      console.error(error);
+      alert("Unable to update publication status.");
+    }
+  }
+
+  async function removePublication(item) {
+    if (!confirm(`Permanently delete "${item.title}"? This cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, "publications", item.id));
+      await loadPublications();
+
+    } catch (error) {
+      console.error(error);
+      alert("Unable to delete publication.");
+    }
+  }
+
+  form.addEventListener("submit", event => {
+    event.preventDefault();
+    savePublication("published");
+  });
+
+  document.getElementById("draftButton").addEventListener("click", () => {
+    savePublication("draft");
+  });
+
+  document.getElementById("cancelButton").addEventListener("click", resetForm);
+
+  document.getElementById("searchInput")
+    .addEventListener("input", displayPublications);
+
+  document.getElementById("statusFilter")
+    .addEventListener("change", displayPublications);
+
+  onAuthStateChanged(auth, async user => {
+    if (!user) {
+      window.location.href = "../login.html";
+      return;
+    }
+
+    try {
+      const roleSnapshot = await getDoc(
+        doc(db, "roles", user.uid)
+      );
+
+      if (!roleSnapshot.exists()
+        || roleSnapshot.data().role !== "super_admin") {
+        accessMessage.textContent =
+          "Access denied. This page is restricted to SIRI super administrators.";
+        return;
+      }
+
+      accessMessage.textContent = "";
+      adminContent.style.display = "block";
+
+      await loadPublications();
+
+    } catch (error) {
+      console.error(error);
+      accessMessage.textContent =
+        "Unable to verify administrator access. Please try again.";
+    }
+  });
+</script>
+
+</body>
+</html>
