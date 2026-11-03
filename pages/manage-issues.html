@@ -1,0 +1,622 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Issue Management | SIRI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7f5;
+      color: #24352c;
+    }
+
+    header {
+      background: #075b3b;
+      color: white;
+      padding: 22px 6%;
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: 25px;
+    }
+
+    header p {
+      margin: 0;
+      color: #d7eee2;
+      font-size: 14px;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 25px auto;
+      padding: 0 16px 40px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    a.back {
+      color: #087044;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .stat, .panel, .issue-card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 25px;
+      color: #075b3b;
+      margin-top: 8px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #d5ded8;
+      border-radius: 8px;
+      font: inherit;
+      background: white;
+    }
+
+    textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 16px;
+      background: #087044;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #064f32;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .secondary {
+      background: #e8f1eb;
+      color: #075b3b;
+    }
+
+    .secondary:hover {
+      background: #d7e9dd;
+    }
+
+    .issue-card {
+      margin-bottom: 15px;
+    }
+
+    .issue-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .issue-heading h3 {
+      margin: 5px 0 10px;
+      font-size: 18px;
+    }
+
+    .meta {
+      color: #68766e;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .description {
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.6;
+      margin: 15px 0;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #edf3ef;
+      color: #315b43;
+      font-size: 12px;
+      margin: 3px 4px 3px 0;
+    }
+
+    .priority-critical {
+      background: #fde7e7;
+      color: #a51d1d;
+    }
+
+    .priority-high {
+      background: #fff0df;
+      color: #9a4d00;
+    }
+
+    .priority-medium {
+      background: #fff8d9;
+      color: #806400;
+    }
+
+    .priority-low {
+      background: #e6f4eb;
+      color: #17643b;
+    }
+
+    .admin-controls {
+      border-top: 1px solid #e5ebe7;
+      margin-top: 15px;
+      padding-top: 15px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .control-row {
+      display: grid;
+      grid-template-columns: 1fr 2fr auto;
+      gap: 10px;
+    }
+
+    .message {
+      padding: 13px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .error {
+      background: #fdeaea;
+      color: #9b2020;
+    }
+
+    .success {
+      background: #e5f5eb;
+      color: #17643b;
+    }
+
+    .empty {
+      text-align: center;
+      color: #68766e;
+      padding: 35px 10px;
+    }
+
+    .small {
+      font-size: 12px;
+      color: #68766e;
+    }
+
+    @media (max-width: 650px) {
+      .control-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>SOBO Issue Management Centre</h1>
+  <p>SIRI — SOBO Research and Intelligence Hub</p>
+</header>
+
+<main>
+
+  <div class="topbar">
+    <a class="back" href="../dashboard.html">← Back to Dashboard</a>
+    <button class="secondary" id="refreshBtn">Refresh Reports</button>
+  </div>
+
+  <div id="message" class="message"></div>
+
+  <section class="summary">
+    <div class="stat">
+      Total Reports
+      <strong id="totalCount">0</strong>
+    </div>
+
+    <div class="stat">
+      Submitted
+      <strong id="submittedCount">0</strong>
+    </div>
+
+    <div class="stat">
+      In Progress
+      <strong id="progressCount">0</strong>
+    </div>
+
+    <div class="stat">
+      Resolved
+      <strong id="resolvedCount">0</strong>
+    </div>
+  </section>
+
+  <section class="panel" style="margin-bottom:20px;">
+    <h3 style="margin-top:0;">Find and filter reports</h3>
+
+    <div class="filters">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search title, description or reference..."
+      >
+
+      <select id="statusFilter">
+        <option value="">All statuses</option>
+        <option value="submitted">Submitted</option>
+        <option value="under_review">Under Review</option>
+        <option value="in_progress">In Progress</option>
+        <option value="resolved">Resolved</option>
+        <option value="closed">Closed</option>
+      </select>
+
+      <select id="categoryFilter">
+        <option value="">All categories</option>
+        <option>Academic</option>
+        <option>Lectures and Timetables</option>
+        <option>Administration</option>
+        <option>Finance and Fees</option>
+        <option>Student Welfare</option>
+        <option>Campus Facilities</option>
+        <option>Leadership and Representation</option>
+        <option>Other</option>
+      </select>
+
+      <select id="priorityFilter">
+        <option value="">All priorities</option>
+        <option>Critical</option>
+        <option>High</option>
+        <option>Medium</option>
+        <option>Low</option>
+      </select>
+    </div>
+  </section>
+
+  <section>
+    <h2>Submitted Reports</h2>
+    <p class="small">
+      Review reports and provide official updates. Only authorised administrators
+      can access this management centre.
+    </p>
+
+    <div id="issuesList">
+      <div class="empty">Loading reports...</div>
+    </div>
+  </section>
+
+</main>
+
+<script type="module">
+  import { auth, db } from "../js/firebase.js";
+
+  import {
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+  import {
+    collection,
+    getDocs,
+    doc,
+    getDoc,
+    updateDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  const issuesList = document.getElementById("issuesList");
+  const messageBox = document.getElementById("message");
+
+  const searchInput = document.getElementById("searchInput");
+  const statusFilter = document.getElementById("statusFilter");
+  const categoryFilter = document.getElementById("categoryFilter");
+  const priorityFilter = document.getElementById("priorityFilter");
+
+  let allIssues = [];
+  let isAdmin = false;
+
+  const statuses = {
+    submitted: "Submitted",
+    under_review: "Under Review",
+    in_progress: "In Progress",
+    resolved: "Resolved",
+    closed: "Closed"
+  };
+
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[character]);
+  }
+
+  function showMessage(text, type = "success") {
+    messageBox.textContent = text;
+    messageBox.className = `message ${type}`;
+    messageBox.style.display = "block";
+  }
+
+  function hideMessage() {
+    messageBox.style.display = "none";
+  }
+
+  function formatDate(timestamp) {
+    if (!timestamp || typeof timestamp.toDate !== "function") {
+      return "Date unavailable";
+    }
+
+    return timestamp.toDate().toLocaleString();
+  }
+
+  function priorityClass(priority) {
+    return `priority-${String(priority || "").toLowerCase()}`;
+  }
+
+  function updateSummary() {
+    document.getElementById("totalCount").textContent = allIssues.length;
+
+    document.getElementById("submittedCount").textContent =
+      allIssues.filter(issue => issue.status === "submitted").length;
+
+    document.getElementById("progressCount").textContent =
+      allIssues.filter(issue => issue.status === "in_progress").length;
+
+    document.getElementById("resolvedCount").textContent =
+      allIssues.filter(issue =>
+        issue.status === "resolved" || issue.status === "closed"
+      ).length;
+  }
+
+  async function loadIssues() {
+    hideMessage();
+    issuesList.innerHTML = '<div class="empty">Loading reports...</div>';
+
+    try {
+      const snapshot = await getDocs(collection(db, "issues"));
+
+      allIssues = snapshot.docs.map(issueDoc => ({
+        id: issueDoc.id,
+        ...issueDoc.data()
+      }));
+
+      allIssues.sort((a, b) => {
+        const dateA = a.createdAt?.toMillis?.() || 0;
+        const dateB = b.createdAt?.toMillis?.() || 0;
+        return dateB - dateA;
+      });
+
+      updateSummary();
+      renderIssues();
+
+    } catch (error) {
+      console.error(error);
+      issuesList.innerHTML =
+        '<div class="empty">Unable to load reports. Check your Firestore rules and connection.</div>';
+      showMessage("Could not load reports: " + error.message, "error");
+    }
+  }
+
+  function renderIssues() {
+    const search = searchInput.value.trim().toLowerCase();
+    const selectedStatus = statusFilter.value;
+    const selectedCategory = categoryFilter.value;
+    const selectedPriority = priorityFilter.value;
+
+    const filtered = allIssues.filter(issue => {
+      const searchableText = [
+        issue.id,
+        issue.title,
+        issue.description,
+        issue.registrationNumber
+      ].join(" ").toLowerCase();
+
+      return (
+        (!search || searchableText.includes(search)) &&
+        (!selectedStatus || issue.status === selectedStatus) &&
+        (!selectedCategory || issue.category === selectedCategory) &&
+        (!selectedPriority || issue.priority === selectedPriority)
+      );
+    });
+
+    if (filtered.length === 0) {
+      issuesList.innerHTML =
+        '<div class="empty">No reports match your filters.</div>';
+      return;
+    }
+
+    issuesList.innerHTML = filtered.map(issue => {
+      const identified = issue.reportType === "identified";
+      const status = statuses[issue.status] || issue.status || "Unknown";
+
+      return `
+        <article class="issue-card">
+          <div class="issue-heading">
+            <div>
+              <span class="tag">${identified ? "Identified" : "Anonymous"}</span>
+              <span class="tag">${escapeHTML(issue.category)}</span>
+              <h3>${escapeHTML(issue.title)}</h3>
+            </div>
+
+            <span class="tag ${priorityClass(issue.priority)}">
+              ${escapeHTML(issue.priority || "Unspecified")} Priority
+            </span>
+          </div>
+
+          <div class="meta">
+            Reference: ${escapeHTML(issue.id)}<br>
+            Submitted: ${escapeHTML(formatDate(issue.createdAt))}<br>
+            Current status: ${escapeHTML(status)}
+            ${
+              identified
+                ? `<br>Registration number: ${escapeHTML(issue.registrationNumber)}
+                   <br>Course: ${escapeHTML(issue.course)}
+                   <br>Year: ${escapeHTML(issue.year)}`
+                : ""
+            }
+          </div>
+
+          <p class="description">${escapeHTML(issue.description)}</p>
+
+          <div class="admin-controls">
+            <label>
+              <strong>Update report status</strong>
+              <select id="status-${escapeHTML(issue.id)}">
+                ${Object.entries(statuses).map(([value, label]) => `
+                  <option value="${value}" ${issue.status === value ? "selected" : ""}>
+                    ${label}
+                  </option>
+                `).join("")}
+              </select>
+            </label>
+
+            <label>
+              <strong>Official response</strong>
+              <textarea
+                id="response-${escapeHTML(issue.id)}"
+                maxlength="3000"
+                placeholder="Write an official response or update for the student..."
+              >${escapeHTML(issue.adminResponse || "")}</textarea>
+            </label>
+
+            <div>
+              <button
+                class="saveBtn"
+                data-id="${escapeHTML(issue.id)}"
+                type="button"
+              >Save Update</button>
+            </div>
+
+            <p class="small">
+              The student can view the status and official response using their tracking reference.
+            </p>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    document.querySelectorAll(".saveBtn").forEach(button => {
+      button.addEventListener("click", () => saveIssue(button.dataset.id, button));
+    });
+  }
+
+  async function saveIssue(issueId, button) {
+    if (!isAdmin) return;
+
+    const statusElement = document.getElementById(`status-${issueId}`);
+    const responseElement = document.getElementById(`response-${issueId}`);
+
+    if (!statusElement || !responseElement) return;
+
+    const newStatus = statusElement.value;
+    const adminResponse = responseElement.value.trim();
+
+    if (adminResponse.length > 3000) {
+      showMessage("The response must not exceed 3,000 characters.", "error");
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Saving...";
+
+    try {
+      await updateDoc(doc(db, "issues", issueId), {
+        status: newStatus,
+        adminResponse,
+        updatedAt: serverTimestamp()
+      });
+
+      showMessage("Report updated successfully.");
+      await loadIssues();
+
+    } catch (error) {
+      console.error(error);
+      showMessage("Update failed: " + error.message, "error");
+      button.disabled = false;
+      button.textContent = "Save Update";
+    }
+  }
+
+  onAuthStateChanged(auth, async user => {
+    if (!user) {
+      window.location.href = "../login.html";
+      return;
+    }
+
+    try {
+      const roleSnapshot = await getDoc(doc(db, "roles", user.uid));
+
+      if (!roleSnapshot.exists() ||
+          roleSnapshot.data().role !== "super_admin") {
+        document.querySelector("main").innerHTML = `
+          <div class="panel">
+            <h2>Access restricted</h2>
+            <p>You are not authorised to manage SOBO issue reports.</p>
+            <a class="back" href="../dashboard.html">Return to Dashboard</a>
+          </div>
+        `;
+        return;
+      }
+
+      isAdmin = true;
+      await loadIssues();
+
+    } catch (error) {
+      console.error(error);
+      showMessage("Unable to verify administrator access.", "error");
+    }
+  });
+
+  searchInput.addEventListener("input", renderIssues);
+  statusFilter.addEventListener("change", renderIssues);
+  categoryFilter.addEventListener("change", renderIssues);
+  priorityFilter.addEventListener("change", renderIssues);
+
+  document.getElementById("refreshBtn").addEventListener("click", loadIssues);
+</script>
+
+</body>
+</html>
