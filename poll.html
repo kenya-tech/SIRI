@@ -1,0 +1,511 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Poll | SIRI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 25px 16px;
+      background:
+        radial-gradient(circle at top right, #183b52 0, transparent 35%),
+        linear-gradient(135deg, #080d1b, #101c2e 60%, #0b1725);
+      color: #eef5fa;
+    }
+
+    .container {
+      max-width: 680px;
+      margin: 45px auto;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .brand h1 {
+      font-size: 30px;
+      letter-spacing: 5px;
+      color: #55d8c2;
+    }
+
+    .brand p {
+      color: #a8bacb;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .poll-card {
+      background: rgba(20, 34, 53, .94);
+      border: 1px solid rgba(115, 176, 202, .2);
+      border-radius: 18px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 20px;
+      background: rgba(47, 198, 174, .12);
+      color: #55d8c2;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      font-size: 25px;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .description {
+      color: #aebdca;
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 25px;
+      white-space: pre-wrap;
+    }
+
+    .instruction {
+      color: #aebdca;
+      font-size: 13px;
+      margin-bottom: 13px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      margin-bottom: 11px;
+      border: 1px solid #34465c;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .option:hover {
+      border-color: #55d8c2;
+      background: rgba(85,216,194,.06);
+    }
+
+    .option input {
+      width: 18px;
+      height: 18px;
+      accent-color: #35c6ad;
+      flex-shrink: 0;
+    }
+
+    .option span {
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .option:has(input:checked) {
+      border-color: #55d8c2;
+      background: rgba(85,216,194,.09);
+    }
+
+    .submit {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(100deg, #159d86, #42d5bc);
+      color: #061c20;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+
+    .submit:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    .message {
+      padding: 14px;
+      border-radius: 9px;
+      margin-top: 17px;
+      font-size: 14px;
+      line-height: 1.6;
+      display: none;
+    }
+
+    .success {
+      display: block;
+      color: #8cf0c4;
+      background: rgba(35, 160, 106, .12);
+      border: 1px solid rgba(35, 160, 106, .3);
+    }
+
+    .error {
+      display: block;
+      color: #ffaaaa;
+      background: rgba(190, 60, 60, .12);
+      border: 1px solid rgba(190, 60, 60, .3);
+    }
+
+    .loading, .unavailable {
+      text-align: center;
+      padding: 35px 10px;
+      color: #b7c6d3;
+      line-height: 1.7;
+    }
+
+    .unavailable h2 {
+      margin-bottom: 12px;
+    }
+
+    .footer {
+      text-align: center;
+      color: #8294a5;
+      font-size: 12px;
+      margin-top: 25px;
+      line-height: 1.7;
+    }
+
+    .back {
+      display: inline-block;
+      color: #55d8c2;
+      text-decoration: none;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    @media(max-width: 500px) {
+      .container {
+        margin: 20px auto;
+      }
+
+      .poll-card {
+        padding: 22px 18px;
+      }
+
+      h2 {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="brand">
+    <h1>SIRI</h1>
+    <p>SOBO Research and Intelligence Hub</p>
+  </div>
+
+  <div class="poll-card" id="pollCard">
+    <div class="loading" id="loadingMessage">
+      Connecting to SIRI and retrieving your poll...
+    </div>
+  </div>
+
+  <div class="footer">
+    University of Nairobi<br>
+    School of Business Organizations
+  </div>
+
+</div>
+
+<script type="module">
+
+  import { auth, db } from "./js/firebase.js";
+
+  import {
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+  import {
+    doc,
+    getDoc,
+    setDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  const pollCard = document.getElementById("pollCard");
+
+  const params = new URLSearchParams(window.location.search);
+  const pollId = params.get("id");
+
+  let currentPoll = null;
+  let currentUser = null;
+  let submitting = false;
+
+  function showUnavailable(title, message) {
+    pollCard.innerHTML = `
+      <div class="unavailable">
+        <h2>${title}</h2>
+        <p>${message}</p>
+        <a class="back" href="./index.html">Visit SIRI homepage</a>
+      </div>
+    `;
+  }
+
+  function showMessage(message, type) {
+    const box = document.getElementById("voteMessage");
+
+    if (!box) return;
+
+    box.textContent = message;
+    box.className = "message " + type;
+  }
+
+  async function loadPoll(user) {
+    currentUser = user;
+
+    if (!pollId) {
+      showUnavailable(
+        "Invalid Poll Link",
+        "This link does not contain a valid poll reference."
+      );
+      return;
+    }
+
+    try {
+      // Verify the student's registration.
+      const profileRef = doc(db, "registrationRequests", user.uid);
+      const profileSnapshot = await getDoc(profileRef);
+
+      if (!profileSnapshot.exists() ||
+          profileSnapshot.data().status !== "active") {
+        showUnavailable(
+          "Account Not Active",
+          "Your SIRI student account could not be verified. Please contact the SIRI administrator."
+        );
+        return;
+      }
+
+      // Retrieve the exact poll from the shared link.
+      const pollRef = doc(db, "studentPolls", pollId);
+      const pollSnapshot = await getDoc(pollRef);
+
+      if (!pollSnapshot.exists()) {
+        showUnavailable(
+          "Poll Not Found",
+          "This poll may have been deleted or the link may be incorrect."
+        );
+        return;
+      }
+
+      currentPoll = pollSnapshot.data();
+
+      if (currentPoll.status !== "published") {
+        showUnavailable(
+          "Poll Unavailable",
+          "This poll is not currently open for participation."
+        );
+        return;
+      }
+
+      if (!Array.isArray(currentPoll.options) ||
+          currentPoll.options.length < 2) {
+        showUnavailable(
+          "Poll Unavailable",
+          "This poll does not have valid answer options."
+        );
+        return;
+      }
+
+      // Check whether this student has already voted.
+      const voteId = `${pollId}_${user.uid}`;
+      const voteRef = doc(db, "pollVotes", voteId);
+      const voteSnapshot = await getDoc(voteRef);
+
+      renderPoll(
+        currentPoll,
+        voteSnapshot.exists()
+      );
+
+    } catch (error) {
+      console.error("Poll loading error:", error);
+
+      showUnavailable(
+        "Unable to Load Poll",
+        "We could not retrieve this poll. Please refresh the page or try again later."
+      );
+    }
+  }
+
+  function renderPoll(poll, alreadyVoted) {
+    pollCard.innerHTML = "";
+
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = "SIRI STUDENT POLL";
+
+    const question = document.createElement("h2");
+    question.textContent = poll.question || "Untitled Poll";
+
+    const description = document.createElement("p");
+    description.className = "description";
+    description.textContent =
+      poll.description || "Share your views by selecting one answer below.";
+
+    pollCard.appendChild(tag);
+    pollCard.appendChild(question);
+    pollCard.appendChild(description);
+
+    if (alreadyVoted) {
+      const notice = document.createElement("div");
+      notice.className = "message success";
+      notice.textContent =
+        "Our records show that you have already participated in this poll. Thank you for sharing your views.";
+
+      pollCard.appendChild(notice);
+      return;
+    }
+
+    const instruction = document.createElement("p");
+    instruction.className = "instruction";
+    instruction.textContent = "Select one answer:";
+
+    pollCard.appendChild(instruction);
+
+    const form = document.createElement("form");
+    form.id = "voteForm";
+
+    poll.options.forEach((option, index) => {
+      const label = document.createElement("label");
+      label.className = "option";
+
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "pollAnswer";
+      radio.value = option;
+      radio.required = true;
+
+      const text = document.createElement("span");
+      text.textContent = option;
+
+      label.appendChild(radio);
+      label.appendChild(text);
+      form.appendChild(label);
+    });
+
+    const submitButton = document.createElement("button");
+    submitButton.type = "submit";
+    submitButton.className = "submit";
+    submitButton.id = "submitVote";
+    submitButton.textContent = "Submit My Vote";
+
+    const message = document.createElement("div");
+    message.id = "voteMessage";
+    message.className = "message";
+
+    form.appendChild(submitButton);
+    form.appendChild(message);
+
+    form.addEventListener("submit", submitVote);
+
+    pollCard.appendChild(form);
+  }
+
+  async function submitVote(event) {
+    event.preventDefault();
+
+    if (submitting || !currentUser || !currentPoll) return;
+
+    const selected = document.querySelector(
+      'input[name="pollAnswer"]:checked'
+    );
+
+    if (!selected) {
+      showMessage("Please select an answer before submitting.", "error");
+      return;
+    }
+
+    if (!currentPoll.options.includes(selected.value)) {
+      showMessage("Invalid answer selection. Please refresh the page.", "error");
+      return;
+    }
+
+    const submitButton = document.getElementById("submitVote");
+
+    submitting = true;
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
+
+    try {
+      // Recheck that the poll is still published.
+      const pollRef = doc(db, "studentPolls", pollId);
+      const latestPoll = await getDoc(pollRef);
+
+      if (!latestPoll.exists() ||
+          latestPoll.data().status !== "published") {
+        showMessage("This poll is no longer open for voting.", "error");
+        submitButton.disabled = true;
+        submitButton.textContent = "Poll Closed";
+        return;
+      }
+
+      const voteId = `${pollId}_${currentUser.uid}`;
+      const voteRef = doc(db, "pollVotes", voteId);
+
+      // Check again to prevent duplicate submissions.
+      const existingVote = await getDoc(voteRef);
+
+      if (existingVote.exists()) {
+        renderPoll(currentPoll, true);
+        return;
+      }
+
+      await setDoc(voteRef, {
+        pollId: pollId,
+        uid: currentUser.uid,
+        selectedOption: selected.value,
+        createdAt: serverTimestamp()
+      });
+
+      renderPoll(currentPoll, true);
+
+    } catch (error) {
+      console.error("Vote submission error:", error);
+
+      showMessage(
+        "We could not submit your vote. Please try again.",
+        "error"
+      );
+
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit My Vote";
+
+    } finally {
+      submitting = false;
+    }
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      // Preserve this exact poll link for the registration/login step.
+      const returnUrl = window.location.href;
+
+      window.location.href =
+        "./register.html?next=" + encodeURIComponent(returnUrl);
+
+      return;
+    }
+
+    await loadPoll(user);
+  });
+
+</script>
+
+</body>
+</html>
