@@ -178,6 +178,17 @@
       font-weight: 600;
     }
 
+    .notification-badge {
+      display: inline-block;
+      background: #c0392b;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 5px 9px;
+      border-radius: 20px;
+      margin-left: 6px;
+    }
+
     .admin-section {
       margin-top: 35px;
       display: none;
@@ -293,8 +304,8 @@
         <h2>Explore SIRI</h2>
 
         <p>
-          Six connected research and intelligence functions
-          designed to strengthen student representation and
+          Research and intelligence functions designed to
+          strengthen student representation and
           institutional decision-making.
         </p>
       </div>
@@ -351,7 +362,6 @@
           <span class="status">Report or Track an Issue →</span>
         </a>
 
-        <!-- Working Research Publications link -->
         <a href="pages/research-publications.html" class="module">
           <div class="module-icon">📰</div>
           <h3>Research Publications</h3>
@@ -360,6 +370,20 @@
             findings and analytical publications.
           </p>
           <span class="status">Explore Publications →</span>
+        </a>
+
+        <!-- Student Notifications -->
+        <a href="pages/student-notifications.html" class="module">
+          <div class="module-icon">🔔</div>
+          <h3>
+            Notifications
+            <span class="notification-badge" id="unreadBadge" hidden>0</span>
+          </h3>
+          <p>
+            Receive important SOBO announcements, academic updates,
+            event notices and student welfare information.
+          </p>
+          <span class="status">View Notifications →</span>
         </a>
 
       </div>
@@ -379,7 +403,6 @@
 
         <a href="pages/manage-polls.html"
            class="module admin-module">
-
           <div class="module-icon">🗳️</div>
           <h3>Poll Administration</h3>
           <p>
@@ -387,12 +410,10 @@
             close voting and administer student polls.
           </p>
           <span class="status">Manage Polls →</span>
-
         </a>
 
         <a href="pages/intelligence-centre.html"
            class="module admin-module">
-
           <div class="module-icon">📈</div>
           <h3>SIRI Intelligence Centre</h3>
           <p>
@@ -400,12 +421,10 @@
             research insights, poll results and event evaluations.
           </p>
           <span class="status">Open Intelligence Centre →</span>
-
         </a>
 
         <a href="pages/manage-issues.html"
            class="module admin-module">
-
           <div class="module-icon">🛠️</div>
           <h3>Issue Management Centre</h3>
           <p>
@@ -413,13 +432,10 @@
             update progress and provide official responses.
           </p>
           <span class="status">Manage Student Issues →</span>
-
         </a>
 
-        <!-- New Publication Management Centre -->
         <a href="pages/manage-publications.html"
            class="module admin-module">
-
           <div class="module-icon">📝</div>
           <h3>Publication Management Centre</h3>
           <p>
@@ -427,7 +443,18 @@
             edit publications and archive older content.
           </p>
           <span class="status">Manage Publications →</span>
+        </a>
 
+        <!-- Notification Management -->
+        <a href="pages/manage-notifications.html"
+           class="module admin-module">
+          <div class="module-icon">📢</div>
+          <h3>Notification Management</h3>
+          <p>
+            Create SOBO announcements, save drafts,
+            publish updates and manage student notifications.
+          </p>
+          <span class="status">Manage Notifications →</span>
         </a>
 
       </div>
@@ -452,10 +479,15 @@
 
     import {
       doc,
-      getDoc
+      getDoc,
+      collection,
+      query,
+      where,
+      getDocs
     } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
     const message = document.getElementById("message");
+    const unreadBadge = document.getElementById("unreadBadge");
 
     onAuthStateChanged(auth, async (user) => {
 
@@ -511,6 +543,9 @@
         message.textContent =
           "Your account is active. Welcome aboard!";
 
+        // Load the student's unread notification count.
+        await loadUnreadCount(user.uid);
+
       } catch (error) {
 
         console.error(error);
@@ -521,6 +556,58 @@
       }
 
     });
+
+    async function loadUnreadCount(uid) {
+
+      try {
+
+        const publishedQuery = query(
+          collection(db, "notifications"),
+          where("status", "==", "published")
+        );
+
+        const readsQuery = query(
+          collection(db, "notificationReads"),
+          where("uid", "==", uid)
+        );
+
+        const [publishedSnapshot, readsSnapshot] =
+          await Promise.all([
+            getDocs(publishedQuery),
+            getDocs(readsQuery)
+          ]);
+
+        const readIds = new Set(
+          readsSnapshot.docs.map(item =>
+            item.data().notificationId
+          )
+        );
+
+        const unread = publishedSnapshot.docs.filter(
+          item => !readIds.has(item.id)
+        ).length;
+
+        if (unread > 0) {
+          unreadBadge.textContent =
+            unread > 99 ? "99+" : unread;
+
+          unreadBadge.hidden = false;
+        } else {
+          unreadBadge.hidden = true;
+        }
+
+      } catch (error) {
+
+        console.error("Unread notification count:", error);
+
+        // Keep the dashboard working even if the count
+        // cannot be retrieved.
+
+        unreadBadge.hidden = true;
+
+      }
+
+    }
 
     document.getElementById("logoutButton")
       .addEventListener("click", async () => {
