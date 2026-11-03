@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Issue Tracking | SIRI</title>
+
+<style>
+:root {
+  --green:#176B45;
+  --dark:#10452F;
+  --bg:#f7f9f7;
+  --border:#e4eae5;
+  --muted:#727d75;
+}
+* {box-sizing:border-box;margin:0;padding:0}
+body {
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:#171717;
+}
+header {
+  background:white;
+  padding:18px 7%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--border);
+}
+.brand {font-size:24px;font-weight:800;color:var(--green)}
+.back {
+  color:var(--green);
+  text-decoration:none;
+  font-weight:bold;
+}
+main {max-width:800px;margin:35px auto;padding:0 18px}
+.intro {
+  background:var(--dark);
+  color:white;
+  padding:28px;
+  border-radius:12px;
+  margin-bottom:25px;
+}
+.intro h1 {margin-bottom:10px}
+.intro p {line-height:1.6;opacity:.9}
+.card {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:25px;
+  margin-bottom:22px;
+}
+h2 {font-size:20px;margin-bottom:18px;color:var(--dark)}
+.field {margin-bottom:18px}
+label {
+  display:block;
+  font-weight:600;
+  margin-bottom:8px;
+  font-size:14px;
+}
+input,select,textarea {
+  width:100%;
+  padding:13px;
+  border:1px solid #d7dfd9;
+  border-radius:7px;
+  font-size:14px;
+  font-family:inherit;
+}
+textarea {min-height:130px;resize:vertical}
+input:focus,select:focus,textarea:focus {
+  outline:2px solid #b7d8c3;
+  border-color:var(--green);
+}
+.choice {
+  border:1px solid var(--border);
+  padding:15px;
+  border-radius:8px;
+  margin-bottom:10px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  cursor:pointer;
+}
+.choice input {width:auto;margin-top:3px}
+.choice strong {display:block;margin-bottom:5px}
+.choice small {color:var(--muted);line-height:1.5}
+button {
+  background:var(--green);
+  color:white;
+  border:0;
+  padding:14px 20px;
+  border-radius:7px;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:disabled {opacity:.6;cursor:not-allowed}
+.full {width:100%}
+.notice {
+  background:#f0f6f1;
+  padding:13px;
+  border-radius:7px;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:18px;
+  color:var(--dark);
+}
+#message {
+  margin-top:15px;
+  font-size:14px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.success {
+  background:#edf7ef;
+  border:1px solid #b7d8c3;
+  padding:18px;
+  border-radius:8px;
+  margin-top:18px;
+  line-height:1.7;
+}
+.ref {
+  font-weight:bold;
+  font-size:18px;
+  color:var(--dark);
+  overflow-wrap:anywhere;
+}
+footer {
+  text-align:center;
+  padding:25px;
+  color:var(--muted);
+  font-size:13px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">SIRI</div>
+  <a class="back" href="../dashboard.html">← Dashboard</a>
+</header>
+
+<main>
+
+<section class="intro">
+  <h1>Student Issue Tracking</h1>
+  <p>
+    Your voice matters. Report concerns affecting students,
+    academic experiences and the School of Business community.
+    Follow your report using its tracking reference.
+  </p>
+</section>
+
+<section class="card">
+  <h2>Submit an Issue</h2>
+
+  <div class="notice">
+    You must be signed in to submit a report. Choose whether
+    to disclose your identity. Anonymous reports do not include
+    your student profile details in the issue record.
+  </div>
+
+  <form id="issueForm">
+
+    <div class="field">
+      <label>How would you like to report?</label>
+
+      <label class="choice">
+        <input type="radio" name="reportType"
+          value="identified" checked>
+        <span>
+          <strong>Identified report</strong>
+          <small>Your registration details will accompany
+          the report and be visible to authorised administrators.</small>
+        </span>
+      </label>
+
+      <label class="choice">
+        <input type="radio" name="reportType"
+          value="anonymous">
+        <span>
+          <strong>Anonymous report</strong>
+          <small>Your UID, registration number, course,
+          year and phone number will not be stored in the report.</small>
+        </span>
+      </label>
+    </div>
+
+    <div class="field">
+      <label for="category">Issue Category</label>
+      <select id="category" required>
+        <option value="">Select category</option>
+        <option>Academic</option>
+        <option>Lectures and Timetables</option>
+        <option>Administration</option>
+        <option>Finance and Fees</option>
+        <option>Student Welfare</option>
+        <option>Campus Facilities</option>
+        <option>Leadership and Representation</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="title">Issue Title</label>
+      <input id="title" maxlength="150"
+        placeholder="Briefly describe the issue" required>
+    </div>
+
+    <div class="field">
+      <label for="description">Detailed Description</label>
+      <textarea id="description" maxlength="3000"
+        placeholder="Explain what happened, who is affected and what action you would like taken..."
+        required></textarea>
+    </div>
+
+    <div class="field">
+      <label for="priority">Urgency</label>
+      <select id="priority" required>
+        <option value="">Select urgency</option>
+        <option>Low</option>
+        <option>Medium</option>
+        <option>High</option>
+        <option>Critical</option>
+      </select>
+    </div>
+
+    <button class="full" id="submitButton" type="submit">
+      Submit Issue
+    </button>
+
+    <p id="message" role="status"></p>
+    <div id="successBox"></div>
+
+  </form>
+</section>
+
+<section class="card">
+  <h2>Track an Existing Issue</h2>
+
+  <p style="color:#727d75;line-height:1.6;margin-bottom:17px">
+    Enter the tracking reference you received after submitting
+    your report.
+  </p>
+
+  <form id="trackForm">
+    <div class="field">
+      <label for="trackingCode">Tracking Reference</label>
+      <input id="trackingCode"
+        placeholder="Paste your tracking reference" required>
+    </div>
+    <button type="submit">Check Issue Status</button>
+    <p id="trackMessage" role="status"></p>
+    <div id="trackResult"></div>
+  </form>
+</section>
+
+</main>
+
+<footer>
+  SIRI | SOBO Research and Intelligence Hub<br>
+  University of Nairobi · School of Business Organizations
+</footer>
+
+<script type="module">
+
+import { auth, db } from "../js/firebase.js";
+
+import {
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+import {
+  collection,
+  addDoc,
+  doc,
+  getDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+let currentUser = null;
+let studentProfile = null;
+
+const form = document.getElementById("issueForm");
+const submitButton = document.getElementById("submitButton");
+const message = document.getElementById("message");
+
+onAuthStateChanged(auth, async (user) => {
+
+  if (!user) {
+    window.location.href = "../login.html";
+    return;
+  }
+
+  currentUser = user;
+
+  try {
+    const profileRef = doc(db, "registrationRequests", user.uid);
+    const snapshot = await getDoc(profileRef);
+
+    if (!snapshot.exists() || snapshot.data().status !== "active") {
+      message.textContent = "An active student profile is required.";
+      submitButton.disabled = true;
+      return;
+    }
+
+    studentProfile = snapshot.data();
+    message.textContent = "Your account is ready to submit an issue.";
+
+  } catch (error) {
+    console.error(error);
+    message.textContent = "Unable to verify your student profile.";
+    submitButton.disabled = true;
+  }
+
+});
+
+form.addEventListener("submit", async (event) => {
+
+  event.preventDefault();
+
+  if (!currentUser || !studentProfile) {
+    message.textContent = "Please wait while your account is verified.";
+    return;
+  }
+
+  const reportType = document.querySelector(
+    'input[name="reportType"]:checked'
+  ).value;
+
+  const category = document.getElementById("category").value;
+  const title = document.getElementById("title").value.trim();
+  const description = document.getElementById("description").value.trim();
+  const priority = document.getElementById("priority").value;
+
+  if (!title || !description || !category || !priority) {
+    message.textContent = "Please complete all required fields.";
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Submitting...";
+
+  try {
+
+    const issueData = {
+      reportType,
+      category,
+      title,
+      description,
+      priority,
+      status: "submitted",
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+
+    if (reportType === "identified") {
+      issueData.uid = currentUser.uid;
+      issueData.registrationNumber = studentProfile.registrationNumber;
+      issueData.course = studentProfile.course;
+      issueData.year = studentProfile.year;
+    }
+
+    const issueRef = await addDoc(
+      collection(db, "issues"),
+      issueData
+    );
+
+    document.getElementById("successBox").innerHTML = `
+      <div class="success">
+        <strong>Your issue has been submitted successfully.</strong>
+        <p>Your tracking reference is:</p>
+        <p class="ref">${issueRef.id}</p>
+        <p>Keep this reference private. You will need it to
+        check the progress of your report.</p>
+      </div>
+    `;
+
+    form.reset();
+    message.textContent = "";
+
+  } catch (error) {
+
+    console.error(error);
+    message.textContent =
+      "Submission failed: " + error.message;
+
+  } finally {
+
+    submitButton.disabled = false;
+    submitButton.textContent = "Submit Issue";
+
+  }
+
+});
+
+document.getElementById("trackForm")
+.addEventListener("submit", async (event) => {
+
+  event.preventDefault();
+
+  const code = document.getElementById("trackingCode")
+    .value.trim();
+
+  const trackMessage = document.getElementById("trackMessage");
+  const result = document.getElementById("trackResult");
+
+  trackMessage.textContent = "Checking...";
+  result.innerHTML = "";
+
+  try {
+
+    const issueRef = doc(db, "issues", code);
+    const snapshot = await getDoc(issueRef);
+
+    if (!snapshot.exists()) {
+      trackMessage.textContent =
+        "No issue was found. Check your tracking reference.";
+      return;
+    }
+
+    const issue = snapshot.data();
+
+    const date = issue.createdAt?.toDate
+      ? issue.createdAt.toDate().toLocaleDateString()
+      : "Pending";
+
+    result.innerHTML = `
+      <div class="success">
+        <strong>${escapeHTML(issue.title)}</strong>
+        <p>Category: ${escapeHTML(issue.category)}</p>
+        <p>Status: <strong>${escapeHTML(issue.status)}</strong></p>
+        <p>Urgency: ${escapeHTML(issue.priority)}</p>
+        <p>Submitted: ${date}</p>
+        <p>Administrator response: ${
+          escapeHTML(issue.adminResponse || "No response yet.")
+        }</p>
+      </div>
+    `;
+
+    trackMessage.textContent = "";
+
+  } catch (error) {
+
+    console.error(error);
+    trackMessage.textContent =
+      "Unable to retrieve this report. Check the reference and permissions.";
+
+  }
+
+});
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  })[char]);
+}
+
+</script>
+
+</body>
+</html>
