@@ -5,7 +5,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SIRI | Intelligence Centre</title>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 
 <style>
 :root {
@@ -27,6 +29,7 @@ main{max-width:1250px;margin:auto;padding:25px 18px 50px}
 button,select{padding:11px 15px;border:1px solid var(--border);border-radius:8px;background:white;cursor:pointer;font-size:14px}
 button.primary{background:var(--blue);color:white;border:0}
 button:hover{opacity:.88}
+button:disabled{opacity:.55;cursor:wait}
 .section-title{font-size:19px;margin:28px 0 14px;color:var(--navy)}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .card,.panel{background:white;border:1px solid var(--border);border-radius:13px;padding:18px;box-shadow:0 3px 12px #182c4d08}
@@ -75,6 +78,7 @@ th{background:#f7f8fc;color:#46536b}
     <div>
       <button onclick="location.href='../dashboard.html'">← Dashboard</button>
       <button class="primary" id="refreshBtn">Refresh data</button>
+      <button class="primary" id="generatePdfBtn">Generate PDF Report</button>
     </div>
   </div>
 
@@ -86,258 +90,186 @@ th{background:#f7f8fc;color:#46536b}
       Figures represent records currently stored in SIRI. Student totals are registered SIRI profiles, not an independently verified University of Nairobi enrolment count.
     </div>
 
-    <!-- INSTITUTIONAL OVERVIEW -->
-
     <h2 class="section-title">Institutional overview</h2>
 
     <div class="cards">
-
       <div class="card">
         <div class="metric-label">Registered student profiles</div>
         <div class="metric-value" id="studentCount">0</div>
         <div class="metric-note">Active profiles recorded in SIRI</div>
       </div>
-
       <div class="card">
         <div class="metric-label">Research requests</div>
         <div class="metric-value" id="requestCount">0</div>
         <div class="metric-note">All submitted requests</div>
       </div>
-
       <div class="card">
         <div class="metric-label">Poll responses</div>
         <div class="metric-value" id="voteCount">0</div>
         <div class="metric-note">Recorded student votes</div>
       </div>
-
       <div class="card">
         <div class="metric-label">Event evaluations</div>
         <div class="metric-value" id="evaluationCount">0</div>
         <div class="metric-note">Feedback submissions</div>
       </div>
-
       <div class="card">
         <div class="metric-label">Published research reports</div>
         <div class="metric-value" id="reportCount">0</div>
         <div class="metric-note">Reports in the research archive</div>
       </div>
-
       <div class="card">
         <div class="metric-label">Published polls</div>
         <div class="metric-value" id="pollCount">0</div>
         <div class="metric-note">Currently published polls</div>
       </div>
-
       <div class="card">
         <div class="metric-label">B.Com profiles</div>
         <div class="metric-value" id="bcomCount">0</div>
         <div class="metric-note">Registered profiles</div>
       </div>
-
       <div class="card">
         <div class="metric-label">PPM profiles</div>
         <div class="metric-value" id="ppmCount">0</div>
         <div class="metric-note">Registered profiles</div>
       </div>
-
       <div class="card">
         <div class="metric-label">Issues reported</div>
         <div class="metric-value" id="issueCount">0</div>
         <div class="metric-note">Records in issue tracking</div>
       </div>
-
       <div class="card">
         <div class="metric-label">Unresolved issues</div>
         <div class="metric-value" id="unresolvedIssueCount">0</div>
         <div class="metric-note">Issues requiring attention</div>
       </div>
-
       <div class="card">
         <div class="metric-label">Resolved issues</div>
         <div class="metric-value" id="resolvedIssueCount">0</div>
         <div class="metric-note">Issues marked resolved or closed</div>
       </div>
-
       <div class="card">
         <div class="metric-label">Published publications</div>
         <div class="metric-value" id="publicationCount">0</div>
         <div class="metric-note">Articles available to students</div>
       </div>
-
     </div>
 
-
-    <!-- STUDENT DEMOGRAPHICS -->
-
     <h2 class="section-title">Student demographics</h2>
-
     <div class="charts">
-
       <div class="panel">
         <h3>Students by course</h3>
         <div class="chart-wrap"><canvas id="courseChart"></canvas></div>
       </div>
-
       <div class="panel">
         <h3>Students by year of study</h3>
         <div class="chart-wrap"><canvas id="yearChart"></canvas></div>
       </div>
-
       <div class="panel full">
         <h3>Course distribution across years</h3>
         <div class="chart-wrap"><canvas id="courseYearChart"></canvas></div>
       </div>
-
     </div>
 
-
-    <!-- POLL INTELLIGENCE -->
-
     <h2 class="section-title">Poll intelligence</h2>
-
     <div class="panel">
       <h3>Select a poll to analyse</h3>
-
       <select id="pollSelect" style="width:100%;max-width:600px">
         <option value="">No polls available</option>
       </select>
-
       <div id="pollSummary" class="notice">
         Select a poll to view its results.
       </div>
     </div>
 
     <div class="charts" style="margin-top:16px">
-
       <div class="panel">
         <h3>Vote distribution</h3>
         <div class="chart-wrap"><canvas id="pollChart"></canvas></div>
       </div>
-
       <div class="panel">
         <h3>Votes by course</h3>
         <div class="chart-wrap"><canvas id="pollCourseChart"></canvas></div>
       </div>
-
       <div class="panel full">
         <h3>Votes by year of study</h3>
         <div class="chart-wrap"><canvas id="pollYearChart"></canvas></div>
       </div>
-
     </div>
 
-
-    <!-- RESEARCH INTELLIGENCE -->
-
     <h2 class="section-title">Research intelligence</h2>
-
     <div class="charts">
-
       <div class="panel">
         <h3>Research requests by status</h3>
         <div class="chart-wrap"><canvas id="requestStatusChart"></canvas></div>
       </div>
-
       <div class="panel">
         <h3>Research requests by category</h3>
         <div class="chart-wrap"><canvas id="requestCategoryChart"></canvas></div>
       </div>
-
       <div class="panel">
         <h3>Published reports by category</h3>
         <div class="chart-wrap"><canvas id="reportCategoryChart"></canvas></div>
       </div>
-
       <div class="panel">
         <h3>Research reports by year</h3>
         <div class="chart-wrap"><canvas id="reportYearChart"></canvas></div>
       </div>
-
     </div>
 
-
-    <!-- EVENT FEEDBACK -->
-
     <h2 class="section-title">Event feedback intelligence</h2>
-
     <div class="charts">
-
       <div class="panel">
         <h3>Average event satisfaction</h3>
         <div class="metric-value" id="averageSatisfaction">—</div>
         <div class="metric-note">Average rating out of 5</div>
       </div>
-
       <div class="panel">
         <h3>Event evaluations by type</h3>
         <div class="chart-wrap"><canvas id="eventTypeChart"></canvas></div>
       </div>
-
       <div class="panel full">
         <h3>Average feedback ratings</h3>
         <div class="chart-wrap"><canvas id="ratingChart"></canvas></div>
       </div>
-
     </div>
 
-
-    <!-- ISSUE TRACKING INTELLIGENCE -->
-
     <h2 class="section-title">Issue tracking intelligence</h2>
-
     <div class="notice">
       Analysis of student concerns and reported issues. These figures represent records submitted through SIRI.
     </div>
-
     <div class="charts">
-
       <div class="panel">
         <h3>Issues by status</h3>
         <div class="chart-wrap"><canvas id="issueStatusChart"></canvas></div>
       </div>
-
       <div class="panel">
         <h3>Issues by category</h3>
         <div class="chart-wrap"><canvas id="issueCategoryChart"></canvas></div>
       </div>
-
       <div class="panel full">
         <h3>Issue resolution overview</h3>
         <div class="chart-wrap"><canvas id="issueResolutionChart"></canvas></div>
       </div>
-
     </div>
 
-
-    <!-- PUBLICATION INTELLIGENCE -->
-
     <h2 class="section-title">Research publications intelligence</h2>
-
     <div class="notice">
       Analysis of publications released through the SIRI Research Publications module.
     </div>
-
     <div class="charts">
-
       <div class="panel">
         <h3>Publications by category</h3>
         <div class="chart-wrap"><canvas id="publicationCategoryChart"></canvas></div>
       </div>
-
       <div class="panel">
         <h3>Publications by year</h3>
         <div class="chart-wrap"><canvas id="publicationYearChart"></canvas></div>
       </div>
-
     </div>
 
-
-    <!-- STUDENT DISTRIBUTION TABLE -->
-
     <h2 class="section-title">Student distribution table</h2>
-
     <div class="panel table-wrap">
-
       <table>
         <thead>
           <tr>
@@ -349,10 +281,8 @@ th{background:#f7f8fc;color:#46536b}
             <th>Total</th>
           </tr>
         </thead>
-
         <tbody id="distributionTable"></tbody>
       </table>
-
     </div>
 
     <div class="notice" style="margin-top:22px">
@@ -360,9 +290,7 @@ th{background:#f7f8fc;color:#46536b}
     </div>
 
   </div>
-
 </main>
-
 
 <script type="module">
 
@@ -394,11 +322,9 @@ function showError(message) {
 
 
 function countBy(items, key, fallback = "Not specified") {
-
   const result = {};
 
   items.forEach(item => {
-
     const value =
       item[key] === undefined ||
       item[key] === null ||
@@ -407,26 +333,19 @@ function countBy(items, key, fallback = "Not specified") {
         : String(item[key]);
 
     result[value] = (result[value] || 0) + 1;
-
   });
 
   return result;
-
 }
 
 
-// Supports different possible field names without changing stored records.
-
 function countByAny(items, keys, fallback = "Not specified") {
-
   const result = {};
 
   items.forEach(item => {
-
     let value = "";
 
     for (const key of keys) {
-
       if (
         item[key] !== undefined &&
         item[key] !== null &&
@@ -435,22 +354,17 @@ function countByAny(items, keys, fallback = "Not specified") {
         value = item[key];
         break;
       }
-
     }
 
     value = value === "" ? fallback : String(value);
-
     result[value] = (result[value] || 0) + 1;
-
   });
 
   return result;
-
 }
 
 
 function average(items, key) {
-
   const values = items
     .map(x => Number(x[key]))
     .filter(x => Number.isFinite(x) && x >= 1 && x <= 5);
@@ -458,58 +372,38 @@ function average(items, key) {
   return values.length
     ? values.reduce((a, b) => a + b, 0) / values.length
     : null;
-
 }
 
 
 function draw(id, type, labels, datasets, extra = {}) {
-
-  if (charts[id]) {
-    charts[id].destroy();
-  }
+  if (charts[id]) charts[id].destroy();
 
   const ctx = $(id);
 
   charts[id] = new Chart(ctx, {
-
     type,
-
-    data: {
-      labels,
-      datasets
-    },
-
+    data: { labels, datasets },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-
       plugins: {
-        legend: {
-          position: "bottom"
-        }
+        legend: { position: "bottom" }
       },
-
       ...extra
-
     }
-
   });
-
 }
 
 
 function clearChart(id) {
-
   if (charts[id]) {
     charts[id].destroy();
     delete charts[id];
   }
-
 }
 
 
 function renderDemographics() {
-
   const profiles = data.students;
 
   const courses = countBy(profiles, "course");
@@ -521,14 +415,12 @@ function renderDemographics() {
   $("ppmCount").textContent =
     profiles.filter(x => x.course === "PPM").length;
 
-
   draw(
     "courseChart",
     "pie",
     Object.keys(courses),
     [{ data: Object.values(courses) }]
   );
-
 
   draw(
     "yearChart",
@@ -539,33 +431,25 @@ function renderDemographics() {
     }]
   );
 
-
   const courseNames = ["B.Com", "PPM"];
   const yearLabels = ["1", "2", "3", "4"];
 
   const datasets = courseNames.map(course => ({
-
     label: course,
-
     data: yearLabels.map(year =>
       profiles.filter(p =>
         p.course === course &&
         String(p.year) === year
       ).length
     )
-
   }));
-
 
   draw("courseYearChart", "bar", yearLabels, datasets);
 
-
   const tbody = $("distributionTable");
-
   tbody.innerHTML = "";
 
   courseNames.forEach(course => {
-
     const values = yearLabels.map(year =>
       profiles.filter(p =>
         p.course === course &&
@@ -574,7 +458,6 @@ function renderDemographics() {
     );
 
     const total = values.reduce((a, b) => a + b, 0);
-
     const row = document.createElement("tr");
 
     row.innerHTML =
@@ -583,16 +466,12 @@ function renderDemographics() {
       `<td><strong>${total}</strong></td>`;
 
     tbody.appendChild(row);
-
   });
-
 }
 
 
 function renderPoll(pollId) {
-
   const poll = data.polls.find(p => p.id === pollId);
-
   if (!poll) return;
 
   const votes = data.votes.filter(v => v.pollId === pollId);
@@ -609,19 +488,14 @@ function renderPoll(pollId) {
     options.map(o => [o, 0])
   );
 
-
   votes.forEach(v => {
-
     if (Object.hasOwn(optionCounts, v.selectedOption)) {
       optionCounts[v.selectedOption]++;
     }
-
   });
-
 
   $("pollSummary").textContent =
     `${votes.length} recorded votes · ${options.length} answer options`;
-
 
   draw(
     "pollChart",
@@ -630,7 +504,6 @@ function renderPoll(pollId) {
     [{ data: options.map(o => optionCounts[o]) }]
   );
 
-
   const courses = ["B.Com", "PPM"];
 
   draw(
@@ -638,19 +511,15 @@ function renderPoll(pollId) {
     "bar",
     options,
     courses.map(course => ({
-
       label: course,
-
       data: options.map(option =>
         votes.filter(v =>
           v.selectedOption === option &&
           profiles.get(v.uid)?.course === course
         ).length
       )
-
     }))
   );
-
 
   const years = ["1", "2", "3", "4"];
 
@@ -659,24 +528,19 @@ function renderPoll(pollId) {
     "bar",
     years,
     options.map(option => ({
-
       label: option,
-
       data: years.map(year =>
         votes.filter(v =>
           v.selectedOption === option &&
           String(profiles.get(v.uid)?.year) === year
         ).length
       )
-
     }))
   );
-
 }
 
 
 function renderResearch() {
-
   const requests = data.requests;
   const reports = data.reports;
 
@@ -685,14 +549,12 @@ function renderResearch() {
   const reportCategories = countBy(reports, "category");
   const reportYears = countBy(reports, "year");
 
-
   draw(
     "requestStatusChart",
     "doughnut",
     Object.keys(statuses),
     [{ data: Object.values(statuses) }]
   );
-
 
   draw(
     "requestCategoryChart",
@@ -705,14 +567,12 @@ function renderResearch() {
     { indexAxis: "y" }
   );
 
-
   draw(
     "reportCategoryChart",
     "pie",
     Object.keys(reportCategories),
     [{ data: Object.values(reportCategories) }]
   );
-
 
   draw(
     "reportYearChart",
@@ -723,21 +583,17 @@ function renderResearch() {
       data: Object.values(reportYears)
     }]
   );
-
 }
 
 
 function renderEvents() {
-
   const events = data.evaluations;
-
   const satisfaction = average(events, "satisfaction");
 
   $("averageSatisfaction").textContent =
     satisfaction === null
       ? "—"
       : `${satisfaction.toFixed(2)} / 5`;
-
 
   const types = countBy(events, "eventType");
 
@@ -748,14 +604,12 @@ function renderEvents() {
     [{ data: Object.values(types) }]
   );
 
-
   const metrics = [
     ["Satisfaction", "satisfaction"],
     ["Organisation", "organisationRating"],
     ["Communication", "communicationRating"],
     ["Venue", "venueRating"]
   ];
-
 
   draw(
     "ratingChart",
@@ -774,14 +628,10 @@ function renderEvents() {
       }
     }
   );
-
 }
 
 
-// ISSUE TRACKING INTELLIGENCE
-
 function renderIssues() {
-
   const issues = data.issues;
 
   const statuses = countByAny(
@@ -794,7 +644,6 @@ function renderIssues() {
     ["category", "issueType", "type"]
   );
 
-
   const resolvedStatuses = [
     "resolved",
     "closed",
@@ -802,25 +651,18 @@ function renderIssues() {
   ];
 
   const resolved = issues.filter(issue => {
-
     const status = String(
       issue.status || issue.issueStatus || ""
     ).toLowerCase().trim();
 
     return resolvedStatuses.includes(status);
-
   });
-
 
   const unresolved = issues.length - resolved.length;
 
-
   $("issueCount").textContent = issues.length;
-
   $("resolvedIssueCount").textContent = resolved.length;
-
   $("unresolvedIssueCount").textContent = unresolved;
-
 
   draw(
     "issueStatusChart",
@@ -832,7 +674,6 @@ function renderIssues() {
     }]
   );
 
-
   draw(
     "issueCategoryChart",
     "bar",
@@ -841,11 +682,8 @@ function renderIssues() {
       label: "Issues",
       data: Object.values(categories)
     }],
-    {
-      indexAxis: "y"
-    }
+    { indexAxis: "y" }
   );
-
 
   draw(
     "issueResolutionChart",
@@ -856,72 +694,46 @@ function renderIssues() {
       data: [resolved.length, unresolved]
     }]
   );
-
 }
 
 
-// PUBLICATION INTELLIGENCE
-
 function publicationYear(publication) {
-
   const timestamp =
     publication.publishedAt ||
     publication.createdAt ||
     publication.datePublished;
 
   if (timestamp && typeof timestamp.toDate === "function") {
-
     return String(timestamp.toDate().getFullYear());
-
   }
 
   if (timestamp instanceof Date) {
-
     return String(timestamp.getFullYear());
-
   }
 
   if (typeof timestamp === "string" && timestamp.length >= 4) {
-
     const year = timestamp.substring(0, 4);
-
-    if (/^\d{4}$/.test(year)) {
-      return year;
-    }
-
+    if (/^\d{4}$/.test(year)) return year;
   }
 
-  if (publication.year) {
-    return String(publication.year);
-  }
+  if (publication.year) return String(publication.year);
 
   return "Year not specified";
-
 }
 
 
 function renderPublications() {
-
   const publications = data.publications;
 
-  const categories = countBy(
-    publications,
-    "category"
-  );
-
+  const categories = countBy(publications, "category");
   const years = {};
 
   publications.forEach(publication => {
-
     const year = publicationYear(publication);
-
     years[year] = (years[year] || 0) + 1;
-
   });
 
-
   $("publicationCount").textContent = publications.length;
-
 
   draw(
     "publicationCategoryChart",
@@ -932,7 +744,6 @@ function renderPublications() {
       data: Object.values(categories)
     }]
   );
-
 
   draw(
     "publicationYearChart",
@@ -945,7 +756,583 @@ function renderPublications() {
         .map(year => years[year])
     }]
   );
+}
 
+
+// =====================================================
+// PDF REPORT GENERATOR
+// =====================================================
+
+function createPdfReport() {
+
+  if (!window.jspdf || !window.jspdf.jsPDF) {
+    alert("The PDF library could not load. Please refresh the page and try again.");
+    return;
+  }
+
+  if (!data.students) {
+    alert("Please wait for the Intelligence Centre data to finish loading.");
+    return;
+  }
+
+  const button = $("generatePdfBtn");
+  button.disabled = true;
+  button.textContent = "Generating PDF...";
+
+  try {
+
+    const { jsPDF } = window.jspdf;
+
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "mm",
+      format: "a4"
+    });
+
+    const pageWidth = 210;
+    const pageHeight = 297;
+    const margin = 18;
+    const contentWidth = pageWidth - margin * 2;
+
+    let y = 20;
+
+    const navy = [23, 37, 84];
+    const blue = [49, 87, 164];
+    const grey = [95, 105, 125];
+
+    const generatedAt = new Date();
+
+    const reportDate = generatedAt.toLocaleDateString(
+      "en-GB",
+      {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      }
+    );
+
+    const number = id => {
+      const value = $(id)?.textContent || "0";
+      return value.trim();
+    };
+
+    const metrics = [
+      ["Registered student profiles", number("studentCount")],
+      ["Research requests", number("requestCount")],
+      ["Poll responses", number("voteCount")],
+      ["Event evaluations", number("evaluationCount")],
+      ["Published research reports", number("reportCount")],
+      ["Published polls", number("pollCount")],
+      ["B.Com profiles", number("bcomCount")],
+      ["PPM profiles", number("ppmCount")],
+      ["Issues reported", number("issueCount")],
+      ["Unresolved issues", number("unresolvedIssueCount")],
+      ["Resolved issues", number("resolvedIssueCount")],
+      ["Published publications", number("publicationCount")]
+    ];
+
+    function addPageHeader(title) {
+      pdf.setFillColor(...navy);
+      pdf.rect(0, 0, pageWidth, 17, "F");
+
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(9);
+      pdf.text("SIRI | SOBO RESEARCH AND INTELLIGENCE HUB", margin, 11);
+
+      pdf.setTextColor(...navy);
+      pdf.setFontSize(15);
+      pdf.text(title, margin, 29);
+
+      pdf.setDrawColor(220, 225, 235);
+      pdf.line(margin, 34, pageWidth - margin, 34);
+
+      y = 43;
+    }
+
+    function addFooter() {
+      const total = pdf.internal.getNumberOfPages();
+
+      for (let i = 2; i <= total; i++) {
+        pdf.setPage(i);
+
+        pdf.setDrawColor(220, 225, 235);
+        pdf.line(margin, 284, pageWidth - margin, 284);
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(8);
+        pdf.setTextColor(...grey);
+
+        pdf.text(
+          "SOBO | University of Nairobi",
+          margin,
+          290
+        );
+
+        pdf.text(
+          `Page ${i} of ${total}`,
+          pageWidth - margin,
+          290,
+          { align: "right" }
+        );
+      }
+    }
+
+    function ensureSpace(height) {
+      if (y + height > 273) {
+        pdf.addPage();
+        addPageHeader("Institutional Intelligence Report");
+      }
+    }
+
+    function addHeading(text) {
+      ensureSpace(15);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(12);
+      pdf.setTextColor(...blue);
+
+      pdf.text(text, margin, y);
+      y += 8;
+    }
+
+    function addParagraph(text) {
+      if (!text) return;
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(9);
+      pdf.setTextColor(45, 55, 72);
+
+      const lines = pdf.splitTextToSize(
+        String(text),
+        contentWidth
+      );
+
+      ensureSpace(lines.length * 5 + 5);
+
+      pdf.text(lines, margin, y);
+      y += lines.length * 5 + 5;
+    }
+
+    function addMetricTable(items) {
+      const col1 = margin;
+      const col2 = pageWidth - margin - 35;
+
+      items.forEach((item, index) => {
+        ensureSpace(9);
+
+        if (index % 2 === 0) {
+          pdf.setFillColor(246, 248, 252);
+          pdf.rect(margin, y - 5, contentWidth, 8, "F");
+        }
+
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(9);
+        pdf.setTextColor(45, 55, 72);
+        pdf.text(String(item[0]), col1 + 2, y);
+
+        pdf.setFont("helvetica", "bold");
+        pdf.setTextColor(...navy);
+        pdf.text(String(item[1]), col2, y, { align: "right" });
+
+        y += 8;
+      });
+
+      y += 4;
+    }
+
+    function addChart(chartId, title) {
+      const chart = charts[chartId];
+
+      if (!chart || !$(chartId)) return;
+
+      const image = chart.toBase64Image("image/png", 1);
+
+      const imageWidth = 165;
+      const imageHeight = 75;
+
+      ensureSpace(92);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(10);
+      pdf.setTextColor(...navy);
+      pdf.text(title, margin, y);
+
+      y += 5;
+
+      pdf.addImage(
+        image,
+        "PNG",
+        margin + 4,
+        y,
+        imageWidth,
+        imageHeight,
+        undefined,
+        "FAST"
+      );
+
+      y += imageHeight + 12;
+    }
+
+    function addChartSection(title, items) {
+      pdf.addPage();
+      addPageHeader(title);
+
+      items.forEach(item => {
+        addChart(item[0], item[1]);
+      });
+    }
+
+    function addCover() {
+      pdf.setFillColor(...navy);
+      pdf.rect(0, 0, pageWidth, pageHeight, "F");
+
+      pdf.setFillColor(...blue);
+      pdf.rect(0, 0, pageWidth, 12, "F");
+
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(16);
+
+      pdf.text("UNIVERSITY OF NAIROBI", pageWidth / 2, 65, {
+        align: "center"
+      });
+
+      pdf.setFontSize(12);
+      pdf.setFont("helvetica", "normal");
+
+      pdf.text(
+        "FACULTY OF BUSINESS AND MANAGEMENT SCIENCES",
+        pageWidth / 2,
+        76,
+        { align: "center" }
+      );
+
+      pdf.setDrawColor(150, 170, 220);
+      pdf.line(45, 91, 165, 91);
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(27);
+
+      pdf.text("SIRI", pageWidth / 2, 120, {
+        align: "center"
+      });
+
+      pdf.setFontSize(17);
+
+      pdf.text(
+        "INSTITUTIONAL INTELLIGENCE",
+        pageWidth / 2,
+        137,
+        { align: "center" }
+      );
+
+      pdf.text(
+        "REPORT",
+        pageWidth / 2,
+        148,
+        { align: "center" }
+      );
+
+      pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(11);
+
+      pdf.text(
+        "SOBO Research and Intelligence Hub",
+        pageWidth / 2,
+        169,
+        { align: "center" }
+      );
+
+      pdf.setDrawColor(150, 170, 220);
+      pdf.line(55, 184, 155, 184);
+
+      pdf.setFontSize(10);
+
+      pdf.text(
+        `Generated on ${reportDate}`,
+        pageWidth / 2,
+        204,
+        { align: "center" }
+      );
+
+      pdf.text(
+        "Prepared from records available in the SIRI platform",
+        pageWidth / 2,
+        213,
+        { align: "center" }
+      );
+
+      pdf.setFontSize(9);
+      pdf.setTextColor(210, 220, 245);
+
+      pdf.text(
+        "SOBO | University of Nairobi",
+        pageWidth / 2,
+        270,
+        { align: "center" }
+      );
+    }
+
+
+    // COVER PAGE
+
+    addCover();
+
+
+    // EXECUTIVE SUMMARY
+
+    pdf.addPage();
+    addPageHeader("Executive Summary");
+
+    addParagraph(
+      "This report presents an overview of institutional information recorded through the SOBO Research and Intelligence Hub (SIRI). It brings together student profile records, research activity, poll participation, event feedback, issue tracking and research publications."
+    );
+
+    addParagraph(
+      `As at ${reportDate}, SIRI contained ${number("studentCount")} active student profiles, ${number("requestCount")} research requests, ${number("voteCount")} poll responses and ${number("evaluationCount")} event evaluations.`
+    );
+
+    addParagraph(
+      `The platform also recorded ${number("issueCount")} reported issues, of which ${number("resolvedIssueCount")} were marked resolved or closed and ${number("unresolvedIssueCount")} remained unresolved.`
+    );
+
+    addParagraph(
+      `There were ${number("reportCount")} published research reports and ${number("publicationCount")} published research publications available through SIRI.`
+    );
+
+    addHeading("Institutional indicators");
+    addMetricTable(metrics);
+
+    addHeading("Scope and interpretation");
+
+    addParagraph(
+      "The figures in this report represent records available in SIRI at the time the report was generated. Student profile totals are not an independently verified University of Nairobi enrolment count. Findings should therefore be interpreted as platform-based indicators rather than a complete institutional census."
+    );
+
+
+    // STUDENT ANALYSIS
+
+    pdf.addPage();
+    addPageHeader("Student Demographics");
+
+    addParagraph(
+      `SIRI recorded ${number("studentCount")} active student profiles. The registered course distribution includes ${number("bcomCount")} B.Com profiles and ${number("ppmCount")} PPM profiles.`
+    );
+
+    addParagraph(
+      "The charts below illustrate the distribution of registered profiles by course and year of study, including the cross-tabulation of the two dimensions."
+    );
+
+    addChart("courseChart", "Student profiles by course");
+    addChart("yearChart", "Student profiles by year of study");
+    addChart("courseYearChart", "Course distribution across years");
+
+    addHeading("Student distribution table");
+
+    const tableRows = [
+      ["Course", "Year 1", "Year 2", "Year 3", "Year 4", "Total"]
+    ];
+
+    ["B.Com", "PPM"].forEach(course => {
+      const values = ["1", "2", "3", "4"].map(year =>
+        data.students.filter(p =>
+          p.course === course && String(p.year) === year
+        ).length
+      );
+
+      tableRows.push([
+        course,
+        ...values.map(String),
+        String(values.reduce((a, b) => a + b, 0))
+      ]);
+    });
+
+    pdf.autoTable({
+      startY: y,
+      head: [tableRows[0]],
+      body: tableRows.slice(1),
+      margin: { left: margin, right: margin },
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: navy }
+    });
+
+    y = pdf.lastAutoTable.finalY + 12;
+
+
+    // POLL ANALYSIS
+
+    const selectedPoll = data.polls.find(
+      p => p.id === $("pollSelect").value
+    );
+
+    pdf.addPage();
+    addPageHeader("Poll Intelligence");
+
+    addParagraph(
+      `SIRI recorded ${number("voteCount")} poll responses across ${number("pollCount")} published polls.`
+    );
+
+    if (selectedPoll) {
+      const selectedVotes = data.votes.filter(
+        v => v.pollId === selectedPoll.id
+      );
+
+      addHeading("Selected poll");
+      addParagraph(`Poll question: ${selectedPoll.question || "Untitled poll"}`);
+      addParagraph(`Recorded responses: ${selectedVotes.length}`);
+
+      addParagraph(
+        "The following charts analyse the currently selected published poll. The poll selection on the Intelligence Centre determines which poll is included in this report."
+      );
+
+      addChart("pollChart", "Vote distribution");
+      addChart("pollCourseChart", "Votes by course");
+      addChart("pollYearChart", "Votes by year of study");
+    } else {
+      addParagraph(
+        "No published poll was selected at the time of report generation. Poll-specific charts are therefore not included."
+      );
+    }
+
+
+    // RESEARCH ANALYSIS
+
+    pdf.addPage();
+    addPageHeader("Research Intelligence");
+
+    addParagraph(
+      `The platform recorded ${number("requestCount")} research requests and ${number("reportCount")} published research reports. The charts below summarise request status, request categories, report categories and report publication years.`
+    );
+
+    addChart("requestStatusChart", "Research requests by status");
+    addChart("requestCategoryChart", "Research requests by category");
+    addChart("reportCategoryChart", "Published reports by category");
+    addChart("reportYearChart", "Research reports by year");
+
+
+    // EVENT FEEDBACK
+
+    pdf.addPage();
+    addPageHeader("Event Feedback Intelligence");
+
+    addParagraph(
+      `SIRI recorded ${number("evaluationCount")} event evaluation submissions. The average satisfaction rating was ${number("averageSatisfaction")}.`
+    );
+
+    addParagraph(
+      "The following charts show the distribution of event evaluation types and average ratings for satisfaction, organisation, communication and venue."
+    );
+
+    addChart("eventTypeChart", "Event evaluations by type");
+    addChart("ratingChart", "Average feedback ratings");
+
+
+    // ISSUE TRACKING
+
+    pdf.addPage();
+    addPageHeader("Issue Tracking Intelligence");
+
+    addParagraph(
+      `A total of ${number("issueCount")} issues were recorded through SIRI. ${number("resolvedIssueCount")} were marked resolved or closed, while ${number("unresolvedIssueCount")} were not marked as resolved.`
+    );
+
+    addParagraph(
+      "The charts show the distribution of reported issues by status and category, alongside the overall resolution position."
+    );
+
+    addChart("issueStatusChart", "Issues by status");
+    addChart("issueCategoryChart", "Issues by category");
+    addChart("issueResolutionChart", "Issue resolution overview");
+
+
+    // PUBLICATIONS
+
+    pdf.addPage();
+    addPageHeader("Research Publications Intelligence");
+
+    addParagraph(
+      `SIRI contained ${number("publicationCount")} published research publications available to students. The charts below present the distribution of publications by category and year.`
+    );
+
+    addChart("publicationCategoryChart", "Publications by category");
+    addChart("publicationYearChart", "Publications by year");
+
+
+    // CONCLUSION AND RECOMMENDATIONS
+
+    pdf.addPage();
+    addPageHeader("Conclusion and Recommendations");
+
+    addHeading("Key observations");
+
+    addParagraph(
+      `SIRI currently contains ${number("studentCount")} active student profiles. Continued student registration and profile updates will improve the usefulness of course and year-level comparisons.`
+    );
+
+    addParagraph(
+      `The platform has recorded ${number("requestCount")} research requests and ${number("reportCount")} published research reports. Regular review of request statuses and publication activity can help strengthen research coordination.`
+    );
+
+    addParagraph(
+      `The issue tracking module contains ${number("issueCount")} reported issues, including ${number("unresolvedIssueCount")} that are not marked resolved. These records provide a basis for prioritising follow-up and monitoring responses to student concerns.`
+    );
+
+    addHeading("Recommendations");
+
+    addParagraph(
+      "1. Encourage students to maintain accurate and up-to-date SIRI profiles to improve the quality of student distribution analysis."
+    );
+
+    addParagraph(
+      "2. Review pending research requests regularly and communicate progress to students."
+    );
+
+    addParagraph(
+      "3. Use poll findings to inform student engagement, programme planning and SOBO decision-making."
+    );
+
+    addParagraph(
+      "4. Review unresolved issues and assign appropriate follow-up responsibilities."
+    );
+
+    addParagraph(
+      "5. Continue collecting event evaluations and use the feedback to improve future activities."
+    );
+
+    addParagraph(
+      "6. Encourage research contributions and maintain an updated archive of publications."
+    );
+
+    addHeading("Data limitations");
+
+    addParagraph(
+      "This report is generated from information stored in SIRI. Its accuracy and completeness depend on the information submitted and maintained within the platform. Missing fields, incomplete submissions and records not entered into SIRI are not estimated or independently verified."
+    );
+
+    addParagraph(
+      `Report generated automatically by SIRI on ${generatedAt.toLocaleString("en-GB")}.`
+    );
+
+
+    // FOOTERS AND DOWNLOAD
+
+    addFooter();
+
+    const fileDate = generatedAt.toISOString().slice(0, 10);
+
+    pdf.save(`SIRI_Intelligence_Report_${fileDate}.pdf`);
+
+  } catch (error) {
+    console.error("PDF generation error:", error);
+    alert(
+      "The PDF could not be generated. Please refresh the Intelligence Centre and try again. " +
+      (error.message || "")
+    );
+  } finally {
+    button.disabled = false;
+    button.textContent = "Generate PDF Report";
+  }
 }
 
 
@@ -956,11 +1343,9 @@ async function loadData() {
   $("refreshBtn").disabled = true;
   $("refreshBtn").textContent = "Loading...";
 
-
   try {
 
     const names = [
-
       "registrationRequests",
       "researchRequests",
       "pollVotes",
@@ -969,18 +1354,11 @@ async function loadData() {
       "researchReports",
       "issues",
       "publications"
-
     ];
 
-
     const snapshots = await Promise.all(
-
-      names.map(name =>
-        getDocs(collection(db, name))
-      )
-
+      names.map(name => getDocs(collection(db, name)))
     );
-
 
     const records = snapshots.map(snapshot =>
       snapshot.docs.map(document => ({
@@ -989,17 +1367,13 @@ async function loadData() {
       }))
     );
 
-
     data.students = records[0].filter(
       x => x.status === "active"
     );
 
     data.requests = records[1];
-
     data.votes = records[2];
-
     data.polls = records[3];
-
     data.evaluations = records[4];
 
     data.reports = records[5].filter(
@@ -1013,39 +1387,24 @@ async function loadData() {
     );
 
 
-    // INSTITUTIONAL METRICS
-
     $("studentCount").textContent = data.students.length;
-
     $("requestCount").textContent = data.requests.length;
-
     $("voteCount").textContent = data.votes.length;
-
     $("evaluationCount").textContent = data.evaluations.length;
-
     $("reportCount").textContent = data.reports.length;
 
     $("pollCount").textContent =
       data.polls.filter(x => x.status === "published").length;
 
 
-    // RENDER ALL SECTIONS
-
     renderDemographics();
-
     renderResearch();
-
     renderEvents();
-
     renderIssues();
-
     renderPublications();
 
 
-    // POLL SELECTOR
-
     const select = $("pollSelect");
-
     const previous = select.value;
 
     select.innerHTML = "";
@@ -1053,7 +1412,6 @@ async function loadData() {
     const published = data.polls.filter(
       p => p.status === "published"
     );
-
 
     if (!published.length) {
 
@@ -1069,35 +1427,24 @@ async function loadData() {
     } else {
 
       published.forEach(p => {
-
         const option = document.createElement("option");
-
         option.value = p.id;
-
-        option.textContent =
-          p.question || "Untitled poll";
-
+        option.textContent = p.question || "Untitled poll";
         select.appendChild(option);
-
       });
-
 
       select.value = published.some(p => p.id === previous)
         ? previous
         : published[0].id;
 
       renderPoll(select.value);
-
     }
-
 
     $("lastUpdated").textContent =
       "Last refreshed: " + new Date().toLocaleString();
 
     $("loading").hidden = true;
-
     $("app").hidden = false;
-
 
   } catch (error) {
 
@@ -1111,20 +1458,16 @@ async function loadData() {
   } finally {
 
     $("refreshBtn").disabled = false;
-
     $("refreshBtn").textContent = "Refresh data";
 
   }
-
 }
 
 
 // POLL SELECTION
 
 $("pollSelect").addEventListener("change", event => {
-
   renderPoll(event.target.value);
-
 });
 
 
@@ -1133,25 +1476,25 @@ $("pollSelect").addEventListener("change", event => {
 $("refreshBtn").addEventListener("click", loadData);
 
 
+// PDF GENERATION
+
+$("generatePdfBtn").addEventListener("click", createPdfReport);
+
+
 // ADMINISTRATOR VERIFICATION
 
 onAuthStateChanged(auth, async user => {
 
   if (!user) {
-
     location.href = "../login.html";
-
     return;
-
   }
-
 
   try {
 
     const roleSnap = await getDoc(
       doc(db, "roles", user.uid)
     );
-
 
     if (
       !roleSnap.exists() ||
@@ -1163,12 +1506,9 @@ onAuthStateChanged(auth, async user => {
       );
 
       return;
-
     }
 
-
     await loadData();
-
 
   } catch (error) {
 
