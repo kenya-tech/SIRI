@@ -188,11 +188,13 @@
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 
-    import {
+   import {
   collection,
   getDocs,
   query,
-  where
+  where,
+  doc,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
     const statusMessage = document.getElementById("statusMessage");
@@ -356,41 +358,32 @@
     categoryFilter.addEventListener("change", displayPublications);
 
     onAuthStateChanged(auth, async user => {
-      if (!user) {
-        window.location.href = "../login.html";
-        return;
-      }
+  if (!user) {
+    window.location.href = "../login.html";
+    return;
+  }
 
-      try {
-        const profileSnapshot = await getDocs(
-          query(
-            collection(db, "registrationRequests"),
-            where("uid", "==", user.uid)
-          )
-        );
+  try {
+    // Fetch only this student's profile using their Firebase UID.
+    const profileRef = doc(db, "registrationRequests", user.uid);
+    const profileSnapshot = await getDoc(profileRef);
 
-        // The profile document is normally stored using the UID as its ID.
-        // Check that document directly if the query returns no result.
-        if (profileSnapshot.empty) {
-          const { doc, getDoc } = await import(
-            "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js"
-          );
+    if (!profileSnapshot.exists() ||
+        profileSnapshot.data().status !== "active") {
+      window.location.href = "../login.html";
+      return;
+    }
 
-          const profile = await getDoc(
-            doc(db, "registrationRequests", user.uid)
-          );
+    // Student is verified. Load published research.
+    await loadPublications();
 
-          if (!profile.exists() || profile.data().status !== "active") {
-            window.location.href = "../login.html";
-            return;
-          }
-        } else if (profileSnapshot.docs[0].data().status !== "active") {
-          window.location.href = "../login.html";
-          return;
-        }
+  } catch (error) {
+    console.error("Student verification error:", error);
 
-        await loadPublications();
-
+    statusMessage.textContent =
+      "We could not verify your student account. Please sign in again.";
+  }
+});
       } catch (error) {
         console.error(error);
         statusMessage.textContent =
