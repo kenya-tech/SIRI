@@ -1,0 +1,628 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Notifications | SIRI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f4f7f5;
+      color: #24352b;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 25px auto;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 18px;
+      color: #17643c;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .header {
+      background: #145c38;
+      color: white;
+      padding: 28px;
+      border-radius: 14px;
+      margin-bottom: 22px;
+    }
+
+    .header h1 {
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      line-height: 1.6;
+      opacity: .9;
+    }
+
+    .panel {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.05);
+    }
+
+    .panel h2 {
+      margin-bottom: 18px;
+      font-size: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      font-size: 14px;
+      margin: 15px 0 8px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #dce5de;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #24352b;
+      background: white;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    button {
+      border: none;
+      padding: 12px 17px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .primary {
+      background: #17643c;
+      color: white;
+    }
+
+    .secondary {
+      background: #eaf1ec;
+      color: #17643c;
+    }
+
+    .delete {
+      background: #fbeaea;
+      color: #bd3333;
+    }
+
+    .message {
+      margin-top: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .success {
+      color: #168044;
+    }
+
+    .error {
+      color: #c0392b;
+    }
+
+    .announcement {
+      border: 1px solid #e2e9e4;
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .announcement h3 {
+      margin: 12px 0 8px;
+      font-size: 18px;
+    }
+
+    .announcement p {
+      color: #66736b;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      font-size: 12px;
+      color: #77837b;
+    }
+
+    .tag {
+      background: #eaf4ed;
+      color: #17643c;
+      padding: 6px 10px;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+
+    .draft {
+      background: #fff4df;
+      color: #946200;
+    }
+
+    .published {
+      background: #e4f5e9;
+      color: #17643c;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      margin-top: 14px;
+    }
+
+    .empty {
+      background: white;
+      padding: 25px;
+      text-align: center;
+      border-radius: 10px;
+      color: #66736b;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 35px;
+      color: #77837b;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <a href="../dashboard.html" class="back">
+    ← Back to Dashboard
+  </a>
+
+  <div class="header">
+    <h1>Notification Management</h1>
+    <p>
+      Create and manage official SOBO announcements
+      for students using the SIRI platform.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h2 id="formHeading">Create Announcement</h2>
+
+    <form id="notificationForm">
+
+      <label for="title">Announcement Title</label>
+      <input
+        type="text"
+        id="title"
+        maxlength="150"
+        placeholder="Enter announcement title"
+        required
+      >
+
+      <label for="category">Category</label>
+      <select id="category" required>
+        <option value="General">General</option>
+        <option value="Academic">Academic</option>
+        <option value="Events">Events</option>
+        <option value="Research">Research</option>
+        <option value="Student Welfare">Student Welfare</option>
+        <option value="Important">Important</option>
+      </select>
+
+      <label for="message">Announcement Caption / Message</label>
+      <textarea
+        id="message"
+        maxlength="5000"
+        placeholder="Write the announcement details here..."
+        required
+      ></textarea>
+
+      <button type="submit" class="primary" id="saveDraftButton">
+        Save as Draft
+      </button>
+
+      <button type="button" class="secondary" id="publishButton">
+        Publish Announcement
+      </button>
+
+      <button type="button" class="secondary" id="cancelEditButton" hidden>
+        Cancel Editing
+      </button>
+
+      <p id="formMessage" class="message"></p>
+    </form>
+  </div>
+
+  <div class="panel">
+    <h2>Existing Announcements</h2>
+    <div id="announcementContainer">
+      <div class="empty">Loading announcements...</div>
+    </div>
+  </div>
+
+  <footer>
+    SIRI – SOBO Research and Intelligence Hub<br>
+    University of Nairobi
+  </footer>
+
+</div>
+
+<script type="module">
+  import { auth, db } from "../js/firebase.js";
+
+  import {
+    collection,
+    query,
+    getDocs,
+    doc,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
+
+  import { onAuthStateChanged } from
+    "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+
+  const form = document.getElementById("notificationForm");
+  const titleInput = document.getElementById("title");
+  const categoryInput = document.getElementById("category");
+  const messageInput = document.getElementById("message");
+
+  const saveDraftButton = document.getElementById("saveDraftButton");
+  const publishButton = document.getElementById("publishButton");
+  const cancelEditButton = document.getElementById("cancelEditButton");
+
+  const formMessage = document.getElementById("formMessage");
+  const announcementContainer =
+    document.getElementById("announcementContainer");
+
+  const formHeading = document.getElementById("formHeading");
+
+  let currentUser = null;
+  let editingId = null;
+  let announcements = [];
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "../login.html";
+      return;
+    }
+
+    try {
+      const roleRef = doc(db, "roles", user.uid);
+      const roleSnapshot = await import(
+        "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js"
+      ).then(module => module.getDoc(roleRef));
+
+      if (!roleSnapshot.exists() ||
+          roleSnapshot.data().role !== "super_admin") {
+        document.querySelector(".container").innerHTML =
+          '<div class="empty">Access denied. Only authorised SIRI administrators can manage notifications.</div>';
+        return;
+      }
+
+      currentUser = user;
+      await loadAnnouncements();
+
+    } catch (error) {
+      console.error(error);
+      document.querySelector(".container").innerHTML =
+        '<div class="empty">Unable to verify administrator access. Please try again.</div>';
+    }
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await saveAnnouncement("draft");
+  });
+
+  publishButton.addEventListener("click", async () => {
+    if (!form.reportValidity()) return;
+    await saveAnnouncement("published");
+  });
+
+  cancelEditButton.addEventListener("click", resetForm);
+
+  async function saveAnnouncement(status) {
+    if (!currentUser) return;
+
+    const title = titleInput.value.trim();
+    const message = messageInput.value.trim();
+    const category = categoryInput.value;
+
+    if (!title || !message) {
+      showMessage("Please complete all fields.", "error");
+      return;
+    }
+
+    saveDraftButton.disabled = true;
+    publishButton.disabled = true;
+
+    try {
+      if (editingId) {
+        const updateData = {
+          title,
+          message,
+          category,
+          status,
+          updatedAt: serverTimestamp()
+        };
+
+        await updateDoc(
+          doc(db, "notifications", editingId),
+          updateData
+        );
+
+      } else {
+        await addDoc(collection(db, "notifications"), {
+          title,
+          message,
+          category,
+          status,
+          createdBy: currentUser.uid,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+      }
+
+      showMessage(
+        status === "published"
+          ? "Announcement published successfully."
+          : "Announcement saved as a draft.",
+        "success"
+      );
+
+      resetForm();
+      await loadAnnouncements();
+
+    } catch (error) {
+      console.error(error);
+      showMessage(
+        "Unable to save announcement. Please check your connection and try again.",
+        "error"
+      );
+
+    } finally {
+      saveDraftButton.disabled = false;
+      publishButton.disabled = false;
+    }
+  }
+
+  async function loadAnnouncements() {
+    announcementContainer.innerHTML =
+      '<div class="empty">Loading announcements...</div>';
+
+    try {
+      const snapshot = await getDocs(
+        query(collection(db, "notifications"))
+      );
+
+      announcements = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+
+      announcements.sort((a, b) => {
+        return getTime(b.createdAt) - getTime(a.createdAt);
+      });
+
+      renderAnnouncements();
+
+    } catch (error) {
+      console.error(error);
+      announcementContainer.innerHTML =
+        '<div class="empty error">Unable to load announcements.</div>';
+    }
+  }
+
+  function renderAnnouncements() {
+    if (!announcements.length) {
+      announcementContainer.innerHTML =
+        '<div class="empty">No announcements have been created yet.</div>';
+      return;
+    }
+
+    announcementContainer.innerHTML = "";
+
+    announcements.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "announcement";
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+
+      const category = document.createElement("span");
+      category.className = "tag";
+      category.textContent = item.category || "General";
+
+      const status = document.createElement("span");
+      status.className = "tag " +
+        (item.status === "published" ? "published" : "draft");
+
+      status.textContent = item.status === "published"
+        ? "PUBLISHED"
+        : "DRAFT";
+
+      meta.appendChild(category);
+      meta.appendChild(status);
+
+      const heading = document.createElement("h3");
+      heading.textContent = item.title || "Untitled announcement";
+
+      const content = document.createElement("p");
+      content.textContent = item.message || "";
+
+      const date = document.createElement("div");
+      date.className = "date";
+      date.style.marginTop = "12px";
+      date.textContent = "Created: " + formatDate(item.createdAt);
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const editButton = document.createElement("button");
+      editButton.className = "secondary";
+      editButton.textContent = "Edit";
+      editButton.addEventListener("click", () => editAnnouncement(item));
+
+      const publishToggle = document.createElement("button");
+      publishToggle.className = "primary";
+      publishToggle.textContent =
+        item.status === "published" ? "Unpublish" : "Publish";
+
+      publishToggle.addEventListener("click", () => {
+        changeStatus(item);
+      });
+
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "delete";
+      deleteButton.textContent = "Delete";
+      deleteButton.addEventListener("click", () => {
+        removeAnnouncement(item);
+      });
+
+      actions.appendChild(editButton);
+      actions.appendChild(publishToggle);
+      actions.appendChild(deleteButton);
+
+      card.appendChild(meta);
+      card.appendChild(heading);
+      card.appendChild(content);
+      card.appendChild(date);
+      card.appendChild(actions);
+
+      announcementContainer.appendChild(card);
+    });
+  }
+
+  function editAnnouncement(item) {
+    editingId = item.id;
+
+    titleInput.value = item.title || "";
+    categoryInput.value = item.category || "General";
+    messageInput.value = item.message || "";
+
+    formHeading.textContent = "Edit Announcement";
+    saveDraftButton.textContent = "Save Changes";
+    publishButton.textContent = "Save and Publish";
+    cancelEditButton.hidden = false;
+
+    form.scrollIntoView({ behavior: "smooth" });
+  }
+
+  async function changeStatus(item) {
+    const newStatus = item.status === "published"
+      ? "draft"
+      : "published";
+
+    const confirmed = confirm(
+      newStatus === "published"
+        ? "Publish this announcement for students?"
+        : "Unpublish this announcement?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await updateDoc(doc(db, "notifications", item.id), {
+        status: newStatus,
+        updatedAt: serverTimestamp()
+      });
+
+      await loadAnnouncements();
+
+    } catch (error) {
+      console.error(error);
+      alert("Unable to change announcement status.");
+    }
+  }
+
+  async function removeAnnouncement(item) {
+    const confirmed = confirm(
+      "Are you sure you want to permanently delete this announcement?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteDoc(doc(db, "notifications", item.id));
+
+      await loadAnnouncements();
+
+      if (editingId === item.id) resetForm();
+
+    } catch (error) {
+      console.error(error);
+      alert("Unable to delete announcement.");
+    }
+  }
+
+  function resetForm() {
+    form.reset();
+    editingId = null;
+
+    formHeading.textContent = "Create Announcement";
+    saveDraftButton.textContent = "Save as Draft";
+    publishButton.textContent = "Publish Announcement";
+    cancelEditButton.hidden = true;
+  }
+
+  function showMessage(message, type) {
+    formMessage.textContent = message;
+    formMessage.className = "message " + type;
+  }
+
+  function getTime(value) {
+    if (!value) return 0;
+    if (value.toDate) return value.toDate().getTime();
+
+    const date = new Date(value);
+    return isNaN(date.getTime()) ? 0 : date.getTime();
+  }
+
+  function formatDate(value) {
+    const timestamp = getTime(value);
+    return timestamp
+      ? new Date(timestamp).toLocaleString()
+      : "Date unavailable";
+  }
+</script>
+
+</body>
+</html>
