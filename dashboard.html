@@ -247,7 +247,6 @@
 
   <main>
 
-    <!-- Welcome Section -->
     <section class="welcome">
       <h1>Welcome to SIRI</h1>
 
@@ -260,7 +259,6 @@
       <p id="message">Loading your account...</p>
     </section>
 
-    <!-- Student Profile -->
     <section class="profile">
       <h2>Your Student Profile</h2>
 
@@ -289,7 +287,6 @@
       </div>
     </section>
 
-    <!-- SIRI Modules -->
     <section>
 
       <div class="section-heading">
@@ -304,101 +301,66 @@
 
       <div class="modules">
 
-        <!-- 1. Research Archive -->
         <a href="pages/research-archive.html" class="module">
-
           <div class="module-icon">📚</div>
-
           <h3>Research Archive</h3>
-
           <p>
             Access previous research reports, survey findings
             and institutional knowledge.
           </p>
-
           <span class="status">Open Research Archive →</span>
-
         </a>
 
-        <!-- 2. Research Requests -->
         <a href="pages/research-requests.html" class="module">
-
           <div class="module-icon">🔬</div>
-
           <h3>Research Requests</h3>
-
           <p>
             Submit research requests and monitor their
             progress across SOBO directorates.
           </p>
-
           <span class="status">Submit a Request →</span>
-
         </a>
 
-        <!-- 3. Event Evaluation -->
         <a href="pages/event-evaluation.html" class="module">
-
           <div class="module-icon">📋</div>
-
           <h3>Event Evaluation</h3>
-
           <p>
             Share feedback on events, activities,
             organisation and student experiences.
           </p>
-
           <span class="status">Evaluate an Event →</span>
-
         </a>
 
-        <!-- 4. Student Polls -->
         <a href="pages/student-polls.html" class="module">
-
           <div class="module-icon">📊</div>
-
           <h3>Student Polls</h3>
-
           <p>
             Participate in student polls and contribute
             to collective student insights.
           </p>
-
           <span class="status">View and Participate →</span>
-
         </a>
 
-        <!-- 5. Issue Tracking -->
         <a href="pages/issue-tracking.html" class="module">
-
           <div class="module-icon">💡</div>
-
           <h3>Issue Tracking</h3>
-
           <p>
             Report academic, administrative and student welfare concerns.
             Track submitted issues and follow their progress.
           </p>
-
           <span class="status">Report or Track an Issue →</span>
-
         </a>
 
-        <!-- 6. Research Publications -->
-        <div class="module">
-
+        <!-- Working Research Publications link -->
+        <a href="pages/research-publications.html" class="module">
           <div class="module-icon">📰</div>
-
           <h3>Research Publications</h3>
-
           <p>
             Explore research articles, student insights,
             findings and analytical publications.
           </p>
-
-          <span class="status">Being developed</span>
-
-        </div>
+          <span class="status">Explore Publications →</span>
+        </a>
 
       </div>
     </section>
@@ -408,7 +370,6 @@
 
       <div class="admin-heading">
         <h2>Administration</h2>
-
         <p>
           Restricted tools for authorised SIRI administrators.
         </p>
@@ -416,54 +377,56 @@
 
       <div class="modules">
 
-        <!-- Poll Administration -->
         <a href="pages/manage-polls.html"
            class="module admin-module">
 
           <div class="module-icon">🗳️</div>
-
           <h3>Poll Administration</h3>
-
           <p>
             Create polls, manage publication status,
             close voting and administer student polls.
           </p>
-
           <span class="status">Manage Polls →</span>
 
         </a>
 
-        <!-- Intelligence Centre -->
         <a href="pages/intelligence-centre.html"
            class="module admin-module">
 
           <div class="module-icon">📈</div>
-
           <h3>SIRI Intelligence Centre</h3>
-
           <p>
             Access institutional analytics, student demographics,
             research insights, poll results and event evaluations.
           </p>
-
           <span class="status">Open Intelligence Centre →</span>
 
         </a>
 
-        <!-- Issue Management Centre -->
         <a href="pages/manage-issues.html"
            class="module admin-module">
 
           <div class="module-icon">🛠️</div>
-
           <h3>Issue Management Centre</h3>
-
           <p>
             Review student concerns, monitor reported issues,
             update progress and provide official responses.
           </p>
-
           <span class="status">Manage Student Issues →</span>
+
+        </a>
+
+        <!-- New Publication Management Centre -->
+        <a href="pages/manage-publications.html"
+           class="module admin-module">
+
+          <div class="module-icon">📝</div>
+          <h3>Publication Management Centre</h3>
+          <p>
+            Create research articles, save drafts, publish findings,
+            edit publications and archive older content.
+          </p>
+          <span class="status">Manage Publications →</span>
 
         </a>
 
@@ -494,7 +457,6 @@
 
     const message = document.getElementById("message");
 
-    // Check authentication and load student profile
     onAuthStateChanged(auth, async (user) => {
 
       if (!user) {
@@ -536,7 +498,6 @@
         document.getElementById("phone").textContent =
           profile.phone || "Not available";
 
-        // Check whether the signed-in user is a super administrator
         const roleRef = doc(db, "roles", user.uid);
         const roleSnapshot = await getDoc(roleRef);
 
@@ -561,14 +522,12 @@
 
     });
 
-    // Sign out
     document.getElementById("logoutButton")
       .addEventListener("click", async () => {
 
         try {
 
           await signOut(auth);
-
           window.location.href = "login.html";
 
         } catch (error) {
