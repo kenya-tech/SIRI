@@ -122,6 +122,11 @@
       color: #b42318;
     }
 
+    .whatsapp {
+      background: #e5f8ec;
+      color: #128c4a;
+    }
+
     .poll-item {
       border: 1px solid #e2e9e4;
       padding: 17px;
@@ -158,6 +163,28 @@
 
     .actions button {
       flex: 1;
+      min-width: 115px;
+    }
+
+    .share-section {
+      background: #f5f9f6;
+      border: 1px solid #dce9df;
+      border-radius: 9px;
+      padding: 13px;
+      margin-top: 13px;
+    }
+
+    .share-section p {
+      margin-bottom: 9px;
+      font-weight: bold;
+      color: #17643c;
+    }
+
+    .share-link {
+      font-size: 12px;
+      color: #52645a;
+      overflow-wrap: anywhere;
+      margin-bottom: 10px;
     }
 
     .message {
@@ -275,15 +302,12 @@
     doc,
     updateDoc,
     deleteDoc,
-    serverTimestamp
+    serverTimestamp,
+    getDoc
   } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
   import { onAuthStateChanged } from
     "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
-
-  import {
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
   const pollForm = document.getElementById("pollForm");
   const optionsContainer = document.getElementById("optionsContainer");
@@ -292,6 +316,40 @@
   const createButton = document.getElementById("createButton");
 
   let adminReady = false;
+
+  // Generates a direct link to the future poll page.
+  function getPollLink(pollId) {
+    return new URL(
+      `../poll.html?id=${encodeURIComponent(pollId)}`,
+      window.location.href
+    ).href;
+  }
+
+  async function copyPollLink(pollId) {
+    const link = getPollLink(pollId);
+
+    try {
+      await navigator.clipboard.writeText(link);
+      alert("Poll link copied successfully. You can now share it.");
+    } catch (error) {
+      console.error(error);
+      prompt("Copy this poll link:", link);
+    }
+  }
+
+  function shareOnWhatsApp(pollId, question) {
+    const link = getPollLink(pollId);
+
+    const message =
+      `Have your say! Participate in this SIRI student poll:\n\n` +
+      `${question}\n\n` +
+      `Click the link below to participate:\n${link}`;
+
+    const whatsappUrl =
+      "https://wa.me/?text=" + encodeURIComponent(message);
+
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+  }
 
   function addOption(value = "") {
     const row = document.createElement("div");
@@ -522,6 +580,45 @@
         item.appendChild(status);
         item.appendChild(optionText);
         item.appendChild(actions);
+
+        // Share controls are shown only for published polls.
+        if (poll.status === "published") {
+          const shareSection = document.createElement("div");
+          shareSection.className = "share-section";
+
+          const shareHeading = document.createElement("p");
+          shareHeading.textContent = "Share this poll";
+
+          const linkText = document.createElement("div");
+          linkText.className = "share-link";
+          linkText.textContent = getPollLink(pollDoc.id);
+
+          const shareActions = document.createElement("div");
+          shareActions.className = "actions";
+
+          const copyButton = document.createElement("button");
+          copyButton.className = "secondary";
+          copyButton.textContent = "Copy Poll Link";
+          copyButton.addEventListener("click", () => {
+            copyPollLink(pollDoc.id);
+          });
+
+          const whatsappButton = document.createElement("button");
+          whatsappButton.className = "whatsapp";
+          whatsappButton.textContent = "Share on WhatsApp";
+          whatsappButton.addEventListener("click", () => {
+            shareOnWhatsApp(pollDoc.id, poll.question || "SIRI Student Poll");
+          });
+
+          shareActions.appendChild(copyButton);
+          shareActions.appendChild(whatsappButton);
+
+          shareSection.appendChild(shareHeading);
+          shareSection.appendChild(linkText);
+          shareSection.appendChild(shareActions);
+
+          item.appendChild(shareSection);
+        }
 
         pollList.appendChild(item);
       });
