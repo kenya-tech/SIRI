@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,8 +61,6 @@ body{
     linear-gradient(90deg,rgba(4,15,27,.3),transparent,rgba(4,15,27,.3));
 }
 
-/* REGISTRATION CONTAINER */
-
 .container{
   position:relative;
   z-index:2;
@@ -90,8 +87,6 @@ body{
     transform:translateY(0);
   }
 }
-
-/* BRAND */
 
 .brand{
   display:flex;
@@ -128,8 +123,6 @@ body{
   margin-top:3px;
 }
 
-/* HEADINGS */
-
 .eyebrow{
   display:flex;
   align-items:center;
@@ -161,8 +154,6 @@ h1{
   line-height:1.8;
   margin-bottom:24px;
 }
-
-/* FORM */
 
 label{
   display:block;
@@ -211,8 +202,6 @@ select option{
   line-height:1.5;
 }
 
-/* PASSWORD FIELD */
-
 .password-wrap{
   position:relative;
 }
@@ -238,8 +227,6 @@ select option{
 .toggle-password:hover{
   color:var(--green-light);
 }
-
-/* BUTTON */
 
 button[type="submit"]{
   width:100%;
@@ -268,8 +255,6 @@ button[type="submit"]:disabled{
   transform:none;
 }
 
-/* FEEDBACK */
-
 #message{
   display:none;
   padding:12px 14px;
@@ -292,8 +277,6 @@ button[type="submit"]:disabled{
   color:#ff9d9d;
   border:1px solid rgba(239,68,68,.2);
 }
-
-/* FOOTER LINKS */
 
 .bottom{
   text-align:center;
@@ -342,8 +325,6 @@ button[type="submit"]:disabled{
 .security-note span{
   color:var(--green-light);
 }
-
-/* MOBILE */
 
 @media(max-width:520px){
   body{
@@ -489,7 +470,7 @@ button[type="submit"]:disabled{
 
   <div class="bottom">
     Already have an account?
-    <a href="login.html">Sign in</a>
+    <a href="login.html" id="loginLink">Sign in</a>
   </div>
 
   <a href="index.html" class="back">
@@ -521,10 +502,68 @@ const form = document.getElementById("registrationForm");
 const button = document.getElementById("registerButton");
 const message = document.getElementById("message");
 
+/*
+  POLL RETURN DESTINATION
+
+  Only accepts a poll URL belonging to this SIRI website.
+  Invalid or missing destinations fall back to the dashboard.
+*/
+
+function getRegistrationDestination(){
+
+  const next = new URLSearchParams(window.location.search).get("next");
+
+  if(!next){
+    return "dashboard.html";
+  }
+
+  try{
+
+    const destination = new URL(next,window.location.origin);
+
+    const pollPath = new URL(
+      "./poll.html",
+      window.location.href
+    ).pathname;
+
+    if(
+      destination.origin === window.location.origin &&
+      destination.pathname === pollPath &&
+      destination.searchParams.has("id")
+    ){
+      return destination.href;
+    }
+
+  }catch(error){
+
+    console.error("Invalid return destination:",error);
+
+  }
+
+  return "dashboard.html";
+}
+
+/*
+  PRESERVE THE POLL LINK WHEN A STUDENT CHOOSES SIGN IN
+*/
+
+const loginLink = document.getElementById("loginLink");
+const registrationDestination = getRegistrationDestination();
+
+if(registrationDestination !== "dashboard.html"){
+
+  loginLink.href =
+    "login.html?next=" +
+    encodeURIComponent(registrationDestination);
+
+}
+
 function showMessage(text,type){
+
   message.textContent=text;
   message.className=type;
   message.style.display="block";
+
 }
 
 async function createInternalEmail(registrationNumber){
@@ -542,6 +581,7 @@ async function createInternalEmail(registrationNumber){
     .join("");
 
   return `student-${hashString}@accounts.siri.invalid`;
+
 }
 
 /* SHOW / HIDE PASSWORD */
@@ -666,13 +706,13 @@ form.addEventListener("submit",async(event)=>{
     );
 
     showMessage(
-      "Your SIRI account has been created successfully. Redirecting to your dashboard...",
+      "Your SIRI account has been created successfully. Redirecting...",
       "success"
     );
 
     form.reset();
 
-    window.location.href="dashboard.html";
+    window.location.href=getRegistrationDestination();
 
   }catch(error){
 
@@ -696,8 +736,10 @@ form.addEventListener("submit",async(event)=>{
       errorText="Please choose a stronger password.";
     }else if(error.code==="auth/operation-not-allowed"){
       errorText="Email and password authentication is not enabled in Firebase.";
-    }else if(error.code==="permission-denied" ||
-             error.code==="firestore/permission-denied"){
+    }else if(
+      error.code==="permission-denied" ||
+      error.code==="firestore/permission-denied"
+    ){
       errorText="Database permission denied. Please contact the administrator.";
     }else if(error.code==="auth/network-request-failed"){
       errorText="Network error. Check your internet connection.";
