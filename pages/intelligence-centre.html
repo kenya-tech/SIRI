@@ -503,15 +503,29 @@ function createPdfReport(){
       return issue.description||issue.details||issue.message||issue.issueDescription||issue.subject||"No description was supplied.";
     }
 
-    function getPollOptionCounts(poll){
-      const options=Array.isArray(poll.options)?poll.options:[];
-      const votes=data.votes.filter(v=>v.pollId===poll.id);
-      const counts=options.map(option=>({
-        option:String(option),
-        count:votes.filter(v=>String(v.selectedOption)===String(option)).length
-      }));
-      return {options:counts,total:votes.length};
-    }
+   function getPollOptionCounts(poll){
+  const options=Array.isArray(poll.options)?poll.options:[];
+  const votes=data.votes.filter(v=>v.pollId===poll.id);
+
+  const counts=options.map(option=>{
+    const count=votes.filter(
+      v=>String(v.selectedOption)===String(option)
+    ).length;
+
+    return {
+      option:String(option),
+      count,
+      percentage:votes.length
+        ? (count/votes.length*100).toFixed(1)+"%"
+        : "0.0%"
+    };
+  });
+
+  return {
+    options:counts,
+    total:votes.length
+  };
+}
 
     function metricTable(){
       const metrics=[
@@ -657,7 +671,14 @@ function createPdfReport(){
         paragraph(`Total recorded responses: ${result.total}`);
 
         if(result.options.length){
-          table(["Answer option","Recorded responses"],result.options.map(o=>[o.option,String(o.count)]));
+         table(
+  ["Answer option","Recorded responses","Percentage"],
+  result.options.map(o=>[
+    o.option,
+    String(o.count),
+    o.percentage
+  ])
+);
         }else{
           paragraph("No answer options were recorded for this poll.");
         }
