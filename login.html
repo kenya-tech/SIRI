@@ -395,8 +395,6 @@ footer {
   to { opacity: 1; transform: scale(1); }
 }
 
-/* WHITE LIGHT EXPLOSION */
-
 #lightExplosion {
   position: fixed;
   inset: 0;
@@ -502,7 +500,7 @@ footer {
 
     <div class="register-link">
       New to SIRI?
-      <a href="register.html">Create an account</a>
+      <a href="register.html" id="registerLink">Create an account</a>
     </div>
 
     <div class="security-note">
@@ -516,8 +514,6 @@ footer {
   SIRI · SOBO RESEARCH AND INTELLIGENCE HUB<br>
   UNIVERSITY OF NAIROBI
 </footer>
-
-<!-- LOGIN SUCCESS TRANSITION -->
 
 <div id="transmission">
   <div class="transmission-grid"></div>
@@ -556,8 +552,62 @@ const transmission = document.getElementById("transmission");
 const transmissionStatus = document.getElementById("transmissionStatus");
 const lightExplosion = document.getElementById("lightExplosion");
 
+/*
+  Validate the return destination.
+  Only allow a poll page hosted on this same SIRI website.
+*/
+
+function getLoginDestination() {
+
+  const next = new URLSearchParams(window.location.search).get("next");
+
+  if (!next) {
+    return "dashboard.html";
+  }
+
+  try {
+
+    const destination = new URL(next, window.location.origin);
+
+    const pollPath = new URL(
+      "./poll.html",
+      window.location.href
+    ).pathname;
+
+    if (
+      destination.origin === window.location.origin &&
+      destination.pathname === pollPath &&
+      destination.searchParams.has("id")
+    ) {
+      return destination.href;
+    }
+
+  } catch (error) {
+    console.error("Invalid return destination:", error);
+  }
+
+  return "dashboard.html";
+}
+
+const loginDestination = getLoginDestination();
+
+/*
+  If the student needs to register, preserve the poll destination.
+*/
+
+const registerLink = document.getElementById("registerLink");
+
+if (loginDestination !== "dashboard.html") {
+
+  registerLink.href =
+    "register.html?next=" +
+    encodeURIComponent(loginDestination);
+
+}
+
 // Match the registration page's identifier-generation method.
 async function generateLoginEmail(registrationNumber) {
+
   const normalized = registrationNumber
     .trim()
     .toUpperCase()
@@ -567,6 +617,7 @@ async function generateLoginEmail(registrationNumber) {
   const hash = await crypto.subtle.digest("SHA-256", data);
 
   const hashArray = Array.from(new Uint8Array(hash));
+
   const hashString = hashArray
     .map(byte => byte.toString(16).padStart(2, "0"))
     .join("");
@@ -576,15 +627,19 @@ async function generateLoginEmail(registrationNumber) {
 
 // Password visibility
 togglePassword.addEventListener("click", () => {
+
   const isPassword = passwordInput.type === "password";
 
   passwordInput.type = isPassword ? "text" : "password";
   togglePassword.textContent = isPassword ? "HIDE" : "SHOW";
+
 });
 
 // Electric data particles
 function launchDataParticles() {
+
   for (let i = 0; i < 65; i++) {
+
     const particle = document.createElement("span");
     particle.className = "data-particle";
 
@@ -601,6 +656,7 @@ function launchDataParticles() {
 
 // Successful login entrance sequence
 async function playEntranceTransition() {
+
   transmission.classList.add("active");
 
   launchDataParticles();
@@ -623,11 +679,13 @@ async function playEntranceTransition() {
 
   await new Promise(resolve => setTimeout(resolve, 500));
 
-  window.location.href = "dashboard.html";
+  // Return to the original poll, or dashboard for normal login.
+  window.location.href = loginDestination;
 }
 
 // Login
 form.addEventListener("submit", async (event) => {
+
   event.preventDefault();
 
   const registrationNumber =
@@ -642,6 +700,7 @@ form.addEventListener("submit", async (event) => {
   button.textContent = "AUTHENTICATING...";
 
   try {
+
     if (!registrationNumber.trim()) {
       throw new Error("Enter your registration number.");
     }
@@ -655,7 +714,6 @@ form.addEventListener("submit", async (event) => {
       password
     );
 
-    // Only a successful Firebase login triggers the animation.
     message.style.color = "#00d68f";
     message.textContent = "Authentication successful.";
 
@@ -664,6 +722,7 @@ form.addEventListener("submit", async (event) => {
     await playEntranceTransition();
 
   } catch (error) {
+
     console.error(error);
 
     if (
@@ -671,19 +730,27 @@ form.addEventListener("submit", async (event) => {
       error.code === "auth/wrong-password" ||
       error.code === "auth/user-not-found"
     ) {
+
       message.textContent =
         "Incorrect registration number or password.";
+
     } else if (error.code === "auth/too-many-requests") {
+
       message.textContent =
         "Too many attempts. Please try again later.";
+
     } else {
+
       message.textContent =
         error.message || "Unable to sign in. Please try again.";
+
     }
 
     button.disabled = false;
     button.textContent = "SIGN IN";
+
   }
+
 });
 </script>
 
@@ -696,6 +763,7 @@ let particles = [];
 let width, height;
 
 function resizeCanvas() {
+
   width = canvas.width = window.innerWidth;
   height = canvas.height = window.innerHeight;
 
@@ -708,12 +776,15 @@ function resizeCanvas() {
     vy: (Math.random() - .5) * .35,
     radius: Math.random() * 1.6 + .5
   }));
+
 }
 
 function animateNetwork() {
+
   ctx.clearRect(0, 0, width, height);
 
   particles.forEach((p, i) => {
+
     p.x += p.vx;
     p.y += p.vy;
 
@@ -726,12 +797,14 @@ function animateNetwork() {
     ctx.fill();
 
     for (let j = i + 1; j < particles.length; j++) {
+
       const other = particles[j];
       const dx = p.x - other.x;
       const dy = p.y - other.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
 
       if (distance < 125) {
+
         ctx.beginPath();
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(other.x, other.y);
@@ -741,6 +814,7 @@ function animateNetwork() {
 
         ctx.lineWidth = .7;
         ctx.stroke();
+
       }
     }
   });
