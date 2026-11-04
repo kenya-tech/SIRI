@@ -90,6 +90,38 @@ Figures represent records currently stored in SIRI. Student totals are registere
   <div class="card"><div class="metric-label">Published publications</div><div class="metric-value" id="publicationCount">0</div><div class="metric-note">Articles available to students</div></div>
 </div>
 
+<!-- ASSOCIATION MEMBERSHIP INTELLIGENCE -->
+<h2 class="section-title">Association membership intelligence</h2>
+
+<div class="notice">
+Association membership is calculated from active student registration records.
+Students affiliated with two associations are counted once under each association.
+Students whose affiliation information was not recorded are reported separately.
+</div>
+
+<div class="cards" id="associationCards"></div>
+
+<div class="charts" style="margin-top:16px">
+  <div class="panel full">
+    <h3>Student membership by association</h3>
+    <div class="chart-wrap"><canvas id="associationChart"></canvas></div>
+  </div>
+
+  <div class="panel full table-wrap">
+    <h3>Association membership breakdown</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Association</th>
+          <th>Members</th>
+          <th>% of active student profiles</th>
+        </tr>
+      </thead>
+      <tbody id="associationTable"></tbody>
+    </table>
+  </div>
+</div>
+
 <h2 class="section-title">Student demographics</h2>
 <div class="charts">
   <div class="panel"><h3>Students by course</h3><div class="chart-wrap"><canvas id="courseChart"></canvas></div></div>
@@ -162,6 +194,16 @@ const $ = id => document.getElementById(id);
 let charts = {};
 let data = {};
 
+const ASSOCIATIONS = [
+  "FISA",
+  "ASA",
+  "MSA",
+  "UNISA",
+  "PMSA",
+  "HRSA",
+  "BISSA"
+];
+
 function showError(message){
   $("loading").hidden=false;
   $("loading").className="notice error";
@@ -206,6 +248,199 @@ function draw(id,type,labels,datasets,extra={}){
 
 function clearChart(id){
   if(charts[id]){charts[id].destroy();delete charts[id];}
+}
+
+// =====================================================
+// ASSOCIATION MEMBERSHIP INTELLIGENCE
+// =====================================================
+
+function getAssociationStats(){
+  const students=data.students||[];
+
+  const counts=Object.fromEntries(
+    ASSOCIATIONS.map(name=>[name,0])
+  );
+
+  let notAffiliated=0;
+  let notRecorded=0;
+  let invalidRecords=0;
+  const affiliatedStudentIds=new Set();
+
+  students.forEach((student,index)=>{
+    const affiliations=student.affiliations;
+
+    // Older records may not contain this field.
+    if(!Array.isArray(affiliations)){
+      notRecorded++;
+      return;
+    }
+
+    // Validate the original array before counting.
+    const unique=[...new Set(affiliations)];
+    const hasDuplicates=unique.length!==affiliations.length;
+
+    if(
+      hasDuplicates ||
+      unique.length<1 ||
+      unique.length>2 ||
+      unique.some(value=>typeof value!=="string")
+    ){
+      invalidRecords++;
+      return;
+    }
+
+    if(unique.length===1&&unique[0]==="NONE"){
+      notAffiliated++;
+      return;
+    }
+
+    if(unique.includes("NONE")){
+      invalidRecords++;
+      return;
+    }
+
+    if(unique.some(value=>!ASSOCIATIONS.includes(value))){
+      invalidRecords++;
+      return;
+    }
+
+    unique.forEach(name=>{
+      counts[name]++;
+    });
+
+    affiliatedStudentIds.add(student.uid||student.id||`student-${index}`);
+  });
+
+  return {
+    counts,
+    notAffiliated,
+    notRecorded,
+    invalidRecords,
+    affiliatedStudents:affiliatedStudentIds.size,
+    totalStudents:students.length
+  };
+}
+
+function renderAssociations(){
+  const stats=getAssociationStats();
+  const cards=$("associationCards");
+  const table=$("associationTable");
+
+  cards.innerHTML="";
+
+  const cardData=[
+    ...ASSOCIATIONS.map(name=>({
+      label:name+" members",
+      value:stats.counts[name],
+      note:"Recorded association membership"
+    })),
+    {
+      label:"Not affiliated",
+      value:stats.notAffiliated,
+      note:"Students who selected Not affiliated"
+    },
+    {
+      label:"Affiliation not recorded",
+      value:stats.notRecorded,
+      note:"Older or incomplete registration records"
+    },
+    {
+      label:"Affiliated students",
+      value:stats.affiliatedStudents,
+      note:"Unique students affiliated with at least one association"
+    },
+    {
+      label:"Invalid affiliation records",
+      value:stats.invalidRecords,
+      note:"Records excluded from association counts"
+    }
+  ];
+
+  cardData.forEach(item=>{
+    const card=document.createElement("div");
+    card.className="card";
+
+    const label=document.createElement("div");
+    label.className="metric-label";
+    label.textContent=item.label;
+
+    const value=document.createElement("div");
+    value.className="metric-value";
+    value.textContent=item.value;
+
+    const note=document.createElement("div");
+    note.className="metric-note";
+    note.textContent=item.note;
+
+    card.append(label,value,note);
+    cards.appendChild(card);
+  });
+
+  table.innerHTML="";
+
+  const rows=ASSOCIATIONS.map(name=>({
+    name,
+    count:stats.counts[name],
+    percentage:stats.totalStudents
+      ?(stats.counts[name]/stats.totalStudents*100).toFixed(1)
+      :"0.0"
+  }));
+
+  rows.push({
+    name:"Not affiliated",
+    count:stats.notAffiliated,
+    percentage:stats.totalStudents
+      ?(stats.notAffiliated/stats.totalStudents*100).toFixed(1)
+      :"0.0"
+  });
+
+  rows.push({
+    name:"Affiliation not recorded",
+    count:stats.notRecorded,
+    percentage:stats.totalStudents
+      ?(stats.notRecorded/stats.totalStudents*100).toFixed(1)
+      :"0.0"
+  });
+
+  rows.push({
+    name:"Invalid records",
+    count:stats.invalidRecords,
+    percentage:stats.totalStudents
+      ?(stats.invalidRecords/stats.totalStudents*100).toFixed(1)
+      :"0.0"
+  });
+
+  rows.forEach(item=>{
+    const tr=document.createElement("tr");
+
+    [item.name,item.count,item.percentage+"%"].forEach(value=>{
+      const td=document.createElement("td");
+      td.textContent=value;
+      tr.appendChild(td);
+    });
+
+    table.appendChild(tr);
+  });
+
+  draw(
+    "associationChart",
+    "bar",
+    ASSOCIATIONS,
+    [{
+      label:"Registered members",
+      data:ASSOCIATIONS.map(name=>stats.counts[name])
+    }],
+    {
+      scales:{
+        y:{
+          beginAtZero:true,
+          ticks:{precision:0}
+        }
+      }
+    }
+  );
+
+  return stats;
 }
 
 function renderDemographics(){
@@ -503,31 +738,26 @@ function createPdfReport(){
       return issue.description||issue.details||issue.message||issue.issueDescription||issue.subject||"No description was supplied.";
     }
 
-   function getPollOptionCounts(poll){
-  const options=Array.isArray(poll.options)?poll.options:[];
-  const votes=data.votes.filter(v=>v.pollId===poll.id);
+    function getPollOptionCounts(poll){
+      const options=Array.isArray(poll.options)?poll.options:[];
+      const votes=data.votes.filter(v=>v.pollId===poll.id);
 
-  const counts=options.map(option=>{
-    const count=votes.filter(
-      v=>String(v.selectedOption)===String(option)
-    ).length;
+      const counts=options.map(option=>{
+        const count=votes.filter(v=>String(v.selectedOption)===String(option)).length;
 
-    return {
-      option:String(option),
-      count,
-      percentage:votes.length
-        ? (count/votes.length*100).toFixed(1)+"%"
-        : "0.0%"
-    };
-  });
+        return {
+          option:String(option),
+          count,
+          percentage:votes.length?(count/votes.length*100).toFixed(1)+"%":"0.0%"
+        };
+      });
 
-  return {
-    options:counts,
-    total:votes.length
-  };
-}
+      return {options:counts,total:votes.length};
+    }
 
     function metricTable(){
+      const associationStats=getAssociationStats();
+
       const metrics=[
         ["Active student profiles",number("studentCount")],
         ["Research requests",number("requestCount")],
@@ -540,8 +770,16 @@ function createPdfReport(){
         ["Reported issues",number("issueCount")],
         ["Unresolved issues",number("unresolvedIssueCount")],
         ["Resolved issues",number("resolvedIssueCount")],
-        ["Average event satisfaction",number("averageSatisfaction")]
+        ["Average event satisfaction",number("averageSatisfaction")],
+        ["Affiliated students",String(associationStats.affiliatedStudents)],
+        ["Not affiliated",String(associationStats.notAffiliated)],
+        ["Affiliation not recorded",String(associationStats.notRecorded)]
       ];
+
+      ASSOCIATIONS.forEach(name=>{
+        metrics.push([name+" members",String(associationStats.counts[name])]);
+      });
+
       table(["Institutional indicator","Recorded value"],metrics);
     }
 
@@ -555,7 +793,11 @@ function createPdfReport(){
       const totalStudents=data.students.length;
       const bcom=data.students.filter(x=>x.course==="B.Com").length;
       const ppm=data.students.filter(x=>x.course==="PPM").length;
+      const associationStats=getAssociationStats();
+
       findings.push(`SIRI has ${totalStudents} active student profiles. B.Com accounts for ${bcom} profiles, while PPM accounts for ${ppm}.`);
+
+      findings.push(`${associationStats.affiliatedStudents} students have at least one valid association affiliation. ${associationStats.notAffiliated} selected Not affiliated, while ${associationStats.notRecorded} profiles have no recorded affiliation information.`);
 
       const issueCategory=largestCategory(data.issues,["category","issueType","type"]);
       findings.push(issueCategory?
@@ -570,7 +812,7 @@ function createPdfReport(){
         "There are insufficient satisfaction ratings to calculate an average.");
 
       findings.push(`The platform has recorded ${data.requests.length} research requests and ${data.reports.length} published research reports.`);
-      findings.push(`There are ${data.votes.length} recorded poll responses across ${publishedPolls.length} published polls.`);
+      findings.push(`${data.votes.length} recorded poll responses across ${publishedPolls.length} published polls.`);
       findings.push(`${publishedNotifications.length} published notifications and announcements are currently available in SIRI.`);
       return findings;
     }
@@ -582,54 +824,39 @@ function createPdfReport(){
     pdf.addPage();
     addHeader("Executive Summary");
 
-    paragraph(
-      "This report presents an overview of information recorded through the SOBO Research and Intelligence Hub (SIRI). SOBO means School of Business Organizations. SIRI is an intelligence space for SOBO, operating through the ICT, Research and Insights Directorate."
-    );
+    paragraph("This report presents an overview of information recorded through the SOBO Research and Intelligence Hub (SIRI). SOBO means School of Business Organizations. SIRI is an intelligence space for SOBO, operating through the ICT, Research and Insights Directorate.");
 
-    paragraph(
-      `As at ${reportDate}, SIRI contained ${number("studentCount")} active student profiles, ${number("requestCount")} research requests, ${number("voteCount")} poll responses and ${number("evaluationCount")} event evaluations.`
-    );
+    paragraph(`As at ${reportDate}, SIRI contained ${number("studentCount")} active student profiles, ${number("requestCount")} research requests, ${number("voteCount")} poll responses and ${number("evaluationCount")} event evaluations.`);
 
-    paragraph(
-      `The issue tracking module contained ${number("issueCount")} records. Of these, ${number("resolvedIssueCount")} were marked resolved or closed, while ${number("unresolvedIssueCount")} were not marked as resolved.`
-    );
+    paragraph(`The issue tracking module contained ${number("issueCount")} records. Of these, ${number("resolvedIssueCount")} were marked resolved or closed, while ${number("unresolvedIssueCount")} were not marked as resolved.`);
 
-    paragraph(
-      `SIRI also contained ${publishedPolls.length} published polls and ${publishedNotifications.length} published notifications and announcements.`
-    );
+    paragraph(`SIRI also contained ${publishedPolls.length} published polls and ${publishedNotifications.length} published notifications and announcements.`);
 
     heading("Institutional performance indicators");
     metricTable();
 
     heading("Scope of the report");
-    paragraph(
-      "This report reflects records available in SIRI at the time of generation. Student profile totals represent active SIRI profiles and are not an independently verified University of Nairobi enrolment count. The findings are platform-based indicators."
-    );
+    paragraph("This report reflects records available in SIRI at the time of generation. Student profile totals represent active SIRI profiles and are not an independently verified University of Nairobi enrolment count. The findings are platform-based indicators.");
 
     // PAGE 3: NOTIFICATIONS AND ANNOUNCEMENTS
     pdf.addPage();
     addHeader("Notifications and Announcements");
 
-    paragraph(
-      `This section presents published communications recorded in SIRI. There are ${publishedNotifications.length} published notifications and announcements available at the time this report was generated.`
-    );
+    paragraph(`This section presents published communications recorded in SIRI. There are ${publishedNotifications.length} published notifications and announcements available at the time this report was generated.`);
 
     if(!publishedNotifications.length){
       paragraph("No published notifications or announcements were found.");
     }else{
-      publishedNotifications
-        .slice()
-        .sort((a,b)=>{
-          const da=a.createdAt&&typeof a.createdAt.toDate==="function"?a.createdAt.toDate():new Date(a.createdAt||0);
-          const db=b.createdAt&&typeof b.createdAt.toDate==="function"?b.createdAt.toDate():new Date(b.createdAt||0);
-          return db-da;
-        })
-        .forEach((item,index)=>{
-          heading(`${index+1}. ${item.title||"Untitled announcement"}`);
-          paragraph(`Category: ${item.category||"Not specified"}`);
-          paragraph(`Publication date: ${notificationDate(item)}`);
-          paragraph(item.message||"No message content was recorded.");
-        });
+      publishedNotifications.slice().sort((a,b)=>{
+        const da=a.createdAt&&typeof a.createdAt.toDate==="function"?a.createdAt.toDate():new Date(a.createdAt||0);
+        const db=b.createdAt&&typeof b.createdAt.toDate==="function"?b.createdAt.toDate():new Date(b.createdAt||0);
+        return db-da;
+      }).forEach((item,index)=>{
+        heading(`${index+1}. ${item.title||"Untitled announcement"}`);
+        paragraph(`Category: ${item.category||"Not specified"}`);
+        paragraph(`Publication date: ${notificationDate(item)}`);
+        paragraph(item.message||"No message content was recorded.");
+      });
     }
 
     // KEY FINDINGS
@@ -656,6 +883,42 @@ function createPdfReport(){
     });
     table(["Course","Year 1","Year 2","Year 3","Year 4","Total"],studentRows);
 
+    // ASSOCIATION MEMBERSHIP INTELLIGENCE
+    pdf.addPage();
+    addHeader("Association Membership Intelligence");
+
+    const associationStats=getAssociationStats();
+
+    paragraph(`SIRI contains ${associationStats.totalStudents} active student profiles. ${associationStats.affiliatedStudents} students have at least one valid association affiliation.`);
+
+    paragraph("Students who selected two associations are counted once under each association. Therefore, membership totals may overlap and may exceed the number of unique affiliated students.");
+
+    table(
+      ["Association","Registered members","% of active profiles"],
+      ASSOCIATIONS.map(name=>[
+        name,
+        String(associationStats.counts[name]),
+        associationStats.totalStudents
+          ?(associationStats.counts[name]/associationStats.totalStudents*100).toFixed(1)+"%"
+          :"0.0%"
+      ])
+    );
+
+    table(
+      ["Additional registration category","Students"],
+      [
+        ["Not affiliated",String(associationStats.notAffiliated)],
+        ["Affiliation not recorded",String(associationStats.notRecorded)],
+        ["Invalid affiliation records",String(associationStats.invalidRecords)]
+      ]
+    );
+
+    addChart(
+      "associationChart",
+      "Student membership by association",
+      "Association membership counts based on valid active student registration records."
+    );
+
     // POLL INTELLIGENCE: ALL PUBLISHED POLLS
     pdf.addPage();
     addHeader("Poll Intelligence");
@@ -671,14 +934,10 @@ function createPdfReport(){
         paragraph(`Total recorded responses: ${result.total}`);
 
         if(result.options.length){
-         table(
-  ["Answer option","Recorded responses","Percentage"],
-  result.options.map(o=>[
-    o.option,
-    String(o.count),
-    o.percentage
-  ])
-);
+          table(
+            ["Answer option","Recorded responses","Percentage"],
+            result.options.map(o=>[o.option,String(o.count),o.percentage])
+          );
         }else{
           paragraph("No answer options were recorded for this poll.");
         }
@@ -691,7 +950,6 @@ function createPdfReport(){
       });
     }
 
-    // Include the currently selected poll charts where available.
     const selectedPoll=data.polls.find(p=>p.id===$("pollSelect").value);
     if(selectedPoll){
       heading("Selected poll visual analysis");
@@ -748,7 +1006,11 @@ function createPdfReport(){
 
     heading("Student data management");
     bullet("Encourage students to maintain accurate and up-to-date profiles to strengthen demographic reporting.");
-    bullet("Monitor missing course and year-of-study information to improve the completeness of student records.");
+    bullet("Monitor missing course, year-of-study and association information to improve the completeness of student records.");
+
+    heading("Association engagement");
+    bullet("Use association membership figures to understand the distribution of student affiliation across SOBO associations.");
+    bullet("Work with associations to encourage accurate registration and periodic updates of membership information.");
 
     heading("Research coordination");
     bullet("Review outstanding research requests regularly and communicate progress to the students who submitted them.");
@@ -772,7 +1034,7 @@ function createPdfReport(){
     // CONCLUSION
     pdf.addPage();
     addHeader("Conclusion and Data Limitations");
-    paragraph("The SIRI Intelligence Centre brings together several streams of student and institutional information in one reporting environment. Its records provide SOBO with a basis for monitoring student profiles, research requests, poll participation, event feedback, notifications and reported issues.");
+    paragraph("The SIRI Intelligence Centre brings together several streams of student and institutional information in one reporting environment. Its records provide SOBO with a basis for monitoring student profiles, association membership, research requests, poll participation, event feedback, notifications and reported issues.");
     paragraph("The value of these insights will increase as student participation, data completeness and regular administrative updates improve. Consistent review of the information can support evidence-informed planning and follow-up.");
 
     heading("Data limitations");
@@ -783,6 +1045,7 @@ function createPdfReport(){
     bullet("Issue resolution figures depend on the status recorded in the SIRI issue tracking module.");
     bullet("Poll findings represent recorded votes and do not necessarily represent the views of all students.");
     bullet("Only published notifications and announcements are included.");
+    bullet("Association membership counts are based on valid affiliation selections in active student profiles. Students with two associations appear in both membership totals.");
 
     heading("Report information");
     paragraph(`Generated on: ${generatedAt.toLocaleString("en-GB")}`);
@@ -845,6 +1108,7 @@ async function loadData(){
     $("pollCount").textContent=data.polls.filter(x=>x.status==="published").length;
 
     renderDemographics();
+    renderAssociations();
     renderResearch();
     renderEvents();
     renderIssues();
