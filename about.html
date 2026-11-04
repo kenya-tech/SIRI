@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07111f">
   <title>About SOBO | SIRI</title>
 
   <style>
@@ -70,7 +71,7 @@
 
     .hero {
       text-align: center;
-      padding: 85px 20px 65px;
+      padding: 80px 20px 60px;
       background:
         radial-gradient(ellipse at top, rgba(53,212,154,.13), transparent 65%);
     }
@@ -106,17 +107,17 @@
     }
 
     section {
-      padding: 55px 0;
+      padding: 50px 0;
     }
 
     .section-heading {
       text-align: center;
-      margin-bottom: 35px;
+      margin-bottom: 32px;
     }
 
     .section-heading h2 {
       font-size: 29px;
-      margin-bottom: 8px;
+      margin: 8px 0;
     }
 
     .section-heading p {
@@ -124,47 +125,81 @@
       font-size: 14px;
     }
 
-    .about-card {
+    /* Expandable information sections */
+
+    .info-accordion {
       background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 30px;
-      margin-bottom: 20px;
-    }
-
-    .about-card h3 {
-      color: var(--green);
-      margin-bottom: 12px;
-      font-size: 20px;
-    }
-
-    .about-card p {
-      color: var(--muted);
-    }
-
-    .values-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-top: 20px;
-    }
-
-    .value-card {
-      background: var(--panel-light);
-      border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 20px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: border-color .3s;
     }
 
-    .value-card h4 {
+    .info-accordion[open] {
+      border-color: rgba(53,212,154,.45);
+    }
+
+    .info-accordion summary {
+      padding: 19px 22px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      font-weight: bold;
+      font-size: 15px;
+      transition: .3s;
+    }
+
+    .info-accordion summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .info-accordion summary:hover {
       color: var(--green);
-      margin-bottom: 7px;
     }
 
-    .value-card p {
-      color: var(--muted);
-      font-size: 13px;
+    .info-accordion summary::after {
+      content: "+";
+      color: var(--green);
+      font-size: 23px;
+      font-weight: normal;
     }
+
+    .info-accordion[open] summary::after {
+      content: "−";
+    }
+
+    .accordion-content {
+      padding: 18px 22px 22px;
+      color: var(--muted);
+      font-size: 14px;
+      border-top: 1px solid var(--border);
+      animation: reveal .25s ease;
+    }
+
+    .accordion-content ul {
+      padding-left: 20px;
+    }
+
+    .accordion-content li {
+      margin-bottom: 9px;
+    }
+
+    @keyframes reveal {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Leadership */
 
     .leadership-section {
       border-top: 1px solid var(--border);
@@ -173,13 +208,13 @@
     .profile-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 22px;
+      gap: 20px;
     }
 
     .director-grid {
       display: grid;
       grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 17px;
+      gap: 16px;
     }
 
     .profile-card {
@@ -192,14 +227,14 @@
     }
 
     .profile-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-4px);
       border-color: rgba(53,212,154,.5);
     }
 
     .photo-button {
       display: block;
-      width: 105px;
-      height: 105px;
+      width: 100px;
+      height: 100px;
       margin: 0 auto 13px;
       border: 2px solid rgba(53,212,154,.65);
       border-radius: 50%;
@@ -223,7 +258,7 @@
       align-items: center;
       justify-content: center;
       color: var(--green);
-      font-size: 30px;
+      font-size: 28px;
       font-weight: bold;
     }
 
@@ -240,7 +275,7 @@
 
     .profile-card small {
       display: block;
-      margin-top: 9px;
+      margin-top: 8px;
       font-size: 10px;
       color: var(--muted);
     }
@@ -251,6 +286,8 @@
       font-size: 12px;
       margin-top: 20px;
     }
+
+    /* Enlarged photo */
 
     .modal {
       display: none;
@@ -339,11 +376,7 @@
       }
 
       .hero {
-        padding: 65px 18px 45px;
-      }
-
-      .values-grid {
-        grid-template-columns: 1fr;
+        padding: 60px 18px 45px;
       }
 
       .profile-grid,
@@ -364,6 +397,14 @@
       .section-heading h2 {
         font-size: 24px;
       }
+
+      .info-accordion summary {
+        padding: 17px;
+      }
+
+      .accordion-content {
+        padding: 16px 17px 19px;
+      }
     }
   </style>
 </head>
@@ -379,73 +420,72 @@
     <div class="eyebrow">School of Business Organizations</div>
     <h1>About <span>SOBO</span></h1>
     <p>
-      Discover the organization, its purpose, leadership and commitment
+      Discover our organization, purpose, leadership and commitment
       to strengthening student organizations within the University of Nairobi.
     </p>
   </header>
 
   <main class="container">
 
+    <!-- ABOUT SOBO INFORMATION -->
+
     <section>
-      <div class="about-card">
-        <h3>Who We Are</h3>
-        <p>
-          The School of Business Organizations (SOBO) is a student
-          leadership and coordination structure within the Faculty of
-          Business and Management Sciences at the University of Nairobi.
-          It provides a platform for coordination, representation,
-          collaboration and the advancement of student organizations.
-        </p>
+
+      <div class="section-heading">
+        <div class="eyebrow">Get to Know Us</div>
+        <h2>Discover SOBO</h2>
+        <p>Select a section below to learn more.</p>
       </div>
 
-      <div class="about-card">
-        <h3>Our Mission</h3>
-        <p>
-          [Insert the officially approved SOBO mission statement here.]
-        </p>
-      </div>
-
-      <div class="about-card">
-        <h3>Our Vision</h3>
-        <p>
-          [Insert the officially approved SOBO vision statement here.]
-        </p>
-      </div>
-
-      <div class="about-card">
-        <h3>Our Goals and Objectives</h3>
-
-        <div class="values-grid">
-          <div class="value-card">
-            <h4>Student Representation</h4>
-            <p>
-              Promote student participation and representation
-              in matters affecting student organizations.
-            </p>
-          </div>
-
-          <div class="value-card">
-            <h4>Collaboration</h4>
-            <p>
-              Encourage cooperation and meaningful engagement
-              among organizations.
-            </p>
-          </div>
-
-          <div class="value-card">
-            <h4>Development</h4>
-            <p>
-              Support leadership, innovation and opportunities
-              for student growth.
-            </p>
-          </div>
+      <details class="info-accordion">
+        <summary>About SOBO</summary>
+        <div class="accordion-content">
+          <p>
+            The School of Business Organizations (SOBO) is a student
+            leadership and coordination structure within the Faculty of
+            Business and Management Sciences at the University of Nairobi.
+            It provides a platform for coordination, representation,
+            collaboration and the advancement of student organizations.
+          </p>
         </div>
-      </div>
+      </details>
+
+      <details class="info-accordion">
+        <summary>Our Mission</summary>
+        <div class="accordion-content">
+          <p>
+            [Insert the officially approved SOBO mission statement here.]
+          </p>
+        </div>
+      </details>
+
+      <details class="info-accordion">
+        <summary>Our Vision</summary>
+        <div class="accordion-content">
+          <p>
+            [Insert the officially approved SOBO vision statement here.]
+          </p>
+        </div>
+      </details>
+
+      <details class="info-accordion">
+        <summary>Goals and Objectives</summary>
+        <div class="accordion-content">
+          <ul>
+            <li>Promote student participation and representation.</li>
+            <li>Encourage collaboration among student organizations.</li>
+            <li>Support leadership development and innovation.</li>
+            <li>Strengthen communication and coordination.</li>
+          </ul>
+        </div>
+      </details>
+
     </section>
 
     <!-- EXECUTIVE COUNCIL -->
 
     <section class="leadership-section">
+
       <div class="section-heading">
         <div class="eyebrow">Our Leadership</div>
         <h2>Executive Council</h2>
@@ -453,11 +493,13 @@
       </div>
 
       <div class="profile-grid" id="executiveGrid"></div>
+
     </section>
 
     <!-- DIRECTORS -->
 
     <section class="leadership-section">
+
       <div class="section-heading">
         <div class="eyebrow">Directorates</div>
         <h2>Our Directors</h2>
@@ -469,6 +511,7 @@
       <p class="photo-note">
         Select any leadership photo to view an enlarged profile.
       </p>
+
     </section>
 
   </main>
@@ -477,10 +520,18 @@
 
   <div class="modal" id="photoModal">
     <div class="modal-content">
-      <button class="close-modal" id="closeModal" aria-label="Close">&times;</button>
+
+      <button
+        class="close-modal"
+        id="closeModal"
+        aria-label="Close"
+      >&times;</button>
+
       <img id="modalImage" src="" alt="Leadership profile photo">
+
       <h3 id="modalName"></h3>
       <p id="modalPosition"></p>
+
     </div>
   </div>
 
@@ -491,16 +542,16 @@
   </footer>
 
   <script>
+
     /*
       EDIT LEADERSHIP DETAILS BELOW.
 
-      Replace each name and position with the official details.
-      Replace each photo path with the image location in your repository.
+      Replace names and positions with official details.
 
-      Example:
+      Example photo path:
       photo: "images/chairperson.jpg"
 
-      If you have not uploaded a photo yet, leave photo as "".
+      Leave photo as "" until you upload the image.
     */
 
     const executives = [
@@ -524,22 +575,28 @@
     const executiveGrid = document.getElementById("executiveGrid");
     const directorGrid = document.getElementById("directorGrid");
 
-    function createProfile(person, index) {
+    function createProfile(person) {
       const card = document.createElement("div");
       card.className = "profile-card";
 
       const photoButton = document.createElement("button");
       photoButton.className = "photo-button";
       photoButton.type = "button";
-      photoButton.setAttribute("aria-label", "View " + person.name + "'s photo");
+      photoButton.setAttribute(
+        "aria-label",
+        "View " + person.name + "'s photo"
+      );
 
       if (person.photo) {
         const image = document.createElement("img");
         image.src = person.photo;
         image.alt = person.name;
+
         image.onerror = function() {
-          photoButton.innerHTML = '<div class="photo-placeholder">+</div>';
+          photoButton.innerHTML =
+            '<div class="photo-placeholder">+</div>';
         };
+
         photoButton.appendChild(image);
       } else {
         const placeholder = document.createElement("div");
@@ -562,15 +619,16 @@
       instruction.textContent = "View profile";
 
       card.append(photoButton, name, position, instruction);
+
       return card;
     }
 
-    executives.forEach((person, index) => {
-      executiveGrid.appendChild(createProfile(person, index));
+    executives.forEach(function(person) {
+      executiveGrid.appendChild(createProfile(person));
     });
 
-    directors.forEach((person, index) => {
-      directorGrid.appendChild(createProfile(person, index));
+    directors.forEach(function(person) {
+      directorGrid.appendChild(createProfile(person));
     });
 
     const modal = document.getElementById("photoModal");
@@ -596,7 +654,8 @@
       modal.classList.remove("active");
     }
 
-    document.getElementById("closeModal").addEventListener("click", closeProfile);
+    document.getElementById("closeModal")
+      .addEventListener("click", closeProfile);
 
     modal.addEventListener("click", function(event) {
       if (event.target === modal) {
@@ -609,6 +668,20 @@
         closeProfile();
       }
     });
+
+    // Only one information section stays open at a time.
+    document.querySelectorAll(".info-accordion").forEach(function(item) {
+      item.addEventListener("toggle", function() {
+        if (item.open) {
+          document.querySelectorAll(".info-accordion").forEach(function(other) {
+            if (other !== item) {
+              other.open = false;
+            }
+          });
+        }
+      });
+    });
+
   </script>
 
 </body>
