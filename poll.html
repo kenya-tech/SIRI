@@ -186,6 +186,35 @@
       font-size: 14px;
     }
 
+    .back:hover {
+      text-decoration: underline;
+    }
+
+    .success-icon {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      background: rgba(35,160,106,.15);
+      color: #8cf0c4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: bold;
+      margin: 0 auto 20px;
+    }
+
+    .redirect-text {
+      margin-top: 20px;
+      color: #aebdca;
+    }
+
+    .redirect-count {
+      color: #55d8c2;
+      font-weight: bold;
+      font-size: 19px;
+    }
+
     @media(max-width: 500px) {
       .container {
         margin: 20px auto;
@@ -248,16 +277,20 @@
   let currentUser = null;
   let submitting = false;
 
+  // Display unavailable or error messages.
   function showUnavailable(title, message) {
     pollCard.innerHTML = `
       <div class="unavailable">
         <h2>${title}</h2>
         <p>${message}</p>
-        <a class="back" href="./index.html">Visit SIRI homepage</a>
+        <a class="back" href="./index.html">
+          Visit SIRI homepage
+        </a>
       </div>
     `;
   }
 
+  // Display form messages.
   function showMessage(message, type) {
     const box = document.getElementById("voteMessage");
 
@@ -267,7 +300,62 @@
     box.className = "message " + type;
   }
 
+  // Show success confirmation and redirect to homepage.
+  function showVoteSuccess() {
+
+    pollCard.innerHTML = `
+      <div class="unavailable">
+
+        <div class="success-icon">✓</div>
+
+        <h2 style="color:#8cf0c4;">
+          Vote Submitted Successfully!
+        </h2>
+
+        <p>
+          Thank you for participating in this SIRI student poll.
+          Your response has been successfully recorded.
+        </p>
+
+        <p class="redirect-text">
+          Redirecting you to the SIRI homepage in
+          <strong class="redirect-count" id="redirectCountdown">
+            3
+          </strong>
+          seconds...
+        </p>
+
+        <a class="back" href="./index.html">
+          Return to homepage now
+        </a>
+
+      </div>
+    `;
+
+    let seconds = 3;
+
+    const countdown = setInterval(() => {
+
+      seconds--;
+
+      const counter = document.getElementById("redirectCountdown");
+
+      if (counter) {
+        counter.textContent = seconds;
+      }
+
+      if (seconds <= 0) {
+        clearInterval(countdown);
+
+        window.location.replace("./index.html");
+      }
+
+    }, 1000);
+  }
+
+  // Retrieve and verify poll information.
   async function loadPoll(user) {
+
     currentUser = user;
 
     if (!pollId) {
@@ -279,12 +367,15 @@
     }
 
     try {
+
       // Verify the student's registration.
       const profileRef = doc(db, "registrationRequests", user.uid);
       const profileSnapshot = await getDoc(profileRef);
 
-      if (!profileSnapshot.exists() ||
-          profileSnapshot.data().status !== "active") {
+      if (
+        !profileSnapshot.exists() ||
+        profileSnapshot.data().status !== "active"
+      ) {
         showUnavailable(
           "Account Not Active",
           "Your SIRI student account could not be verified. Please contact the SIRI administrator."
@@ -292,7 +383,7 @@
         return;
       }
 
-      // Retrieve the exact poll from the shared link.
+      // Retrieve the exact poll.
       const pollRef = doc(db, "studentPolls", pollId);
       const pollSnapshot = await getDoc(pollRef);
 
@@ -314,8 +405,10 @@
         return;
       }
 
-      if (!Array.isArray(currentPoll.options) ||
-          currentPoll.options.length < 2) {
+      if (
+        !Array.isArray(currentPoll.options) ||
+        currentPoll.options.length < 2
+      ) {
         showUnavailable(
           "Poll Unavailable",
           "This poll does not have valid answer options."
@@ -334,6 +427,7 @@
       );
 
     } catch (error) {
+
       console.error("Poll loading error:", error);
 
       showUnavailable(
@@ -343,7 +437,9 @@
     }
   }
 
+  // Render the poll interface.
   function renderPoll(poll, alreadyVoted) {
+
     pollCard.innerHTML = "";
 
     const tag = document.createElement("span");
@@ -356,15 +452,19 @@
     const description = document.createElement("p");
     description.className = "description";
     description.textContent =
-      poll.description || "Share your views by selecting one answer below.";
+      poll.description ||
+      "Share your views by selecting one answer below.";
 
     pollCard.appendChild(tag);
     pollCard.appendChild(question);
     pollCard.appendChild(description);
 
+    // Prevent students from voting twice.
     if (alreadyVoted) {
+
       const notice = document.createElement("div");
       notice.className = "message success";
+
       notice.textContent =
         "Our records show that you have already participated in this poll. Thank you for sharing your views.";
 
@@ -381,7 +481,8 @@
     const form = document.createElement("form");
     form.id = "voteForm";
 
-    poll.options.forEach((option, index) => {
+    poll.options.forEach((option) => {
+
       const label = document.createElement("label");
       label.className = "option";
 
@@ -396,6 +497,7 @@
 
       label.appendChild(radio);
       label.appendChild(text);
+
       form.appendChild(label);
     });
 
@@ -417,7 +519,9 @@
     pollCard.appendChild(form);
   }
 
+  // Submit the student's vote.
   async function submitVote(event) {
+
     event.preventDefault();
 
     if (submitting || !currentUser || !currentPoll) return;
@@ -427,31 +531,47 @@
     );
 
     if (!selected) {
-      showMessage("Please select an answer before submitting.", "error");
+      showMessage(
+        "Please select an answer before submitting.",
+        "error"
+      );
       return;
     }
 
     if (!currentPoll.options.includes(selected.value)) {
-      showMessage("Invalid answer selection. Please refresh the page.", "error");
+      showMessage(
+        "Invalid answer selection. Please refresh the page.",
+        "error"
+      );
       return;
     }
 
     const submitButton = document.getElementById("submitVote");
 
     submitting = true;
+
     submitButton.disabled = true;
     submitButton.textContent = "Submitting...";
 
     try {
+
       // Recheck that the poll is still published.
       const pollRef = doc(db, "studentPolls", pollId);
       const latestPoll = await getDoc(pollRef);
 
-      if (!latestPoll.exists() ||
-          latestPoll.data().status !== "published") {
-        showMessage("This poll is no longer open for voting.", "error");
+      if (
+        !latestPoll.exists() ||
+        latestPoll.data().status !== "published"
+      ) {
+
+        showMessage(
+          "This poll is no longer open for voting.",
+          "error"
+        );
+
         submitButton.disabled = true;
         submitButton.textContent = "Poll Closed";
+
         return;
       }
 
@@ -466,6 +586,7 @@
         return;
       }
 
+      // Save the vote to Firebase.
       await setDoc(voteRef, {
         pollId: pollId,
         uid: currentUser.uid,
@@ -473,9 +594,11 @@
         createdAt: serverTimestamp()
       });
 
-      renderPoll(currentPoll, true);
+      // Only show success and redirect after Firebase confirms saving.
+      showVoteSuccess();
 
     } catch (error) {
+
       console.error("Vote submission error:", error);
 
       showMessage(
@@ -487,13 +610,18 @@
       submitButton.textContent = "Submit My Vote";
 
     } finally {
+
       submitting = false;
+
     }
   }
 
+  // Check authentication.
   onAuthStateChanged(auth, async (user) => {
+
     if (!user) {
-      // Preserve this exact poll link for the registration/login step.
+
+      // Preserve this exact poll link for the login step.
       const returnUrl = window.location.href;
 
       window.location.href =
@@ -503,6 +631,7 @@
     }
 
     await loadPoll(user);
+
   });
 
 </script>
