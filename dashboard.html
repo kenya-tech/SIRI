@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -468,6 +467,89 @@ footer{
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
+
+/* =========================================================
+   SIRI AMOLED BLACK + EMERALD THEME
+   Visual-only overrides; existing layout and motion retained.
+========================================================= */
+:root{
+  --bg:#030605;--panel:#08110c;--panel2:#0d1b13;
+  --cyan:#35e89a;--blue:#16bd78;--violet:#16865a;
+  --emerald:#00d982;--gold:#7ce8b2;
+  --text:#f4fff8;--muted:#c0d3c8;--line:rgba(75,210,139,.24);
+}
+body{
+  color:#f4fff8;
+  background:radial-gradient(ellipse at 50% 18%,rgba(0,115,67,.19),transparent 43%),
+             radial-gradient(ellipse at 4% 82%,rgba(0,76,48,.16),transparent 36%),#030605;
+}
+body::before{
+  opacity:.12;
+  background-image:linear-gradient(rgba(67,205,135,.10) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(67,205,135,.10) 1px,transparent 1px);
+}
+header{background:rgba(3,6,5,.96);border-bottom-color:rgba(69,201,132,.25)}
+.brand-symbol{background:linear-gradient(145deg,#00e68a,#087b4c 70%,#06472f);color:#02150b;box-shadow:0 0 24px rgba(0,230,138,.28)}
+.brand-sub{color:#b4cfc0}
+.system-status{color:#8fffc0}
+.status-dot{background:#00e68a;box-shadow:0 0 12px rgba(0,230,138,.8)}
+.logout{border-color:#267b53;background:#0b1b12;color:#f0fff6}
+.logout:hover{background:#123b27;border-color:#35e89a}
+.welcome{
+  border-color:rgba(49,204,129,.42);
+  background:radial-gradient(circle at 85% 50%,rgba(0,220,130,.17),transparent 35%),
+             radial-gradient(circle at 65% 10%,rgba(63,255,164,.09),transparent 40%),
+             linear-gradient(115deg,#07140d,#0b2116 58%,#0b1911);
+  box-shadow:0 20px 55px #0009,inset 0 1px rgba(255,255,255,.08);
+}
+.welcome::before{background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.045) 50%,transparent 65%)}
+.eyebrow{color:#9bffca}.eyebrow-line{background:#00e68a}
+.welcome h1{color:#fff}.welcome p{color:#e0eee6}#message{color:#9affc5}
+.hero-orb-core{color:#eafff2;background:radial-gradient(circle at 35% 25%,#65ffb4,#07965a 56%,#043c27);box-shadow:0 0 30px rgba(0,230,138,.45),0 0 70px rgba(0,130,76,.25)}
+.hero-ring{border-color:rgba(65,238,155,.65)}.hero-ring.two{border-color:rgba(28,168,103,.58)}.hero-ring.three{border-color:rgba(113,255,184,.42)}
+.profile{border-color:rgba(65,205,133,.32);background:linear-gradient(125deg,rgba(13,34,22,.98),rgba(6,17,11,.98) 55%,rgba(14,39,25,.98));box-shadow:0 15px 40px #0009,inset 0 1px rgba(255,255,255,.10)}
+.profile::before{background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.035) 46%,rgba(255,255,255,.09) 50%,rgba(255,255,255,.035) 54%,transparent 60%)}
+.profile-heading h2,.section-heading h2,.admin-heading h2{color:#fff}
+.profile-tag{color:#a6ffd0;border-color:rgba(65,225,143,.45);background:rgba(0,205,117,.10)}
+.profile-item{border-left-color:#00df83;background:linear-gradient(110deg,rgba(255,255,255,.075),rgba(255,255,255,.025))}
+.detail-label{color:#c1d8ca}.detail-value{color:#fff}
+.section-heading p,.admin-heading p{color:#d0dfd6}
+.section-label{color:#8dffc0}.orbit-instruction{color:#c0d5c8}
+.orbit-halo{border-color:rgba(0,220,130,.28);box-shadow:0 0 40px rgba(0,220,130,.07),inset 0 0 35px rgba(0,220,130,.06)}
+.orbit-halo::before{border-color:rgba(54,230,146,.25)}.orbit-halo::after{border-color:rgba(104,255,178,.18)}
+.orbit-module{
+  --accent:#35e89a!important;color:#fff;border-color:rgba(49,218,133,.65);
+  background:linear-gradient(145deg,rgba(13,35,23,.98),rgba(5,17,11,.99));
+  box-shadow:0 12px 30px #000b,0 0 20px rgba(0,220,130,.10),inset 0 1px rgba(255,255,255,.10);
+  opacity:1!important;
+}
+.orbit-module:hover{background:linear-gradient(145deg,#123b27,#092116);border-color:#69ffb1;box-shadow:0 18px 45px #000b,0 0 30px rgba(0,230,138,.24)}
+.orbit-icon{color:#8dffc0;border-color:rgba(65,235,153,.52);background:rgba(0,210,119,.12);box-shadow:0 0 18px rgba(0,220,130,.12)}
+.orbit-module strong{color:#fff;font-size:12px;font-weight:800}
+.orbit-module small{color:#d2e3d9;font-size:10px;line-height:1.45}
+.orbit-core{background:radial-gradient(circle at 32% 25%,#35f49b,#087c4b 42%,#06452d 75%,#03170e);border-color:rgba(159,255,202,.78);box-shadow:0 0 35px rgba(0,230,138,.38),0 0 100px rgba(0,130,76,.22),inset 0 0 25px rgba(255,255,255,.16)}
+.orbit-core::before{border-color:rgba(72,255,166,.68)}.orbit-core::after{border-color:rgba(121,255,187,.48)}
+.core-letter{color:#fff}.core-caption{color:#e0ffed}
+.orbit-control{border-color:#286d4b;background:#0a1b11;color:#e5fff0}
+.orbit-control:hover{background:#123a26;border-color:#4cf5a5}
+.orbit-control.active{background:#10452b;border-color:#35e89a;color:#baffd8}
+.admin-tag{color:#a8ffd0;background:rgba(0,210,119,.09);border-color:rgba(65,225,143,.42)}
+.admin-module{border-color:rgba(65,205,133,.35);background:linear-gradient(145deg,#102419,#07130c)}
+.admin-module:hover{border-color:#5cf3a7;box-shadow:0 12px 30px rgba(0,0,0,.45),0 0 22px rgba(0,220,130,.12)}
+.admin-module .orbit-icon{color:#8dffc0;background:rgba(0,210,119,.12);border-color:rgba(65,235,153,.48)}
+.admin-module h3{color:#fff}.admin-module p{color:#d2e3d9}.admin-action{color:#8dffc0}
+footer{background:#020403;border-top-color:rgba(69,201,132,.22);color:#c0d1c7}
+.footer-brand{color:#8dffc0}
+#pageTransition{background:radial-gradient(circle,#0b633c,#030806 70%)}
+.transition-orb{border-color:#8dffc0;box-shadow:0 0 35px rgba(0,230,138,.45)}
+.transition-name{color:#fff}
+.notification-badge{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 5px;margin-left:4px;border-radius:20px;background:#00d982;color:#03150b;font-size:10px;font-weight:900;vertical-align:middle}
+@media(max-width:600px){
+  .orbit-module strong{font-size:11px}
+  .orbit-module small{font-size:9px;color:#e0eee6}
+  .detail-label,.orbit-instruction{color:#d0e1d7}
+}
+
 </style>
 </head>
 
@@ -484,8 +566,8 @@ footer{
 
   <div class="header-right">
     <div class="system-status">
-      <span class="status-dot"></span>
-      SYSTEM ONLINE
+      <span class="status-dot" id="systemStatusDot"></span>
+      <span id="systemStatusText">VERIFYING ACCOUNT</span>
     </div>
     <button class="logout" id="logoutButton">Sign Out ↗</button>
   </div>
@@ -685,7 +767,6 @@ footer{
   <div class="transition-orb"></div>
   <div class="transition-name">SIRI</div>
 </div>
-
 <script type="module">
 import { auth, db } from "./js/firebase.js";
 
@@ -700,108 +781,157 @@ import {
   collection,
   query,
   where,
-  getDocs
+  getDocs,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
 const message = document.getElementById("message");
 const unreadBadge = document.getElementById("unreadBadge");
 
+const systemStatusText = document.getElementById("systemStatusText");
+const systemStatusDot = document.getElementById("systemStatusDot");
+
+let accountVerified = false;
+let stopNotificationsListener = null;
+let stopReadsListener = null;
+let publishedNotifications = [];
+let readNotificationIds = new Set();
+
+function setSystemStatus(label, state) {
+  systemStatusText.textContent = label;
+  systemStatusDot.style.background = state === "online" ? "#00e68a" : state === "error" ? "#ff7373" : "#e5c46b";
+  systemStatusDot.style.boxShadow = state === "online"
+    ? "0 0 12px rgba(0,230,138,.8)"
+    : state === "error" ? "0 0 12px rgba(255,115,115,.65)" : "none";
+}
+
+function updateUnreadBadge() {
+  // Audience filtering is intentionally not guessed here. The current dashboard
+  // file does not define the notification audience field/value schema.
+  const unread = publishedNotifications.filter(item => !readNotificationIds.has(item.id)).length;
+  if (unread > 0) {
+    unreadBadge.textContent = unread > 99 ? "99+" : unread;
+    unreadBadge.hidden = false;
+  } else {
+    unreadBadge.hidden = true;
+  }
+}
+
+function stopNotificationListeners() {
+  if (stopNotificationsListener) stopNotificationsListener();
+  if (stopReadsListener) stopReadsListener();
+  stopNotificationsListener = null;
+  stopReadsListener = null;
+}
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
+    accountVerified = false;
+    stopNotificationListeners();
     window.location.href = "login.html";
     return;
   }
+
+  accountVerified = false;
+  setSystemStatus("VERIFYING ACCOUNT", "checking");
+  message.textContent = "Verifying your student account...";
 
   try {
     const profileRef = doc(db, "registrationRequests", user.uid);
     const profileSnapshot = await getDoc(profileRef);
 
-    if (!profileSnapshot.exists()) {
-      message.textContent = "Your profile could not be found.";
+    if (!profileSnapshot.exists() || profileSnapshot.data().status !== "active") {
+      message.textContent = profileSnapshot.exists()
+        ? "Your account is not active. Redirecting to sign in..."
+        : "Your profile could not be found. Redirecting to sign in...";
+      await signOut(auth);
+      window.location.replace("login.html");
       return;
     }
 
     const profile = profileSnapshot.data();
 
-    if (profile.status !== "active") {
-      message.textContent = "Your account is not active.";
-      return;
-    }
-
     document.getElementById("regNumber").textContent =
       profile.registrationNumber || "Not available";
-
     document.getElementById("year").textContent =
       profile.year ? "Year " + profile.year : "Not available";
-
     document.getElementById("course").textContent =
       profile.course || "Not available";
-
     document.getElementById("phone").textContent =
       profile.phone || "Not available";
 
     const roleRef = doc(db, "roles", user.uid);
     const roleSnapshot = await getDoc(roleRef);
 
-    if (
-      roleSnapshot.exists() &&
-      roleSnapshot.data().role === "super_admin"
-    ) {
+    if (roleSnapshot.exists() && roleSnapshot.data().role === "super_admin") {
       document.getElementById("adminSection").style.display = "block";
+    } else {
+      document.getElementById("adminSection").style.display = "none";
     }
 
+    accountVerified = true;
+    setSystemStatus("ACCOUNT VERIFIED", "online");
     message.textContent = "Your account is active. Welcome aboard!";
-    await loadUnreadCount(user.uid);
+    startUnreadCountListeners(user.uid);
 
+    // Start the orbital animation only after the account has been verified.
+    if (!animationFrame) {
+      arrangeModules();
+      animate();
+    }
   } catch (error) {
-    console.error(error);
-    message.textContent =
-      "We could not load your profile. Please refresh the page.";
+    console.error("Dashboard account verification:", error);
+    accountVerified = false;
+    setSystemStatus("CONNECTION ISSUE", "error");
+    message.textContent = "We could not verify your account. Please sign in again.";
+    stopNotificationListeners();
+    try {
+      await signOut(auth);
+    } catch (signOutError) {
+      console.error("Sign out after verification failure:", signOutError);
+    }
+    window.location.replace("login.html");
   }
 });
 
-async function loadUnreadCount(uid) {
-  try {
-    const publishedQuery = query(
-      collection(db, "notifications"),
-      where("status", "==", "published")
-    );
+function startUnreadCountListeners(uid) {
+  stopNotificationListeners();
 
-    const readsQuery = query(
-      collection(db, "notificationReads"),
-      where("uid", "==", uid)
-    );
+  const publishedQuery = query(
+    collection(db, "notifications"),
+    where("status", "==", "published")
+  );
+  const readsQuery = query(
+    collection(db, "notificationReads"),
+    where("uid", "==", uid)
+  );
 
-    const [publishedSnapshot, readsSnapshot] = await Promise.all([
-      getDocs(publishedQuery),
-      getDocs(readsQuery)
-    ]);
-
-    const readIds = new Set(
-      readsSnapshot.docs.map(item => item.data().notificationId)
-    );
-
-    const unread = publishedSnapshot.docs.filter(
-      item => !readIds.has(item.id)
-    ).length;
-
-    if (unread > 0) {
-      unreadBadge.textContent = unread > 99 ? "99+" : unread;
-      unreadBadge.hidden = false;
-    } else {
-      unreadBadge.hidden = true;
-    }
-
-  } catch (error) {
-    console.error("Unread notification count:", error);
+  stopNotificationsListener = onSnapshot(publishedQuery, snapshot => {
+    publishedNotifications = snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
+    updateUnreadBadge();
+  }, error => {
+    console.error("Published notifications listener:", error);
     unreadBadge.hidden = true;
-  }
+  });
+
+  stopReadsListener = onSnapshot(readsQuery, snapshot => {
+    readNotificationIds = new Set(
+      snapshot.docs.map(item => item.data().notificationId).filter(Boolean)
+    );
+    updateUnreadBadge();
+  }, error => {
+    console.error("Notification reads listener:", error);
+    unreadBadge.hidden = true;
+  });
 }
 
 /* SIGN OUT */
 
 document.getElementById("logoutButton").addEventListener("click", async () => {
   try {
+    stopNotificationListeners();
+    accountVerified = false;
+    setSystemStatus("SIGNING OUT", "checking");
     await signOut(auth);
     window.location.href = "login.html";
   } catch (error) {
@@ -881,10 +1011,10 @@ function animate() {
   animationFrame = requestAnimationFrame(animate);
 }
 
-arrangeModules();
-animate();
-
-window.addEventListener("resize", arrangeModules);
+window.addEventListener("resize", () => {
+  arrangeModules();
+  if (accountVerified) renderOrbit();
+});
 
 /* DRAG TO ROTATE */
 
