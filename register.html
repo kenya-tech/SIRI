@@ -1,882 +1,836 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#061321">
-<title>Student Registration | SIRI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Registration | SIRI</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green: #20c77b;
+      --green-light: #65f2b1;
+      --navy: #061321;
+      --navy-light: #0c2033;
+      --white: #ffffff;
+      --muted: #9aafc3;
+      --danger: #ff7777;
+    }
 
-<style>
-:root{
-  --navy:#061321;
-  --panel:rgba(12,29,48,.88);
-  --green:#20c77b;
-  --green-light:#65f2b1;
-  --blue:#35aaff;
-  --cyan:#65e5ff;
-  --white:#f5f9ff;
-  --muted:#a6b8ce;
-  --border:rgba(255,255,255,.10);
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
+    body {
+      min-height: 100vh;
+      padding: 35px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--navy);
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      overflow-x: hidden;
+    }
 
-body{
-  min-height:100vh;
-  background:var(--navy);
-  color:var(--white);
-  font-family:'DM Sans',sans-serif;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:35px 16px;
-  overflow-x:hidden;
-  position:relative;
-}
+    #networkCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: .35;
+    }
 
-#network{
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:0;
-  pointer-events:none;
-}
+    .container {
+      width: 100%;
+      max-width: 510px;
+      padding: 35px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 18px;
+      background: rgba(9, 28, 46, .94);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
 
-.background-glow{
-  position:fixed;
-  inset:0;
-  z-index:1;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 50% 40%,transparent,rgba(3,12,24,.72) 85%),
-    linear-gradient(90deg,rgba(4,15,27,.3),transparent,rgba(4,15,27,.3));
-}
+    .brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
 
-.container{
-  position:relative;
-  z-index:2;
-  width:100%;
-  max-width:490px;
-  padding:36px;
-  border:1px solid rgba(101,229,255,.15);
-  border-radius:20px;
-  background:var(--panel);
-  backdrop-filter:blur(22px);
-  box-shadow:
-    0 25px 90px rgba(0,0,0,.4),
-    0 0 45px rgba(32,199,123,.06);
-  animation:appear .8s ease both;
-}
+    .brand h1 {
+      color: var(--green-light);
+      font-size: 30px;
+      letter-spacing: 3px;
+      margin-bottom: 7px;
+    }
 
-@keyframes appear{
-  from{
-    opacity:0;
-    transform:translateY(22px);
-  }
-  to{
-    opacity:1;
-    transform:translateY(0);
-  }
-}
+    .brand p {
+      color: var(--muted);
+      font-size: 13px;
+    }
 
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:30px;
-}
+    .brand .subtitle {
+      margin-top: 15px;
+      color: var(--white);
+      font-size: 20px;
+      font-weight: 600;
+    }
 
-.logo{
-  width:46px;
-  height:46px;
-  display:grid;
-  place-items:center;
-  border-radius:12px;
-  background:linear-gradient(140deg,#087c4b,#2ce69a);
-  color:white;
-  font-family:'Space Grotesk',sans-serif;
-  font-size:27px;
-  font-weight:700;
-  box-shadow:0 0 25px rgba(32,199,123,.3);
-}
+    .form-group {
+      margin-bottom: 19px;
+    }
 
-.brand h2{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:23px;
-  letter-spacing:1px;
-}
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #dce8f5;
+      font-size: 13px;
+      font-weight: 600;
+    }
 
-.brand small{
-  display:block;
-  font-size:8px;
-  color:#a4bacd;
-  letter-spacing:1.7px;
-  margin-top:3px;
-}
+    input,
+    select {
+      width: 100%;
+      min-height: 46px;
+      padding: 12px 13px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 8px;
+      outline: none;
+      background: rgba(3,15,28,.8);
+      color: var(--white);
+      font-size: 14px;
+    }
 
-.eyebrow{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  color:var(--green-light);
-  font-size:9px;
-  font-weight:700;
-  letter-spacing:2px;
-  margin-bottom:12px;
-}
+    input:focus,
+    select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 2px rgba(32,199,123,.12);
+    }
 
-.eyebrow:before{
-  content:"";
-  height:1px;
-  width:20px;
-  background:var(--green-light);
-}
+    select option {
+      background: var(--navy-light);
+      color: var(--white);
+    }
 
-h1{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:29px;
-  letter-spacing:-1px;
-  margin-bottom:9px;
-}
+    .hint {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+    }
 
-.subtitle{
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.8;
-  margin-bottom:24px;
-}
+    .password-wrapper {
+      position: relative;
+    }
 
-label{
-  display:block;
-  color:#dce8f5;
-  font-size:12px;
-  font-weight:600;
-  margin:17px 0 8px;
-}
+    .password-wrapper input {
+      padding-right: 65px;
+    }
 
-input,select{
-  width:100%;
-  padding:13px 14px;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:8px;
-  background:rgba(3,15,28,.65);
-  color:var(--white);
-  font-family:'DM Sans',sans-serif;
-  font-size:13px;
-  outline:none;
-  transition:border-color .25s,box-shadow .25s,background .25s;
-}
+    .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      transform: translateY(-50%);
+      border: none;
+      background: none;
+      color: var(--green-light);
+      font-size: 11px;
+      cursor: pointer;
+    }
 
-input::placeholder{
-  color:#71859b;
-}
+    .affiliation-heading {
+      margin-bottom: 8px;
+    }
 
-input:focus,select:focus{
-  border-color:var(--green);
-  background:rgba(7,28,40,.9);
-  box-shadow:0 0 0 3px rgba(32,199,123,.12);
-}
+    .affiliation-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
 
-select{
-  cursor:pointer;
-}
+    .affiliation-option {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 0;
+      padding: 13px 11px;
+      min-height: 45px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 8px;
+      background: rgba(3,15,28,.65);
+      color: #dce8f5;
+      font-size: 12px;
+      cursor: pointer;
+      transition: .2s;
+    }
 
-select option{
-  background:#10243a;
-  color:white;
-}
+    .affiliation-option:has(input:checked) {
+      border-color: var(--green);
+      background: rgba(32,199,123,.12);
+      color: var(--green-light);
+    }
 
-.hint{
-  color:#8095a9;
-  font-size:10px;
-  margin-top:7px;
-  line-height:1.5;
-}
+    .affiliation-option input {
+      width: 16px;
+      height: 16px;
+      min-height: auto;
+      margin: 0;
+      padding: 0;
+      accent-color: var(--green);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
 
-.password-wrap{
-  position:relative;
-}
+    .affiliation-option input:disabled {
+      cursor: not-allowed;
+      opacity: .4;
+    }
 
-.password-wrap input{
-  padding-right:65px;
-}
+    #affiliationCount {
+      margin-top: 10px;
+    }
 
-.toggle-password{
-  position:absolute;
-  right:12px;
-  top:50%;
-  transform:translateY(-50%);
-  border:0;
-  background:none;
-  color:#79bca0;
-  font-size:10px;
-  font-weight:700;
-  cursor:pointer;
-  padding:5px;
-}
+    .message {
+      display: none;
+      padding: 12px;
+      margin-bottom: 16px;
+      border-radius: 7px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
 
-.toggle-password:hover{
-  color:var(--green-light);
-}
+    .message.error {
+      display: block;
+      color: #ffaaaa;
+      background: rgba(255,80,80,.1);
+      border: 1px solid rgba(255,80,80,.2);
+    }
 
-button[type="submit"]{
-  width:100%;
-  padding:15px;
-  margin-top:25px;
-  border:0;
-  border-radius:8px;
-  background:linear-gradient(110deg,#19b86d,#65f2b1);
-  color:#041b13;
-  font-family:'DM Sans',sans-serif;
-  font-size:14px;
-  font-weight:700;
-  cursor:pointer;
-  box-shadow:0 8px 30px rgba(32,199,123,.2);
-  transition:.25s;
-}
+    .message.success {
+      display: block;
+      color: var(--green-light);
+      background: rgba(32,199,123,.1);
+      border: 1px solid rgba(32,199,123,.2);
+    }
 
-button[type="submit"]:hover{
-  transform:translateY(-2px);
-  box-shadow:0 10px 35px rgba(32,199,123,.35);
-}
+    .register-button {
+      width: 100%;
+      min-height: 49px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 8px;
+      background: var(--green);
+      color: #04170e;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .2s;
+    }
 
-button[type="submit"]:disabled{
-  opacity:.6;
-  cursor:wait;
-  transform:none;
-}
+    .register-button:hover {
+      background: var(--green-light);
+      transform: translateY(-1px);
+    }
 
-#message{
-  display:none;
-  padding:12px 14px;
-  border-radius:8px;
-  margin-top:17px;
-  font-size:12px;
-  line-height:1.6;
-}
+    .register-button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+      transform: none;
+    }
 
-.success{
-  display:block!important;
-  background:rgba(32,199,123,.12);
-  color:#75e8b3;
-  border:1px solid rgba(32,199,123,.25);
-}
+    .bottom-text {
+      margin-top: 23px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
 
-.error{
-  display:block!important;
-  background:rgba(239,68,68,.10);
-  color:#ff9d9d;
-  border:1px solid rgba(239,68,68,.2);
-}
+    .bottom-text a {
+      color: var(--green-light);
+      text-decoration: none;
+      font-weight: 600;
+    }
 
-.bottom{
-  text-align:center;
-  margin-top:25px;
-  color:var(--muted);
-  font-size:12px;
-}
+    @media(max-width:520px) {
+      body {
+        padding: 20px 12px;
+      }
 
-.bottom a{
-  color:var(--green-light);
-  font-weight:700;
-  text-decoration:none;
-}
+      .container {
+        padding: 25px 19px;
+      }
 
-.bottom a:hover{
-  text-decoration:underline;
-}
+      .brand h1 {
+        font-size: 26px;
+      }
 
-.back{
-  display:block;
-  text-align:center;
-  margin-top:19px;
-  color:#8198ad;
-  font-size:11px;
-  text-decoration:none;
-  transition:.2s;
-}
-
-.back:hover{
-  color:var(--cyan);
-}
-
-.security-note{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:7px;
-  margin-top:24px;
-  padding-top:17px;
-  border-top:1px solid var(--border);
-  color:#758ca2;
-  font-size:9px;
-  letter-spacing:.5px;
-}
-
-.security-note span{
-  color:var(--green-light);
-}
-
-@media(max-width:520px){
-  body{
-    padding:20px 12px;
-    align-items:flex-start;
-  }
-
-  .container{
-    padding:27px 21px;
-    margin:auto 0;
-  }
-
-  h1{
-    font-size:26px;
-  }
-
-  .brand{
-    margin-bottom:25px;
-  }
-}
-
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{
-    animation:none!important;
-    transition:none!important;
-  }
-}
-</style>
+      .affiliation-options {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<canvas id="network"></canvas>
-<div class="background-glow"></div>
+  <canvas id="networkCanvas"></canvas>
 
-<main class="container">
+  <main class="container">
 
-  <div class="brand">
-    <div class="logo">S</div>
-    <div>
-      <h2>SIRI</h2>
-      <small>RESEARCH & INTELLIGENCE HUB</small>
-    </div>
-  </div>
+    <header class="brand">
+      <h1>SIRI</h1>
+      <p>SOBO Research &amp; Intelligence Hub</p>
+      <div class="subtitle">Student Registration</div>
+      <p>Register to access the SIRI platform.</p>
+    </header>
 
-  <div class="eyebrow">JOIN THE SIRI COMMUNITY</div>
+    <form id="registrationForm">
 
-  <h1>Create your account.</h1>
+      <div class="form-group">
+        <label for="registrationNumber">Registration Number</label>
+        <input
+          type="text"
+          id="registrationNumber"
+          placeholder="Enter your registration number"
+          autocomplete="username"
+          required
+        >
+      </div>
 
-  <p class="subtitle">
-    Register using your University of Nairobi student details
-    to access the SIRI platform.
-  </p>
+      <div class="form-group">
+        <label for="year">Year of Study</label>
+        <select id="year" required>
+          <option value="">Select your year of study</option>
+          <option value="1">Year 1</option>
+          <option value="2">Year 2</option>
+          <option value="3">Year 3</option>
+          <option value="4">Year 4</option>
+        </select>
+      </div>
 
-  <form id="registrationForm">
+      <div class="form-group">
+        <label for="course">Programme</label>
+        <select id="course" required>
+          <option value="">Select your programme</option>
+          <option value="B.Com">Bachelor of Commerce (B.Com)</option>
+          <option value="PPM">Project Planning and Management (PPM)</option>
+        </select>
+      </div>
 
-    <label for="registrationNumber">
-      University Registration Number
-    </label>
+      <!-- ASSOCIATION AFFILIATION -->
+      <div class="form-group">
+        <div class="affiliation-heading">
+          <label>Association Affiliation</label>
+          <p class="hint">
+            Select at least one association. You may select a maximum of two.
+          </p>
+        </div>
 
-    <input
-      id="registrationNumber"
-      type="text"
-      placeholder="Enter your registration number"
-      autocomplete="off"
-      required
-      maxlength="40"
-    >
+        <div class="affiliation-options" id="affiliationOptions">
 
-    <label for="year">Year of Study</label>
+          <label class="affiliation-option">
+            <input type="checkbox" name="affiliations" value="FISA">
+            FISA
+          </label>
 
-    <select id="year" required>
-      <option value="">Select your year</option>
-      <option value="1">Year 1</option>
-      <option value="2">Year 2</option>
-      <option value="3">Year 3</option>
-      <option value="4">Year 4</option>
-    </select>
+          <label class="affiliation-option">
+            <input type="checkbox" name="affiliations" value="ASA">
+            ASA
+          </label>
 
-    <label for="course">Programme</label>
+          <label class="affiliation-option">
+            <input type="checkbox" name="affiliations" value="MSA">
+            MSA
+          </label>
 
-    <select id="course" required>
-      <option value="">Select your programme</option>
-      <option value="B.Com">Bachelor of Commerce (B.Com)</option>
-      <option value="PPM">Project Planning and Management (PPM)</option>
-    </select>
+          <label class="affiliation-option">
+            <input type="checkbox" name="affiliations" value="UNISA">
+            UNISA
+          </label>
 
-    <label for="phone">Phone Number</label>
+          <label class="affiliation-option">
+            <input type="checkbox" name="affiliations" value="PMSA">
+            PMSA
+          </label>
 
-    <input
-      id="phone"
-      type="tel"
-      placeholder="07XXXXXXXX"
-      inputmode="numeric"
-      maxlength="10"
-      pattern="07[0-9]{8}"
-      required
-    >
+          <label class="affiliation-option">
+            <input type="checkbox" name="affiliations" value="HRSA">
+            HRSA
+          </label>
 
-    <p class="hint">
-      Kenyan mobile number, e.g. 0712345678.
-    </p>
+          <label class="affiliation-option">
+            <input type="checkbox" name="affiliations" value="BISSA">
+            BISSA
+          </label>
 
-    <label for="password">Password</label>
+          <label class="affiliation-option">
+            <input type="checkbox" name="affiliations" value="NONE">
+            Not affiliated
+          </label>
 
-    <div class="password-wrap">
-      <input
-        id="password"
-        type="password"
-        placeholder="Create a password"
-        autocomplete="new-password"
-        minlength="8"
-        required
-      >
-      <button type="button" class="toggle-password" data-target="password">
-        SHOW
+        </div>
+
+        <p id="affiliationCount" class="hint">
+          0 of 2 associations selected.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input
+          type="tel"
+          id="phone"
+          placeholder="07XXXXXXXX"
+          pattern="07[0-9]{8}"
+          maxlength="10"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">Create Password</label>
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="password"
+            placeholder="At least 8 characters"
+            minlength="8"
+            autocomplete="new-password"
+            required
+          >
+          <button type="button" class="toggle-password" data-target="password">
+            Show
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="confirmPassword"
+            placeholder="Re-enter your password"
+            minlength="8"
+            autocomplete="new-password"
+            required
+          >
+          <button type="button" class="toggle-password" data-target="confirmPassword">
+            Show
+          </button>
+        </div>
+      </div>
+
+      <div id="message" class="message" role="alert"></div>
+
+      <button type="submit" id="registerButton" class="register-button">
+        Create Account
       </button>
+
+    </form>
+
+    <div class="bottom-text">
+      Already registered?
+      <a id="loginLink" href="login.html">Login here</a>
     </div>
 
-    <label for="confirmPassword">Confirm Password</label>
+  </main>
 
-    <div class="password-wrap">
-      <input
-        id="confirmPassword"
-        type="password"
-        placeholder="Enter your password again"
-        autocomplete="new-password"
-        minlength="8"
-        required
-      >
-      <button type="button" class="toggle-password" data-target="confirmPassword">
-        SHOW
-      </button>
-    </div>
+  <script type="module">
+    import { auth, db } from "./js/firebase.js";
 
-    <button type="submit" id="registerButton">
-      Create Account <span>↗</span>
-    </button>
+    import {
+      createUserWithEmailAndPassword,
+      deleteUser
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
 
-    <div id="message" role="status" aria-live="polite"></div>
+    import {
+      doc,
+      setDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
 
-  </form>
 
-  <div class="bottom">
-    Already have an account?
-    <a href="login.html" id="loginLink">Sign in</a>
-  </div>
+    const form = document.getElementById("registrationForm");
+    const button = document.getElementById("registerButton");
+    const message = document.getElementById("message");
 
-  <a href="index.html" class="back">
-    ← Back to SIRI homepage
-  </a>
+    // ASSOCIATION SELECTION
+    const affiliationCheckboxes = [
+      ...document.querySelectorAll('input[name="affiliations"]')
+    ];
 
-  <div class="security-note">
-    <span>●</span>
-    SECURE STUDENT REGISTRATION
-  </div>
+    const affiliationCount = document.getElementById("affiliationCount");
 
-</main>
+    function updateAffiliations() {
+      const selected = affiliationCheckboxes.filter(
+        checkbox => checkbox.checked
+      );
 
-<script type="module">
-import { auth, db } from "./js/firebase.js";
+      const hasNone = selected.some(
+        checkbox => checkbox.value === "NONE"
+      );
 
-import {
-  createUserWithEmailAndPassword,
-  deleteUser
-} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-auth.js";
+      affiliationCheckboxes.forEach(checkbox => {
+        if (hasNone && checkbox.value !== "NONE") {
+          checkbox.disabled = true;
+        } else if (
+          !hasNone &&
+          checkbox.value === "NONE"
+        ) {
+          checkbox.disabled = selected.length > 0;
+        } else {
+          checkbox.disabled =
+            !checkbox.checked && selected.length >= 2;
+        }
+      });
 
-import {
-  doc,
-  setDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/13.1.0/firebase-firestore.js";
-
-const form = document.getElementById("registrationForm");
-const button = document.getElementById("registerButton");
-const message = document.getElementById("message");
-
-/*
-  POLL RETURN DESTINATION
-
-  Only accepts a poll URL belonging to this SIRI website.
-  Invalid or missing destinations fall back to the dashboard.
-*/
-
-function getRegistrationDestination(){
-
-  const next = new URLSearchParams(window.location.search).get("next");
-
-  if(!next){
-    return "dashboard.html";
-  }
-
-  try{
-
-    const destination = new URL(next,window.location.origin);
-
-    const pollPath = new URL(
-      "./poll.html",
-      window.location.href
-    ).pathname;
-
-    if(
-      destination.origin === window.location.origin &&
-      destination.pathname === pollPath &&
-      destination.searchParams.has("id")
-    ){
-      return destination.href;
+      affiliationCount.textContent =
+        `${selected.length} of 2 associations selected.`;
     }
 
-  }catch(error){
-
-    console.error("Invalid return destination:",error);
-
-  }
-
-  return "dashboard.html";
-}
-
-/*
-  PRESERVE THE POLL LINK WHEN A STUDENT CHOOSES SIGN IN
-*/
-
-const loginLink = document.getElementById("loginLink");
-const registrationDestination = getRegistrationDestination();
-
-if(registrationDestination !== "dashboard.html"){
-
-  loginLink.href =
-    "login.html?next=" +
-    encodeURIComponent(registrationDestination);
-
-}
-
-function showMessage(text,type){
-
-  message.textContent=text;
-  message.className=type;
-  message.style.display="block";
-
-}
-
-async function createInternalEmail(registrationNumber){
-
-  const normalized=registrationNumber
-    .trim()
-    .toUpperCase()
-    .replace(/\s+/g,"");
-
-  const bytes=new TextEncoder().encode(normalized);
-  const hash=await crypto.subtle.digest("SHA-256",bytes);
-
-  const hashString=Array.from(new Uint8Array(hash))
-    .map(byte=>byte.toString(16).padStart(2,"0"))
-    .join("");
-
-  return `student-${hashString}@accounts.siri.invalid`;
-
-}
-
-/* SHOW / HIDE PASSWORD */
-
-document.querySelectorAll(".toggle-password").forEach(toggle=>{
-
-  toggle.addEventListener("click",()=>{
-
-    const input=document.getElementById(toggle.dataset.target);
-
-    if(input.type==="password"){
-      input.type="text";
-      toggle.textContent="HIDE";
-    }else{
-      input.type="password";
-      toggle.textContent="SHOW";
-    }
-
-  });
-
-});
-
-/* REGISTRATION */
-
-form.addEventListener("submit",async(event)=>{
-
-  event.preventDefault();
-
-  message.style.display="none";
-
-  const registrationNumber=
-    document.getElementById("registrationNumber").value.trim();
-
-  const year=Number(document.getElementById("year").value);
-
-  const course=document.getElementById("course").value;
-
-  const phone=document.getElementById("phone").value.trim();
-
-  const password=document.getElementById("password").value;
-
-  const confirmPassword=
-    document.getElementById("confirmPassword").value;
-
-  if(!registrationNumber){
-    showMessage(
-      "Enter your university registration number.",
-      "error"
-    );
-    return;
-  }
-
-  if(![1,2,3,4].includes(year)){
-    showMessage(
-      "Select your year of study.",
-      "error"
-    );
-    return;
-  }
-
-  if(!["B.Com","PPM"].includes(course)){
-    showMessage(
-      "Select a valid programme.",
-      "error"
-    );
-    return;
-  }
-
-  if(!/^07[0-9]{8}$/.test(phone)){
-    showMessage(
-      "Enter a valid Kenyan phone number in the format 07XXXXXXXX.",
-      "error"
-    );
-    return;
-  }
-
-  if(password.length<8){
-    showMessage(
-      "Your password must contain at least 8 characters.",
-      "error"
-    );
-    return;
-  }
-
-  if(password!==confirmPassword){
-    showMessage(
-      "Your passwords do not match.",
-      "error"
-    );
-    return;
-  }
-
-  button.disabled=true;
-  button.textContent="Creating your account...";
-
-  let createdUser=null;
-
-  try{
-
-    const internalEmail=
-      await createInternalEmail(registrationNumber);
-
-    const credential=await createUserWithEmailAndPassword(
-      auth,
-      internalEmail,
-      password
-    );
-
-    createdUser=credential.user;
-
-    await setDoc(
-      doc(db,"registrationRequests",createdUser.uid),
-      {
-        uid:createdUser.uid,
-        registrationNumber:registrationNumber,
-        year:year,
-        course:course,
-        phone:"+254"+phone.substring(1),
-        status:"active",
-        createdAt:serverTimestamp()
-      }
-    );
-
-    showMessage(
-      "Your SIRI account has been created successfully. Redirecting...",
-      "success"
-    );
-
-    form.reset();
-
-    window.location.href=getRegistrationDestination();
-
-  }catch(error){
-
-    if(createdUser){
-
-      try{
-        await deleteUser(createdUser);
-      }catch(cleanupError){
-        console.error("Account cleanup failed:",cleanupError);
-      }
-
-    }
-
-    console.error(error);
-
-    let errorText="Registration failed. Please try again.";
-
-    if(error.code==="auth/email-already-in-use"){
-      errorText="This registration number already has an account.";
-    }else if(error.code==="auth/weak-password"){
-      errorText="Please choose a stronger password.";
-    }else if(error.code==="auth/operation-not-allowed"){
-      errorText="Email and password authentication is not enabled in Firebase.";
-    }else if(
-      error.code==="permission-denied" ||
-      error.code==="firestore/permission-denied"
-    ){
-      errorText="Database permission denied. Please contact the administrator.";
-    }else if(error.code==="auth/network-request-failed"){
-      errorText="Network error. Check your internet connection.";
-    }
-
-    showMessage(errorText,"error");
-
-  }finally{
-
-    button.disabled=false;
-    button.innerHTML='Create Account <span>↗</span>';
-
-  }
-
-});
-</script>
-
-<script>
-/* ANIMATED NETWORK BACKGROUND */
-
-const canvas=document.getElementById("network");
-const ctx=canvas.getContext("2d");
-
-let width,height,particles=[];
-let animationFrame;
-
-const mobile=window.innerWidth<600;
-const particleCount=mobile?45:75;
-const connectionDistance=mobile?85:115;
-
-function resizeCanvas(){
-
-  const dpr=Math.min(window.devicePixelRatio||1,2);
-
-  width=window.innerWidth;
-  height=window.innerHeight;
-
-  canvas.width=width*dpr;
-  canvas.height=height*dpr;
-
-  canvas.style.width=width+"px";
-  canvas.style.height=height+"px";
-
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-
-}
-
-function createParticles(){
-
-  particles=[];
-
-  for(let i=0;i<particleCount;i++){
-
-    particles.push({
-      x:Math.random()*width,
-      y:Math.random()*height,
-      vx:(Math.random()-.5)*.45,
-      vy:(Math.random()-.5)*.45,
-      radius:Math.random()*1.5+.5
+    affiliationCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener("change", updateAffiliations);
     });
 
-  }
+    updateAffiliations();
 
-}
 
-function animate(){
+    // PASSWORD VISIBILITY
+    document.querySelectorAll(".toggle-password").forEach(toggle => {
+      toggle.addEventListener("click", () => {
+        const input = document.getElementById(toggle.dataset.target);
 
-  ctx.clearRect(0,0,width,height);
+        if (input.type === "password") {
+          input.type = "text";
+          toggle.textContent = "Hide";
+        } else {
+          input.type = "password";
+          toggle.textContent = "Show";
+        }
+      });
+    });
 
-  for(let i=0;i<particles.length;i++){
 
-    const p=particles[i];
-
-    for(let j=i+1;j<particles.length;j++){
-
-      const q=particles[j];
-
-      const dx=p.x-q.x;
-      const dy=p.y-q.y;
-      const distance=Math.sqrt(dx*dx+dy*dy);
-
-      if(distance<connectionDistance){
-
-        const opacity=(1-distance/connectionDistance)*.4;
-
-        ctx.beginPath();
-        ctx.moveTo(p.x,p.y);
-        ctx.lineTo(q.x,q.y);
-        ctx.strokeStyle=`rgba(65,190,255,${opacity})`;
-        ctx.lineWidth=.6;
-        ctx.stroke();
-
-      }
-
+    // MESSAGE HANDLING
+    function showMessage(text, type) {
+      message.textContent = text;
+      message.className = `message ${type}`;
     }
 
-  }
 
-  particles.forEach(p=>{
+    // REGISTRATION DESTINATION
+    function getRegistrationDestination() {
+      const params = new URLSearchParams(window.location.search);
+      const next = params.get("next");
 
-    p.x+=p.vx;
-    p.y+=p.vy;
+      if (next) {
+        try {
+          const destination = new URL(next, window.location.origin);
 
-    if(p.x<0||p.x>width)p.vx*=-1;
-    if(p.y<0||p.y>height)p.vy*=-1;
+          if (
+            destination.origin === window.location.origin &&
+            destination.pathname.endsWith("/poll.html")
+          ) {
+            return destination.pathname + destination.search;
+          }
+        } catch (error) {
+          // Use the default destination.
+        }
+      }
 
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.radius,0,Math.PI*2);
-    ctx.fillStyle="rgba(105,225,255,.85)";
-    ctx.shadowBlur=10;
-    ctx.shadowColor="#35aaff";
-    ctx.fill();
-    ctx.shadowBlur=0;
+      return "dashboard.html";
+    }
 
-  });
 
-  animationFrame=requestAnimationFrame(animate);
+    // INTERNAL EMAIL GENERATION
+    async function createInternalEmail(registrationNumber) {
+      const normalized = registrationNumber.trim().toUpperCase();
 
-}
+      const encoded = new TextEncoder().encode(normalized);
 
-function startAnimation(){
+      const hashBuffer = await crypto.subtle.digest("SHA-256", encoded);
 
-  resizeCanvas();
-  createParticles();
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
 
-  if(animationFrame){
-    cancelAnimationFrame(animationFrame);
-  }
+      const hashString = hashArray
+        .map(byte => byte.toString(16).padStart(2, "0"))
+        .join("");
 
-  animate();
+      return `student-${hashString}@accounts.siri.invalid`;
+    }
 
-}
 
-window.addEventListener("resize",startAnimation);
+    // LOGIN LINK PRESERVES DESTINATION
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get("next");
 
-startAnimation();
-</script>
+    if (next) {
+      document.getElementById("loginLink").href =
+        `login.html?next=${encodeURIComponent(next)}`;
+    }
+
+
+    // FORM SUBMISSION
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      message.className = "message";
+      message.textContent = "";
+
+      const registrationNumber =
+        document.getElementById("registrationNumber").value.trim();
+
+      const year =
+        document.getElementById("year").value;
+
+      const course =
+        document.getElementById("course").value;
+
+      const affiliations = affiliationCheckboxes
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+
+      const phone =
+        document.getElementById("phone").value.trim();
+
+      const password =
+        document.getElementById("password").value;
+
+      const confirmPassword =
+        document.getElementById("confirmPassword").value;
+
+
+      // VALIDATION
+      if (!registrationNumber) {
+        showMessage("Enter your registration number.", "error");
+        return;
+      }
+
+      if (!["1", "2", "3", "4"].includes(year)) {
+        showMessage("Select your year of study.", "error");
+        return;
+      }
+
+      if (!["B.Com", "PPM"].includes(course)) {
+        showMessage("Select your programme.", "error");
+        return;
+      }
+
+      if (
+        affiliations.length < 1 ||
+        affiliations.length > 2
+      ) {
+        showMessage(
+          "Select at least one association and no more than two.",
+          "error"
+        );
+        return;
+      }
+
+      if (
+        affiliations.includes("NONE") &&
+        affiliations.length !== 1
+      ) {
+        showMessage(
+          "Not affiliated cannot be combined with another association.",
+          "error"
+        );
+        return;
+      }
+
+      if (!/^07[0-9]{8}$/.test(phone)) {
+        showMessage(
+          "Enter a valid phone number beginning with 07.",
+          "error"
+        );
+        return;
+      }
+
+      if (password.length < 8) {
+        showMessage(
+          "Your password must contain at least 8 characters.",
+          "error"
+        );
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showMessage("Your passwords do not match.", "error");
+        return;
+      }
+
+
+      // CREATE ACCOUNT
+      button.disabled = true;
+      button.textContent = "Creating account...";
+
+      let createdUser = null;
+
+      try {
+        const internalEmail =
+          await createInternalEmail(registrationNumber);
+
+        const userCredential =
+          await createUserWithEmailAndPassword(
+            auth,
+            internalEmail,
+            password
+          );
+
+        createdUser = userCredential.user;
+
+
+        // SAVE REGISTRATION INFORMATION
+        await setDoc(
+          doc(db, "registrationRequests", createdUser.uid),
+          {
+            uid: createdUser.uid,
+            registrationNumber: registrationNumber,
+            year: year,
+            course: course,
+            affiliations: affiliations,
+            phone: "+254" + phone.substring(1),
+            status: "active",
+            createdAt: serverTimestamp()
+          }
+        );
+
+
+        showMessage(
+          "Registration successful. Redirecting...",
+          "success"
+        );
+
+        window.location.href = getRegistrationDestination();
+
+      } catch (error) {
+        console.error("Registration error:", error);
+
+        // CLEAN UP AUTH ACCOUNT IF PROFILE CREATION FAILS
+        if (createdUser) {
+          try {
+            await deleteUser(createdUser);
+          } catch (cleanupError) {
+            console.error("Account cleanup error:", cleanupError);
+          }
+        }
+
+        let errorMessage =
+          "Registration failed. Please try again.";
+
+        if (error.code === "auth/email-already-in-use") {
+          errorMessage =
+            "This registration number may already be registered. Please log in.";
+        } else if (error.code === "auth/weak-password") {
+          errorMessage =
+            "Your password is too weak. Use at least 8 characters.";
+        } else if (error.code === "auth/operation-not-allowed") {
+          errorMessage =
+            "Registration is currently unavailable. Contact the SIRI administrator.";
+        } else if (
+          error.code === "permission-denied" ||
+          error.code === "firestore/permission-denied"
+        ) {
+          errorMessage =
+            "Your registration could not be saved. Please contact the SIRI administrator.";
+        } else if (
+          error.code === "auth/network-request-failed"
+        ) {
+          errorMessage =
+            "Network error. Check your internet connection and try again.";
+        }
+
+        showMessage(errorMessage, "error");
+
+      } finally {
+        button.disabled = false;
+        button.textContent = "Create Account";
+      }
+    });
+
+  </script>
+
+
+  <!-- ANIMATED NETWORK BACKGROUND -->
+  <script>
+    const canvas = document.getElementById("networkCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      particles = [];
+
+      const count = Math.min(
+        65,
+        Math.floor(window.innerWidth / 18)
+      );
+
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4
+        });
+      }
+    }
+
+    function animateNetwork() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach((particle, index) => {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+
+        if (particle.x < 0 || particle.x > canvas.width) {
+          particle.vx *= -1;
+        }
+
+        if (particle.y < 0 || particle.y > canvas.height) {
+          particle.vy *= -1;
+        }
+
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "#20c77b";
+        ctx.fill();
+
+        for (let j = index + 1; j < particles.length; j++) {
+          const other = particles[j];
+
+          const dx = particle.x - other.x;
+          const dy = particle.y - other.y;
+
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance < 115) {
+            ctx.beginPath();
+            ctx.moveTo(particle.x, particle.y);
+            ctx.lineTo(other.x, other.y);
+            ctx.strokeStyle =
+              `rgba(32,199,123,${1 - distance / 115})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      });
+
+      requestAnimationFrame(animateNetwork);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+
+    resizeCanvas();
+    animateNetwork();
+  </script>
 
 </body>
 </html>
